@@ -6,8 +6,11 @@ import * as d3 from "d3";
 const GraphDFSEducational = () => {
   const svgRef = useRef(null);
   const nextButtonRef = useRef(null)
+  const descriptionRef = useRef(null)
 
-  const [description, setDescription] = useState("")
+  const setDescription = (description) => {
+    descriptionRef.current.innerText = description
+  }
 
   useEffect(() => {
     const nodes = [
@@ -116,17 +119,40 @@ const GraphDFSEducational = () => {
        label
        .filter(d => d.id === startId)
        .attr("fill", "white");
+      
+      if(visited.size === nodes.length) {
+        setDescription(`Wszystkie wierzchołki zostały odwiedzone.`)
+        nextButtonRef.current.innerText = "Restart"
+        nextButtonRef.current.onclick = () => {
+          nextButtonRef.current.innerText = "Next"
+          nextButtonRef.current.onclick = undefined
 
+          link
+          .attr("stroke", "white")
+
+          node
+            .attr("stroke", "#0b0e1a")
+            .attr("fill", "#f8f8f8")
+
+          label
+            .attr("text-anchor", "middle")
+            .attr("dy", 4)
+            .attr("fill", "black");
+          dfs(1)
+        }
+        return
+      } 
+      
       if(visited.size === 1)
-        setDescription(`DFS polega na eksploracji grafu najpierw w głąb. Wybieramy dowolny wierzchołek i z niego idziemy do kolejnych w obojętnej kolejności, ale nie możemy odwiedzic tego samego wierzchołka dwa razy. Zaczynamy od Node ${startId}`)
+        setDescription(`Zaczynamy od Node ${startId}`)
       else
         setDescription(`Następnie odwiedzamy Node ${startId}`)
     
       await new Promise(resolve => {
         nextButtonRef.current.onclick = () => {
-            resolve()
-            nextButtonRef.current.onclick = undefined
-          }
+          resolve()
+          nextButtonRef.current.onclick = undefined
+        }
       });
 
       for (const neighbor of adjacency[startId]) {
@@ -151,14 +177,21 @@ const GraphDFSEducational = () => {
       }
     }
 
-    setTimeout(() => dfs(1), 1000);
+    nextButtonRef.current.onclick = () => {
+      nextButtonRef.current.onclick = undefined
+      setDescription("DFS polega na eksploracji grafu najpierw w głąb. Wybieramy dowolny wierzchołek i z niego idziemy do kolejnych w obojętnej kolejności, ale nie możemy odwiedzic tego samego wierzchołka dwa razy.")
+      nextButtonRef.current.innerText = "Next"
+      dfs(1)
+    }
   }, []);
 
   return (
-    <div className="flex flex-col h-screen items-center p-8">
-      <svg className="grow" ref={svgRef} width="100%"></svg>
-      <p>{description}</p>
-      <button className="btn inline-block" ref={nextButtonRef}>Next</button>
+    <div className="flex flex-row h-screen items-center p-8 grow-0">
+      <svg className="grow" ref={svgRef} width="100%" height="100%"></svg>
+      <div className="bg-gray-dark w-[40rem] p-5 rounded-lg flex justify-between items-center flex-col gap-5">
+        <p ref={descriptionRef}>DFS polega na eksploracji grafu najpierw w głąb. Wybieramy dowolny wierzchołek i z niego idziemy do kolejnych w obojętnej kolejności, ale nie możemy odwiedzic tego samego wierzchołka dwa razy.</p>
+        <button className="btn inline-block" ref={nextButtonRef}>Start</button>
+      </div>
     </div>
   )
 };

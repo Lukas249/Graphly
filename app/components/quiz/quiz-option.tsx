@@ -24,7 +24,7 @@ const QuizOption: React.FC<QuizOptionProps> = ({
       />
       <label
         htmlFor={`choice-${index}`}
-        className={`block cursor-pointer rounded-lg border border-[#333] bg-[#0f172a] px-4 py-3 text-lg text-white transition-colors duration-300 ease-in-out ${
+        className={`block cursor-pointer rounded-lg border border-[#333] bg-[#0f172a] px-4 py-3 text-base text-white transition-colors duration-300 ease-in-out ${
           selectedAnswerIndex === index ? 'border-[#2f459c] bg-primary' : ''
         }`}
       >

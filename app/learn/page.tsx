@@ -1,14 +1,15 @@
-import CollapsibleVerticalMenu from "../components/collapsible-vertical-menu";
 import Quiz from "../components/quiz/quiz-card";
 import Menu from "../menu";
+import LearnCollapsibleVerticalMenu from "./collapsible-vertical-menu";
 
 export default function Learn() {
     return (
         <div className="flex flex-col justify-center items-center">
             <Menu />
+            
 
             <div className="flex flex-row gap-5 mt-12">
-                <CollapsibleVerticalMenu />
+                <LearnCollapsibleVerticalMenu />
                 
                 <div className="max-w-5xl bg-base-200 p-8 rounded-sm">
                     <h1 className="text-2xl text-white font-semibold">DFS</h1>
