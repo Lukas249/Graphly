@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google/genai": "^1.14.0",
     "@monaco-editor/react": "^4.7.0",
     "@types/d3": "^7.4.3",
     "@types/lodash": "^4.17.20",

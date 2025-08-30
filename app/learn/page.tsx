@@ -1,12 +1,37 @@
+"use client"
+
+import Chat from "../components/chat/chat";
+import Message from "../components/chat/message";
 import Quiz from "../components/quiz/quiz-card";
 import Menu from "../menu";
 import LearnCollapsibleVerticalMenu from "./collapsible-vertical-menu";
 
 export default function Learn() {
+
+    const askAI = async (question: string) => {
+        const response = await fetch(
+            "/api/gemini-ai", 
+            { 
+                method: "POST", 
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ question })}
+        )
+
+        const answer = await response.json()
+
+        console.log(answer)
+    }
+
     return (
         <div className="flex flex-col justify-center items-center">
             <Menu />
             
+            <Chat placeholder="Ask AI about article" onSend={askAI}>
+                <Message>aaaa</Message>
+                <Message>bbbb</Message>
+            </Chat>
 
             <div className="flex flex-row gap-5 mt-12">
                 <LearnCollapsibleVerticalMenu />

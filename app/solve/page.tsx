@@ -80,7 +80,7 @@ export default function Solve() {
   const handleRun = () => {
     setMainTabs((tabs) => {
                   const deepClone = lodash.cloneDeep(tabs)
-                  deepClone.push({id: crypto.randomUUID(), title: "Result", content: "1", closeable: false})
+                  deepClone.push({id: crypto.randomUUID(), title: "Result", content: "1", closeable: true})
                   return deepClone
                 }) 
   };
