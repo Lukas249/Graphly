@@ -25,7 +25,10 @@ const problem = {
         </pre>
     </div>`,
     testcases: ["1 0", "1 1", "1 2"],
-    outputs: ["1", "2", "3"],
+    header: `
+#include <iostream>
+using namespace std;
+    `,
     code: `#include <iostream>
 using namespace std;
 
@@ -33,14 +36,33 @@ int add(int a, int b) {
     return a + b;
 }`,
     driver: `
+int solution(int a, int b) {
+    return a + b;
+}
+
+bool equal(int a, int b) {
+    return a == b;
+}
+
 int main() {
-    int t;
+    int t, testcaseNumber = 1;
     cin >> t;
-    while (t--) {
+
+    while (testcaseNumber <= t) {
         int a, b;
         cin >> a >> b;
-        cout << add(a, b) << endl;
+
+        int got = add(a,b);
+        int expected = solution(a,b);
+        
+        if(!equal(got, expected)) {
+            cerr << "Wrong Answer" << endl << a << " " << b << endl << got << endl << expected;
+            exit(1);
+        }
+        
+        testcaseNumber++;
     }
+
     return 0;
 }
     `

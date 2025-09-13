@@ -24,6 +24,9 @@ export default function Menu() {
                     <li>
                         <a href="/solve" className="block py-2 px-3 text-white bg-transparent hover:text-primary">Solve</a>
                     </li>
+                    <li>
+                        <a href="/roadmap" className="block py-2 px-3 text-white bg-transparent hover:text-primary">Roadmap</a>
+                    </li>
                 </ul>
                 </div>
             </div>

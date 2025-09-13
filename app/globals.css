@@ -1,20 +1,31 @@
 @import "tailwindcss";
-@plugin "daisyui";
+
+@plugin "daisyui" {
+  prefix: "daisyui-";
+}
 
 @import "./animations.css";
 
 @import "./utilities.css";
 
+@tailwind utilities;
+
 @import "./styles/btn.css";
 
-@tailwind utilities;
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --color-primary: #60a5fa;
+  --color-gray-dark: #1e1e1e;
+  --color-gray-dark-850: #252526;
+  --color-dark: #0A0A0A;
+  --color-gray: #6a7282;
 }
 
 @theme {
+  --background: #ffffff;
+  --foreground: #171717;
   --color-primary: #60a5fa;
   --color-gray-dark: #1e1e1e;
   --color-gray-dark-850: #252526;

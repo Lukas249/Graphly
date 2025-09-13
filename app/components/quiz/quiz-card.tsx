@@ -1,25 +1,30 @@
 "use client"
 
 import { useState } from 'react'
-import { quiz } from './data'
 import QuizOption from './quiz-option'
 
-const Quiz = () => {
-  const [activeQuestion, setActiveQuestion] = useState<number>(0)
-  const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | null>(null)
-  const [showExplanation, setShowExplanation] = useState<boolean>(false)
+export type Question = {
+  question: string
+  answers: string[]
+  correctAnswer: number,
+  explanation: string
+}
 
-  const { questions } = quiz
-  const { question, choices, explanation } = questions[activeQuestion]
+const Quiz = ({ questions }: { questions : Question[] }) => {
+  const [activeQuestion, setActiveQuestion] = useState<number>(0)
+  const [selectedAnswer, setSelectedAnswer] = useState<number>(-1)
+  const [finalAnswer, setFinalAnswer] = useState<number>(-1)
+
+  const { question, answers, explanation, correctAnswer } = questions[activeQuestion]
 
   const onClickNext = () => {
-    if(!showExplanation) {
-        setShowExplanation(true)
+    if(finalAnswer === -1) {
+        setFinalAnswer(selectedAnswer)
         return 
     }
 
-    setShowExplanation(false)
-    setSelectedAnswerIndex(null)
+    setFinalAnswer(-1)
+    setSelectedAnswer(-1)
 
     if (activeQuestion !== questions.length - 1) {
       setActiveQuestion((prev) => prev + 1)
@@ -28,49 +33,49 @@ const Quiz = () => {
     }
   }
 
-  const onAnswerSelected = (answer: string, index: number) => {
-    setSelectedAnswerIndex(index)
+  const onAnswerSelected = (answerNumber: number) => {
+    setSelectedAnswer(answerNumber)
   }
-
-  const addLeadingZero = (number: number) => (number > 9 ? number : `0${number}`)
 
   return (
     <div className="mx-auto mt-[50px] max-w-xl rounded-md border border-[#444444] px-[60px] py-[30px]">
       <div className="flex items-center justify-between">
         <div>
           <span className="text-3xl font-medium text-primary">
-            {addLeadingZero(activeQuestion + 1)}
+            {(activeQuestion + 1).toString().padStart(2, "0")}
           </span>
           <span className="text-xl font-medium text-[#817a8e]">
-            /{addLeadingZero(questions.length)}
+            /{questions.length.toString().padStart(2, "0")}
           </span>
         </div>
       </div>
       <h3 className="my-4 text-xl font-medium text-white">{question}</h3>
       {
-      showExplanation && 
-      <p>
-        Explanation: {explanation}
+      finalAnswer >= 0 && 
+      <p className='border-primary border-1 p-2 rounded-lg'>
+        {explanation}
       </p>
       }
-      <form className={showExplanation ? "pointer-events-none" : ""}>
-        {choices.map((answer, index) => (
-          <QuizOption
-            key={answer}
-            index={index}
+      <form className={finalAnswer >= 0 ? "pointer-events-none" : ""}>
+        {answers.map((answer, index) => (<QuizOption
+            key={index}
+            optionNumber={index + 1}
             answer={answer}
-            selectedAnswerIndex={selectedAnswerIndex}
+            selectedAnswer={selectedAnswer}
             onAnswerSelected={onAnswerSelected}
+            finalAnswer={finalAnswer}
+            isCorrect={index + 1 === correctAnswer}
           />
-        ))}
+        )
+      )}
       </form>
       <div className="flex justify-end">
         <button
           onClick={onClickNext}
-          disabled={selectedAnswerIndex === null}
+          disabled={selectedAnswer === null}
           className="mt-12 w-full transform cursor-pointer rounded-lg border border-primary bg-primary px-5 py-1.5 text-base font-semibold text-white outline-none transition duration-300 ease-in-out hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:border-gray-500 disabled:bg-gray-800 disabled:text-gray-500 disabled:hover:scale-100"
         >
-          {activeQuestion === questions.length - 1 ? 'Finish' : showExplanation ? 'Next' : "Submit"}
+          {activeQuestion === questions.length - 1 ? 'Finish' : finalAnswer >= 0 ? 'Next' : "Submit"}
         </button>
       </div>
     </div>

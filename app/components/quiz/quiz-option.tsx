@@ -1,31 +1,49 @@
 interface QuizOptionProps {
-  index: number
+  optionNumber: number
   answer: string
-  selectedAnswerIndex: number | null
-  onAnswerSelected: (answer: string, index: number) => void
+  selectedAnswer: number
+  finalAnswer: number
+  isCorrect: boolean
+  onAnswerSelected: (optionNumber: number) => void
+  className?: string
 }
 
-const QuizOption: React.FC<QuizOptionProps> = ({
-  index,
+const QuizOption = ({
+  optionNumber,
   answer,
-  selectedAnswerIndex,
+  selectedAnswer,
+  finalAnswer,
+  isCorrect,
   onAnswerSelected,
-}) => {
+  className = ""
+} : QuizOptionProps) => {
+
+
   return (
-    <div className="relative mt-4 cursor-pointer">
+    <div className={className + " relative mt-4 cursor-pointer"}>
       <input
         type="radio"
-        id={`choice-${index}`}
+        id={`option-${optionNumber}`}
         name="quiz"
         value={answer}
-        checked={selectedAnswerIndex === index}
-        onChange={() => onAnswerSelected(answer, index)}
+        checked={selectedAnswer === optionNumber}
+        onChange={() => onAnswerSelected(optionNumber)}
         className="hidden"
       />
       <label
-        htmlFor={`choice-${index}`}
+        htmlFor={`option-${optionNumber}`}
         className={`block cursor-pointer rounded-lg border border-[#333] bg-[#0f172a] px-4 py-3 text-base text-white transition-colors duration-300 ease-in-out ${
-          selectedAnswerIndex === index ? 'border-[#2f459c] bg-primary' : ''
+          finalAnswer === -1 ? 
+            selectedAnswer === optionNumber ? 
+              ' bg-primary' 
+            : 
+              ""
+          :
+            finalAnswer === optionNumber ? 
+              isCorrect ? 'bg-green-600' : "bg-primary"
+            :
+              isCorrect ? "bg-green-600" : ""
+
         }`}
       >
         {answer}

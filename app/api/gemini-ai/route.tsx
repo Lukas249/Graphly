@@ -5,7 +5,7 @@ export async function POST(
   req: NextRequest
 ) {
     const { question } = await req.json()
-    console.log(question)
+    
     const GOOGLE_AI_STUDIO_API_KEY = process.env.GOOGLE_AI_STUDIO_API_KEY;
     const ai = new GoogleGenAI({apiKey: GOOGLE_AI_STUDIO_API_KEY});
 
@@ -14,7 +14,7 @@ export async function POST(
             model: 'gemini-2.0-flash-001',
             contents: question,
         });
-
+        console.log(response)
         return response.text
     }
 

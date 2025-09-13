@@ -23,6 +23,6 @@
       "@/lib/*": ["./app/lib/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/visualize/GraphVisualization.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/visualize/GraphVisualization.js", "app/roadmap/page.js"],
   "exclude": ["node_modules"]
 }

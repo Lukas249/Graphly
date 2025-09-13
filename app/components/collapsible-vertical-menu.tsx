@@ -6,7 +6,7 @@ type ListProps = {
 
 export default function CollapsibleVerticalMenu({ children }: ListProps) {
     return (
-      <ul className="menu bg-base-200 rounded-box w-56 h-min">
+      <ul className="daisyui-menu bg-base-200 rounded-box w-56 h-min">
         {children}
       </ul>
     )
