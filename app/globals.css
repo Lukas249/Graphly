@@ -21,6 +21,9 @@
   --color-gray-dark-850: #252526;
   --color-dark: #0A0A0A;
   --color-gray: #6a7282;
+
+  --toastify-color-progress-light: var(--color-primary);
+  --toastify-color-progress-dark: var(--color-primary);
 }
 
 @theme {
