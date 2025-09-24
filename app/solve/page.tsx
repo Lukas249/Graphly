@@ -8,11 +8,10 @@ import ProblemDescription from "./problemDescription";
 import Menu from "../menu";
 
 import { problem } from "./data"
-import { decodeUtf8Base64 } from "@/lib/decodeBase64";
 import { Tab, Tabs } from "../components/tabs";
 import Chat, { ChatRef } from "../components/chat/chat";
 import { MessageDetails } from "../components/chat/types";
-import getSubmissionResult from "./submitCode";
+import getSubmissionResult, { SubmissionResult } from "./submitCode";
 import { askAI } from "../lib/ai";
 import Result, { resultType } from "./result";
 
@@ -102,7 +101,7 @@ export default function Solve() {
       },
   ])
 
-  const addResultTab = (result:any) => {
+  const addResultTab = (result : SubmissionResult) => {
     setMainTabs((tabs) => {
       const deepClone = lodash.cloneDeep(tabs)
       deepClone.push(
@@ -138,7 +137,7 @@ export default function Solve() {
         toast.error("Failed to submit code")
       })
       .finally(() => {
-    setCodeJudging(false)
+        setCodeJudging(false)
       })
   }
  
@@ -196,7 +195,6 @@ export default function Solve() {
             </Allotment>
           </Allotment>
         </div>
-        
     </div>
     )
 }
