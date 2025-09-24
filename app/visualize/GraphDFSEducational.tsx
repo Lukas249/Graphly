@@ -1,7 +1,6 @@
 "use client"
 
 import { RefObject, useEffect, useImperativeHandle, useRef, useState } from "react";
-import * as d3 from "d3";
 import GraphVisualization from "./GraphVisualization";
 import { GraphHandle } from "./GraphTypes";
 
