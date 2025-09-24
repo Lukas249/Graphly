@@ -16,6 +16,8 @@ import getSubmissionResult from "./submitCode";
 import { askAI } from "../lib/ai";
 import Result, { resultType } from "./result";
 
+import { ToastContainer, toast } from 'react-toastify';
+
 export default function Solve() {
   const [mainTabsCurrentTab, setMainTabsCurrentTab] = useState(0)
   const [codeTabsCurrentTab, setCodeTabsCurrentTab] = useState(0)
@@ -127,14 +129,24 @@ export default function Solve() {
 
   const handleCodeRun = async (sourceCode: string, langId: number, testcasesNumber: number, testcases: string) => {
     setCodeJudging(true)
-    const result: any = await getSubmissionResult(sourceCode, langId, testcasesNumber + "\n" + testcases)
+    getSubmissionResult(sourceCode, langId, testcasesNumber + "\n" + testcases)
+      .then(result => {
+        addResultTab(result)
+      })
+      .catch(err => {
+        console.error(err)
+        toast.error("Failed to submit code")
+      })
+      .finally(() => {
     setCodeJudging(false)
-    addResultTab(result)
+      })
   }
  
     return (
       <div className="h-screen flex flex-col mx-2 pb-2">
         <Menu />
+        
+        <ToastContainer theme="dark"  />
         
         {
           codeJudging ? 
