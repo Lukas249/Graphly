@@ -1,4 +1,3 @@
-import { stdout } from "process";
 import { decodeUtf8Base64 } from "../lib/decodeBase64";
 
 type SubmissionStatus = {
