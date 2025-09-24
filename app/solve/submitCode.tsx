@@ -41,10 +41,6 @@ export default async function getSubmissionResult (sourceCode: string, languageI
                 return;
                 }
                 cleanup()
-                console.log(result)
-                //console.log("OUTPUT:", decodeUtf8Base64(result?.stdout?.trim()));
-                console.log("STATUS:", result?.status?.description);
-                console.log(decodeUtf8Base64(result.compile_output))
                 resolve(result)
             })
             .catch((err) => {
