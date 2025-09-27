@@ -16,8 +16,8 @@ const GraphDFS = ({nodes, edges} : {nodes: Node[], edges: Edge[]}) => {
     }
     
     for(const {source, target} of edges) {
-      adjacency[source].push(target)
-      adjacency[target].push(source)
+      adjacency[source.id].push(target.id)
+      adjacency[target.id].push(source.id)
     }
 
     async function dfs(startId: string, visited = new Set()) {
@@ -54,7 +54,7 @@ const GraphDFS = ({nodes, edges} : {nodes: Node[], edges: Edge[]}) => {
 
   return (
     <div className="flex flex-col h-screen items-center p-8 grow">
-      <GraphVisualization ref={graphRef} nodes={nodes} edges={edges} directed={false} className={"grow w-full"} />
+      <GraphVisualization ref={graphRef} graphNodes={nodes} graphEdges={edges} className={"grow w-full"} />
       <button className="btn inline-block" ref={nextButtonRef}>Next</button>
     </div>
   )
