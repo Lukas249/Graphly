@@ -6,6 +6,7 @@ import GraphVisualization from "./GraphVisualization";
 import { Edge, GraphHandle, Node } from "./GraphTypes";
 import { graphColors } from "./defaultGraphColors";
 import HistoryState from "../lib/HistoryState";
+import _ from "lodash";
 
 function useForceUpdate() {
   const [, toggle] = useState(false);
@@ -44,6 +45,24 @@ function Tutorial<TutorialVariables extends Record<string, unknown>>(
   const historyStates = useMemo(() => new HistoryState<TutorialStep<TutorialVariables>>(), []);
 
   const forceUpdate = useForceUpdate();
+
+  useEffect(() => {
+    function handleKeyPress(event: KeyboardEvent) {
+      if (event.key === "ArrowLeft") {
+        prevButtonRef.current?.click()
+      } else if (event.key === "ArrowRight") {
+        nextButtonRef.current?.click()
+      }
+    }
+
+    const throttled = _.throttle(handleKeyPress, 250)
+
+    window.addEventListener("keydown", throttled)
+
+    return () => {
+      window.removeEventListener("keydown", throttled)
+    }
+  }, [])
 
   function resetTutorialSteps() {
     historyStates.reset()
