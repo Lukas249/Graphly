@@ -7,7 +7,7 @@ const Educational = () => {
   const svgRef = useRef(null);
   const nextButtonRef = useRef(null)
 
-  const [description, setDescription] = useState("")
+  const [description, _] = useState("")
 
   useEffect(() => {
     const nodes = [

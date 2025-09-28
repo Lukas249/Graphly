@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import ReactFlow, { Background, Controls, ReactFlowProvider, useReactFlow } from "reactflow";
 import "reactflow/dist/style.css";
 import dagre from "dagre";
