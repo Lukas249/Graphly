@@ -39,4 +39,5 @@ jobs:
         uses: super-linter/super-linter@v8.1.0
         env:
           VALIDATE_ALL_CODEBASE: true
+          DEFAULT_BRANCH: staging-lint 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
