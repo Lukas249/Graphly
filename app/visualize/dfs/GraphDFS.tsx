@@ -9,7 +9,7 @@ const GraphDFS = ({nodes, edges} : {nodes: Node[], edges: Edge[]}) => {
   const nextButtonRef = useRef<HTMLButtonElement>(null)
   
   useEffect(() => {
-    const adjacency: any = {}
+    const adjacency: Record<string, string[]> = {}
 
     for(const node of nodes) {
       adjacency[node.id] = []

@@ -1,7 +1,9 @@
-export default function Accepted({ result, sourceCode } : {result: any, sourceCode: string}) {
+import { SubmissionResult } from "../submitCode";
+
+export default function Accepted({ result, sourceCode } : {result: SubmissionResult, sourceCode: string}) {
     return (
       <>
-        <p className="text-green-400 text-2xl my-2 ml-3">{result?.status?.description}</p>
+        <p className="text-green-400 text-2xl my-2 ml-3">{result.status.description}</p>
         
         <div className="relative bg-gray-dark-850 rounded-xl p-2">
             <div className="py-2 px-1 border-b-2 border-primary">

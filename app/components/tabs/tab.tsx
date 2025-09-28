@@ -1,6 +1,6 @@
 "use client"
 
-import { Dispatch, RefObject, SetStateAction } from "react"
+import { Dispatch, SetStateAction } from "react"
 import lodash from "lodash"
 import XMarkIcon from "@/app/icons/x-mark"
 

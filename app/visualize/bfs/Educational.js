@@ -1,13 +1,13 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
 const Educational = () => {
   const svgRef = useRef(null);
   const nextButtonRef = useRef(null)
 
-  const [description, _] = useState("")
+  const description = ""
 
   useEffect(() => {
     const nodes = [

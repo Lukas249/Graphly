@@ -132,8 +132,7 @@ export default function Solve() {
       .then(result => {
         addResultTab(result)
       })
-      .catch(err => {
-        console.error(err)
+      .catch(() => {
         toast.error("Failed to submit code")
       })
       .finally(() => {
