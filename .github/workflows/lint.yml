@@ -4,9 +4,9 @@ name: Lint
 on:
   workflow_dispatch:
   push:
-      branches: [main]
+      branches: [staging-lint]
   pull_request:
-      branches: [main]
+      branches: [staging-lint]
 
 permissions: {}
 
@@ -24,6 +24,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
+          ref: staging-lint
           fetch-depth: 0
           persist-credentials: false
 
