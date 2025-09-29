@@ -15,6 +15,16 @@ const eslintConfig = [
     rules: {
       "react/react-in-jsx-scope": "off",
       "no-console": "warn",
+    },
+    parserOptions: {
+      ecmaFeatures: {
+        jsx: true
+      }
+    },
+    settings: {
+      react: {
+        version: "detect"
+      }
     }
   })
 ];
