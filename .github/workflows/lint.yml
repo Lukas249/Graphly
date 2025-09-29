@@ -1,0 +1,60 @@
+---
+name: CI Lint
+
+on:
+  workflow_dispatch:
+  push:
+      branches: [main]
+  pull_request:
+      branches: [main]
+
+permissions: {}
+
+jobs:
+  nextjs-lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22.14.0
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Next.js ESLint
+        run: npm run lint
+
+      - name: Run Prettier
+        run: npx prettier --check .
+
+  super-linter:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Super-Linter (Critical)
+        uses: super-linter/super-linter@v8.1.0
+        env:
+          VALIDATE_GITLEAKS: true
+          VALIDATE_GITHUB_ACTIONS: true
+          VALIDATE_GIT_MERGE_CONFLICT_MARKERS: true
+          VALIDATE_ENV: true
+          VALIDATE_GIT_COMMITLINT: true
+
+      - name: Super-Linter (Warnings)
+        uses: super-linter/super-linter@v8.1.0
+        env:
+          VALIDATE_JSCPD: true
+          DISABLE_ERRORS: true
