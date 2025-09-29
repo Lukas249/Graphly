@@ -13,19 +13,8 @@ const eslintConfig = [
   ...compat.config({
     extends: ["next/core-web-vitals", "next/typescript"],
     rules: {
-      "react/react-in-jsx-scope": "off",
       "no-console": "warn",
     },
-    parserOptions: {
-      ecmaFeatures: {
-        jsx: true
-      }
-    },
-    settings: {
-      react: {
-        version: "detect"
-      }
-    }
   })
 ];
 

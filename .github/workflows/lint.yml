@@ -11,22 +11,10 @@ on:
 permissions: {}
 
 jobs:
-  build:
-    name: Lint
+  nextjs-lint:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: read
-      statuses: write
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-        with:
-          ref: staging-lint
-          fetch-depth: 0
-          persist-credentials: false
+      - uses: actions/checkout@v5
 
       - name: Setup Node.js
         uses: actions/setup-node@v5
@@ -36,9 +24,28 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Super-linter
-        uses: super-linter/super-linter@v8.1.0
+      - name: Run Next.js ESLint
+        run: npm run lint
+
+  super-linter:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          ref: staging-lint
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Run Super-Linter
+        uses: github/super-linter@v8.1.0
         env:
           VALIDATE_ALL_CODEBASE: true
-          DEFAULT_BRANCH: staging-lint 
+          DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Disable Prettier and ESLint formatting rules if desired:
+          LINTER_RULES_PATH: .github/linters # optional custom rules
