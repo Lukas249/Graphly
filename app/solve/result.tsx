@@ -37,7 +37,7 @@ export default function Result({
           <Error title={result.status.description} message={compile_output} />
         )) ||
         (result.stderr && /Wrong Answer/.test(stderr) && (
-          <WrongAnswer result={result} sourceCode={sourceCode} />
+          <WrongAnswer result={result} />
         )) ||
         (result.status.id === 5 && result.message && (
           <TLE title={result.status.description} message={message} />
