@@ -1,0 +1,24 @@
+# Build output
+.next/
+
+# Node modules
+node_modules/
+
+# Public files
+public/
+
+# Environment variables
+.env
+
+# Config files that don't need formatting
+*.config.*
+tsconfig.json
+.gitignore
+package.json
+package-lock.json
+next-env.d.ts
+.prettierignore
+.prettierrc.json
+
+# README
+README.md
