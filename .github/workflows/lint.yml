@@ -4,9 +4,9 @@ name: CI Lint
 on:
   workflow_dispatch:
   push:
-      branches: [main]
+    branches: [main]
   pull_request:
-      branches: [main]
+    branches: [main]
 
 permissions: {}
 
@@ -52,9 +52,11 @@ jobs:
           VALIDATE_GIT_MERGE_CONFLICT_MARKERS: true
           VALIDATE_ENV: true
           VALIDATE_GIT_COMMITLINT: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Super-Linter (Warnings)
         uses: super-linter/super-linter@v8.1.0
         env:
           VALIDATE_JSCPD: true
           DISABLE_ERRORS: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
