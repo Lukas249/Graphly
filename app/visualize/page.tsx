@@ -1,14 +1,13 @@
-"use client"
+"use client";
 
 import Menu from "../menu";
 import GraphDFSEducational from "./GraphDFSEducational";
 
 export default function Visualize() {
-    
-    return (
-        <div className="flex flex-col h-screen">
-            <Menu />
-            <GraphDFSEducational />
-        </div>
-    )
+  return (
+    <div className="flex h-screen flex-col">
+      <Menu />
+      <GraphDFSEducational />
+    </div>
+  );
 }

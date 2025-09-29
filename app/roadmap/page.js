@@ -1,7 +1,12 @@
-"use client"
+"use client";
 
 import React, { useState, useMemo, useEffect } from "react";
-import ReactFlow, { Background, Controls, ReactFlowProvider, useReactFlow } from "reactflow";
+import ReactFlow, {
+  Background,
+  Controls,
+  ReactFlowProvider,
+  useReactFlow,
+} from "reactflow";
 import "reactflow/dist/style.css";
 import dagre from "dagre";
 import Menu from "../menu";
@@ -35,19 +40,118 @@ function getLayoutedElements(nodes, edges, direction = "TB") {
 
 // Definicja node’ów z kolorem --color-primary
 const rawNodes = [
-  { id: "graphs", data: { label: "Algorytmy Grafowe" }, style: { backgroundColor: "var(--color-primary)", color: "white", borderRadius: 8, padding: 10 } },
-  { id: "search", data: { label: "Przeszukiwanie" }, style: { backgroundColor: "var(--color-primary)", color: "white", borderRadius: 8, padding: 10 } },
-  { id: "bfs", data: { label: "BFS" }, style: { backgroundColor: "var(--color-primary)", color: "white", borderRadius: 8, padding: 10 } },
-  { id: "dfs", data: { label: "DFS" }, style: { backgroundColor: "var(--color-primary)", color: "white", borderRadius: 8, padding: 10 } },
+  {
+    id: "graphs",
+    data: { label: "Algorytmy Grafowe" },
+    style: {
+      backgroundColor: "var(--color-primary)",
+      color: "white",
+      borderRadius: 8,
+      padding: 10,
+    },
+  },
+  {
+    id: "search",
+    data: { label: "Przeszukiwanie" },
+    style: {
+      backgroundColor: "var(--color-primary)",
+      color: "white",
+      borderRadius: 8,
+      padding: 10,
+    },
+  },
+  {
+    id: "bfs",
+    data: { label: "BFS" },
+    style: {
+      backgroundColor: "var(--color-primary)",
+      color: "white",
+      borderRadius: 8,
+      padding: 10,
+    },
+  },
+  {
+    id: "dfs",
+    data: { label: "DFS" },
+    style: {
+      backgroundColor: "var(--color-primary)",
+      color: "white",
+      borderRadius: 8,
+      padding: 10,
+    },
+  },
 
-  { id: "shortest", data: { label: "Najkrótsza ścieżka" }, style: { backgroundColor: "var(--color-primary)", color: "white", borderRadius: 8, padding: 10 } },
-  { id: "dijkstra", data: { label: "Dijkstra" }, style: { backgroundColor: "var(--color-primary)", color: "white", borderRadius: 8, padding: 10 } },
-  { id: "bellman", data: { label: "Bellman-Ford" }, style: { backgroundColor: "var(--color-primary)", color: "white", borderRadius: 8, padding: 10 } },
-  { id: "floyd", data: { label: "Floyd-warshall" }, style: { backgroundColor: "var(--color-primary)", color: "white", borderRadius: 8, padding: 10 } },
+  {
+    id: "shortest",
+    data: { label: "Najkrótsza ścieżka" },
+    style: {
+      backgroundColor: "var(--color-primary)",
+      color: "white",
+      borderRadius: 8,
+      padding: 10,
+    },
+  },
+  {
+    id: "dijkstra",
+    data: { label: "Dijkstra" },
+    style: {
+      backgroundColor: "var(--color-primary)",
+      color: "white",
+      borderRadius: 8,
+      padding: 10,
+    },
+  },
+  {
+    id: "bellman",
+    data: { label: "Bellman-Ford" },
+    style: {
+      backgroundColor: "var(--color-primary)",
+      color: "white",
+      borderRadius: 8,
+      padding: 10,
+    },
+  },
+  {
+    id: "floyd",
+    data: { label: "Floyd-warshall" },
+    style: {
+      backgroundColor: "var(--color-primary)",
+      color: "white",
+      borderRadius: 8,
+      padding: 10,
+    },
+  },
 
-  { id: "toposort", data: { label: "Sortowanie topologiczne" }, style: { backgroundColor: "var(--color-primary)", color: "white", borderRadius: 8, padding: 10 } },
-  { id: "euler", data: { label: "Ścieżka i cykl Eulera" }, style: { backgroundColor: "var(--color-primary)", color: "white", borderRadius: 8, padding: 10 } },
-  { id: "scc", data: { label: "Silnie spójne składowe" }, style: { backgroundColor: "var(--color-primary)", color: "white", borderRadius: 8, padding: 10 } },
+  {
+    id: "toposort",
+    data: { label: "Sortowanie topologiczne" },
+    style: {
+      backgroundColor: "var(--color-primary)",
+      color: "white",
+      borderRadius: 8,
+      padding: 10,
+    },
+  },
+  {
+    id: "euler",
+    data: { label: "Ścieżka i cykl Eulera" },
+    style: {
+      backgroundColor: "var(--color-primary)",
+      color: "white",
+      borderRadius: 8,
+      padding: 10,
+    },
+  },
+  {
+    id: "scc",
+    data: { label: "Silnie spójne składowe" },
+    style: {
+      backgroundColor: "var(--color-primary)",
+      color: "white",
+      borderRadius: 8,
+      padding: 10,
+    },
+  },
 ];
 
 // Relacje w formie drzewa
@@ -69,42 +173,69 @@ const rawEdges = [
 // Problemy / materiały do node’ów
 const problems = {
   bfs: [
-    { title: "Shortest Path in Binary Matrix", url: "https://leetcode.com/problems/shortest-path-in-binary-matrix/" },
+    {
+      title: "Shortest Path in Binary Matrix",
+      url: "https://leetcode.com/problems/shortest-path-in-binary-matrix/",
+    },
     { title: "Word Ladder", url: "https://leetcode.com/problems/word-ladder/" },
   ],
   dfs: [
-    { title: "Number of Islands", url: "https://leetcode.com/problems/number-of-islands/" },
-    { title: "Max Area of Island", url: "https://leetcode.com/problems/max-area-of-island/" },
+    {
+      title: "Number of Islands",
+      url: "https://leetcode.com/problems/number-of-islands/",
+    },
+    {
+      title: "Max Area of Island",
+      url: "https://leetcode.com/problems/max-area-of-island/",
+    },
   ],
   dijkstra: [
-    { title: "Network Delay Time", url: "https://leetcode.com/problems/network-delay-time/" },
+    {
+      title: "Network Delay Time",
+      url: "https://leetcode.com/problems/network-delay-time/",
+    },
   ],
   bellman: [
-    { title: "Negative Weight Cycle Detection", url: "https://www.geeksforgeeks.org/detect-negative-cycle-graph-bellman-ford/" },
+    {
+      title: "Negative Weight Cycle Detection",
+      url: "https://www.geeksforgeeks.org/detect-negative-cycle-graph-bellman-ford/",
+    },
   ],
   floyd: [
-    { title: "All Pairs Shortest Path", url: "https://cp-algorithms.com/graph/all-pair-shortest-path-floyd-warshall.html" },
+    {
+      title: "All Pairs Shortest Path",
+      url: "https://cp-algorithms.com/graph/all-pair-shortest-path-floyd-warshall.html",
+    },
   ],
   toposort: [
-    { title: "Course Schedule", url: "https://leetcode.com/problems/course-schedule/" },
+    {
+      title: "Course Schedule",
+      url: "https://leetcode.com/problems/course-schedule/",
+    },
   ],
   euler: [
-    { title: "Eulerian Path and Circuit", url: "https://cp-algorithms.com/graph/euler_path.html" },
+    {
+      title: "Eulerian Path and Circuit",
+      url: "https://cp-algorithms.com/graph/euler_path.html",
+    },
   ],
   scc: [
-    { title: "Strongly Connected Components", url: "https://cp-algorithms.com/graph/strongly-connected-components.html" },
+    {
+      title: "Strongly Connected Components",
+      url: "https://cp-algorithms.com/graph/strongly-connected-components.html",
+    },
   ],
 };
 
 export default function Page() {
   return (
-    <div className="flex flex-col h-screen">
-        <Menu />
-        <ReactFlowProvider>
-          <GraphRoadmap/>
-        </ReactFlowProvider>
+    <div className="flex h-screen flex-col">
+      <Menu />
+      <ReactFlowProvider>
+        <GraphRoadmap />
+      </ReactFlowProvider>
     </div>
-  )
+  );
 }
 
 function GraphRoadmap() {
@@ -112,15 +243,15 @@ function GraphRoadmap() {
 
   const { nodes, edges } = useMemo(
     () => getLayoutedElements([...rawNodes], [...rawEdges], "TB"),
-    []
+    [],
   );
 
   const { fitView } = useReactFlow();
 
   useEffect(() => {
-    window.addEventListener("resize", fitView)
+    window.addEventListener("resize", fitView);
     return () => window.removeEventListener("resize", fitView);
-  }, [fitView])
+  }, [fitView]);
 
   return (
     <div className="flex flex-1">
@@ -142,8 +273,11 @@ function GraphRoadmap() {
       </div>
 
       {selectedNode && problems[selectedNode] && (
-        <div className="w-80 p-4 bg-gray-50 border-l shadow-lg overflow-y-auto">
-          <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--color-primary)" }}>
+        <div className="w-80 overflow-y-auto border-l bg-gray-50 p-4 shadow-lg">
+          <h2
+            className="mb-4 text-2xl font-bold"
+            style={{ color: "var(--color-primary)" }}
+          >
             {nodes.find((n) => n.id === selectedNode)?.data.label} – Problems
           </h2>
           <ul className="space-y-2">
@@ -163,7 +297,7 @@ function GraphRoadmap() {
           </ul>
           <button
             onClick={() => setSelectedNode(null)}
-            className="mt-4 px-4 py-2 text-white rounded-xl shadow transition"
+            className="mt-4 rounded-xl px-4 py-2 text-white shadow transition"
             style={{ backgroundColor: "var(--color-primary)" }}
           >
             Close

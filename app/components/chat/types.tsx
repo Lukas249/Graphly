@@ -1,4 +1,4 @@
 export type MessageDetails = {
-    type: "response" | 'question'
-    msg: string
-}
+  type: "response" | "question";
+  msg: string;
+};

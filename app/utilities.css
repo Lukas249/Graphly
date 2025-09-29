@@ -1,4 +1,4 @@
 @utility animation-delay-* {
-    animation-delay: --value([*]);
-    animation-delay: calc(--value(integer) * 1ms);
+  animation-delay: --value([*]);
+  animation-delay: calc(--value(integer) * 1ms);
 }

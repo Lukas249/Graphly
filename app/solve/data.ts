@@ -1,7 +1,7 @@
 const problem = {
-    id: 1,
-    title: "Two Sum",
-    description: `<p>&nbsp;</p>
+  id: 1,
+  title: "Two Sum",
+  description: `<p>&nbsp;</p>
     <p>
     Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
     </p>
@@ -24,18 +24,18 @@ const problem = {
 <strong>Explanation:</strong> Because nums[0] + nums[1] == 9, we return [0, 1].
         </pre>
     </div>`,
-    testcases: ["1 0", "1 1", "1 2"],
-    header: `
+  testcases: ["1 0", "1 1", "1 2"],
+  header: `
 #include <iostream>
 using namespace std;
     `,
-    code: `#include <iostream>
+  code: `#include <iostream>
 using namespace std;
 
 int add(int a, int b) {
     return a + b;
 }`,
-    driver: `
+  driver: `
 int solution(int a, int b) {
     return a + b;
 }
@@ -65,7 +65,7 @@ int main() {
 
     return 0;
 }
-    `
-}
+    `,
+};
 
-export { problem }
+export { problem };

@@ -1,13 +1,13 @@
-import React, { ReactNode } from "react"
+import React, { ReactNode } from "react";
 
 type ListProps = {
-  children: ReactNode
-}
+  children: ReactNode;
+};
 
 export default function CollapsibleVerticalMenu({ children }: ListProps) {
-    return (
-      <ul className="daisyui-menu bg-base-200 rounded-box w-56 h-min">
-        {children}
-      </ul>
-    )
+  return (
+    <ul className="daisyui-menu bg-base-200 rounded-box h-min w-56">
+      {children}
+    </ul>
+  );
 }

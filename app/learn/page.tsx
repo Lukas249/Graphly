@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import Quiz from "../components/quiz/quiz-card";
@@ -6,107 +6,144 @@ import Menu from "../menu";
 import LearnCollapsibleVerticalMenu from "./collapsible-vertical-menu";
 import { quizDFS } from "./dfs/quizData";
 
-function Step({ step } : { step: number }) {
-    return (
-        <span 
-        className="absolute top-2 left-2 text-white font-bold text-lg 
-        bg-primary w-8 h-8 flex justify-center items-center rounded-sm">
-            {step}
-        </span>
-    )
+function Step({ step }: { step: number }) {
+  return (
+    <span className="bg-primary absolute top-2 left-2 flex h-8 w-8 items-center justify-center rounded-sm text-lg font-bold text-white">
+      {step}
+    </span>
+  );
 }
 
-function VisualizationImageWithStep({ image, step  } : { image: React.ReactNode, step: number }) {
-    return (
-        <div className="relative">
-            { image }
-            <Step step={step}/>
-        </div>
-    )
+function VisualizationImageWithStep({
+  image,
+  step,
+}: {
+  image: React.ReactNode;
+  step: number;
+}) {
+  return (
+    <div className="relative">
+      {image}
+      <Step step={step} />
+    </div>
+  );
 }
 
-function ArticleParagraph({ children } : { children: React.ReactNode }) {
-    return (
-        <div className="my-4">
-            {children}
-        </div>
-    )
+function ArticleParagraph({ children }: { children: React.ReactNode }) {
+  return <div className="my-4">{children}</div>;
 }
 
 export default function Learn() {
+  const imagesData = [
+    {
+      src: "/images/graph/undirected_graph.jpg",
+      alt: "DFS - Undirected Graph  - Step 1",
+    },
+    {
+      src: "/images/graph/dfs-phases/phase1.jpg",
+      alt: "DFS - Undirected Graph - Step 2",
+    },
+    {
+      src: "/images/graph/dfs-phases/phase2.jpg",
+      alt: "DFS - Undirected Graph - Step 3",
+    },
+    {
+      src: "/images/graph/dfs-phases/phase3.jpg",
+      alt: "DFS - Undirected Graph - Step 4",
+    },
+    {
+      src: "/images/graph/dfs-phases/phase4.jpg",
+      alt: "DFS - Undirected Graph - Step 5",
+    },
+    {
+      src: "/images/graph/dfs-phases/phase5.jpg",
+      alt: "DFS - Undirected Graph - Step 6",
+    },
+    {
+      src: "/images/graph/dfs-phases/phase6.jpg",
+      alt: "DFS - Undirected Graph - Step 7",
+    },
+  ];
 
-    const imagesData = [
-        {src: "/images/graph/undirected_graph.jpg", alt: "DFS - Undirected Graph  - Step 1"},
-        {src: "/images/graph/dfs-phases/phase1.jpg", alt: "DFS - Undirected Graph - Step 2"},
-        {src: "/images/graph/dfs-phases/phase2.jpg", alt: "DFS - Undirected Graph - Step 3"},
-        {src: "/images/graph/dfs-phases/phase3.jpg", alt: "DFS - Undirected Graph - Step 4"},
-        {src: "/images/graph/dfs-phases/phase4.jpg", alt: "DFS - Undirected Graph - Step 5"},
-        {src: "/images/graph/dfs-phases/phase5.jpg", alt: "DFS - Undirected Graph - Step 6"},
-        {src: "/images/graph/dfs-phases/phase6.jpg", alt: "DFS - Undirected Graph - Step 7"}
-    ]
+  const images = imagesData.map((data, index) => (
+    <VisualizationImageWithStep
+      key={data.src}
+      image={
+        <Image
+          src={data.src}
+          alt={data.alt}
+          width={300}
+          height={400}
+          quality={100}
+        />
+      }
+      step={index + 1}
+    />
+  ));
 
-    const images = imagesData.map((data, index) => <VisualizationImageWithStep key={data.src} image={
-                        <Image 
-                            src={data.src} 
-                            alt={data.alt} width={300} height={400} quality={100} />
-                        } 
-                        step={index + 1} />
-                    )
+  return (
+    <div className="flex flex-col items-center justify-center">
+      <Menu />
 
-    
+      <div className="mt-12 flex flex-row gap-5">
+        <LearnCollapsibleVerticalMenu />
 
-    return (
-        <div className="flex flex-col justify-center items-center">
-            <Menu />
-
-            <div className="flex flex-row gap-5 mt-12">
-                <LearnCollapsibleVerticalMenu />
-                
-                <div className="max-w-5xl bg-base-200 p-8 rounded-sm">
-                    <h1 className="text-2xl text-white font-semibold">DFS</h1>
-                    <p className="my-4">
-W algorytmie DFS (przeszukiwanie w głąb) przeszukujemy graf, odwiedzając kolejne sąsiadujące wierzchołki. 
-Gdy odwiedzamy nowy wierzchołek, najpierw sprawdzamy wszystkie miejsca, do których można z niego dotrzeć, 
-zanim wrócimy do poprzedniego poziomu. W grafach mogą występować pętle, więc jeden wierzchołek mógłby być odwiedzany wielokrotnie. 
-Żeby tego uniknąć, stosujemy tablicę visited, w której zaznaczamy już odwiedzone punkty.    
-                    </p>
-                    <p className="my-4">
-                        W pseudokodzie algorytm DFS zapiszemy następująco:
-                    </p>
-<pre className="my-4">
-{`visited = {}
+        <div className="bg-base-200 max-w-5xl rounded-sm p-8">
+          <h1 className="text-2xl font-semibold text-white">DFS</h1>
+          <p className="my-4">
+            W algorytmie DFS (przeszukiwanie w głąb) przeszukujemy graf,
+            odwiedzając kolejne sąsiadujące wierzchołki. Gdy odwiedzamy nowy
+            wierzchołek, najpierw sprawdzamy wszystkie miejsca, do których można
+            z niego dotrzeć, zanim wrócimy do poprzedniego poziomu. W grafach
+            mogą występować pętle, więc jeden wierzchołek mógłby być odwiedzany
+            wielokrotnie. Żeby tego uniknąć, stosujemy tablicę visited, w której
+            zaznaczamy już odwiedzone punkty.
+          </p>
+          <p className="my-4">
+            W pseudokodzie algorytm DFS zapiszemy następująco:
+          </p>
+          <pre className="my-4">
+            {`visited = {}
 procedure DFS(node):
     visited.add(node)
     for each neighbour in neighbours(node):
         if neighbour not in visited:
             DFS(neighbour)
 `}
-</pre>
-                    <p className="my-4">
-                        A na wizualizacji powyższy kod wykona się w następujący sposób
-                    </p>
-                    <div className="flex flex-row flex-wrap gap-2 justify-center select-none">
-                        {images}
-                    </div>
+          </pre>
+          <p className="my-4">
+            A na wizualizacji powyższy kod wykona się w następujący sposób
+          </p>
+          <div className="flex flex-row flex-wrap justify-center gap-2 select-none">
+            {images}
+          </div>
 
-                    <ArticleParagraph>
-                        Powyższy kod reprezentuje podejście rekurencyjne. Złożoność obliczeniowa wtedy jest następująca:
-                    </ArticleParagraph>
+          <ArticleParagraph>
+            Powyższy kod reprezentuje podejście rekurencyjne. Złożoność
+            obliczeniowa wtedy jest następująca:
+          </ArticleParagraph>
 
-                    <ArticleParagraph>
-                        <b>Złożoność czasowa: O(V + E)</b>, gdzie V to liczba wierzchołków, a E to liczba krawędzi w grafie.
-                    </ArticleParagraph>
-                    
-                    <ArticleParagraph>
-                        <b>Złożoność pamięciowa: O(2V) = O(V)</b>, ponieważ wymagana jest dodatkowa tablica odwiedzonych elementów o rozmiarze V oraz stos dla rekurencyjnych wywołań funkcji DFS. W najgorszym przypadku, jeśli graf jest linią prostą lub długą ścieżką, rekurencja DFS może sięgać tak głęboko, jak liczba wierzchołków.
-                    </ArticleParagraph>
+          <ArticleParagraph>
+            <b>Złożoność czasowa: O(V + E)</b>, gdzie V to liczba wierzchołków,
+            a E to liczba krawędzi w grafie.
+          </ArticleParagraph>
 
-                    <ArticleParagraph>
-                        Aby zmienić podejście rekurencyjne na iteracyjne to musimy zastosować strukturę danych stos. Kod prezentuje się wtedy następująco:
-                    </ArticleParagraph>
+          <ArticleParagraph>
+            <b>Złożoność pamięciowa: O(2V) = O(V)</b>, ponieważ wymagana jest
+            dodatkowa tablica odwiedzonych elementów o rozmiarze V oraz stos dla
+            rekurencyjnych wywołań funkcji DFS. W najgorszym przypadku, jeśli
+            graf jest linią prostą lub długą ścieżką, rekurencja DFS może sięgać
+            tak głęboko, jak liczba wierzchołków.
+          </ArticleParagraph>
 
-<pre className="my-4">
-{`
+          <ArticleParagraph>
+            Aby zmienić podejście rekurencyjne na iteracyjne to musimy
+            zastosować strukturę danych stos. Kod prezentuje się wtedy
+            następująco:
+          </ArticleParagraph>
+
+          <pre className="my-4">
+            {`
 procedure DFS(initialNode):
     stack = {initialNode}
     visited = {initialNode}
@@ -119,19 +156,21 @@ procedure DFS(initialNode):
                 stack.add(neighbour)
                 visited.add(neighbour)
 `}
-</pre>
-                    <ArticleParagraph>
-                        <b>Złożoność czasowa: O(V + E)</b>, gdzie V to liczba wierzchołków, a E to liczba krawędzi w grafie.
-                    </ArticleParagraph>
-                    
-                    <ArticleParagraph>
-                        <b>Złożoność pamięciowa: O(2V) = O(V)</b>, ponieważ wymagana jest dodatkowa tablica odwiedzonych elementów o rozmiarze V oraz stos, który w sumie będzie przechowywać V wierzchołków.
-                    </ArticleParagraph>
+          </pre>
+          <ArticleParagraph>
+            <b>Złożoność czasowa: O(V + E)</b>, gdzie V to liczba wierzchołków,
+            a E to liczba krawędzi w grafie.
+          </ArticleParagraph>
 
-                    <Quiz questions={quizDFS}/>
+          <ArticleParagraph>
+            <b>Złożoność pamięciowa: O(2V) = O(V)</b>, ponieważ wymagana jest
+            dodatkowa tablica odwiedzonych elementów o rozmiarze V oraz stos,
+            który w sumie będzie przechowywać V wierzchołków.
+          </ArticleParagraph>
 
-                </div>
-            </div>
+          <Quiz questions={quizDFS} />
         </div>
-    )
+      </div>
+    </div>
+  );
 }
