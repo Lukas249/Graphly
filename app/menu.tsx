@@ -1,3 +1,4 @@
+import Link from "next/link";
 
 export default function Menu() {
     return (  
@@ -13,19 +14,19 @@ export default function Menu() {
                 <div className="hidden w-full md:block md:w-auto" id="navbar-default">
                 <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 ">
                     <li>
-                        <a href="/" className="block py-2 px-3 text-white bg-transparent hover:text-primary">Home</a>
+                        <Link prefetch={false} href="/" className="block py-2 px-3 text-white bg-transparent hover:text-primary">Home</Link>
                     </li>
                     <li>
-                        <a href="/learn" className="block py-2 px-3 text-white bg-transparent hover:text-primary">Learn</a>
+                        <Link prefetch={false} href="/learn" className="block py-2 px-3 text-white bg-transparent hover:text-primary">Learn</Link>
                     </li>
                     <li>
-                        <a href="/visualize" className="block py-2 px-3 text-white bg-transparent hover:text-primary">Visualize</a>
+                        <Link prefetch={false} href="/visualize" className="block py-2 px-3 text-white bg-transparent hover:text-primary">Visualize</Link>
                     </li>
                     <li>
-                        <a href="/solve" className="block py-2 px-3 text-white bg-transparent hover:text-primary">Solve</a>
+                        <Link prefetch={false} href="/solve" className="block py-2 px-3 text-white bg-transparent hover:text-primary">Solve</Link>
                     </li>
                     <li>
-                        <a href="/roadmap" className="block py-2 px-3 text-white bg-transparent hover:text-primary">Roadmap</a>
+                        <Link prefetch={false} href="/roadmap" className="block py-2 px-3 text-white bg-transparent hover:text-primary">Roadmap</Link>
                     </li>
                 </ul>
                 </div>

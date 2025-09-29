@@ -14,7 +14,7 @@ export async function POST(
             model: 'gemini-2.0-flash-001',
             contents: question,
         });
-        console.log(response)
+        
         return response.text
     }
 

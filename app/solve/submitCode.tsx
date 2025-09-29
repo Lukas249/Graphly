@@ -1,5 +1,3 @@
-import { decodeUtf8Base64 } from "../lib/decodeBase64";
-
 type SubmissionStatus = {
     id: number
     description: string
@@ -22,11 +20,10 @@ export type SubmissionResult = {
 }
 
 export default async function getSubmissionResult (sourceCode: string, languageId: number, testcases: string): Promise<SubmissionResult> {
-    let intervalId: NodeJS.Timeout, timeoutId: NodeJS.Timeout;
-
-    const cleanup = () => {
-          if (intervalId !== undefined) clearInterval(intervalId);
-          if (timeoutId !== undefined) clearTimeout(timeoutId);
+ 
+    const cleanup = ({intervalID, timeoutID } : {intervalID?: NodeJS.Timeout, timeoutID?: NodeJS.Timeout}) => {
+          if (intervalID !== undefined) clearInterval(intervalID);
+          if (timeoutID !== undefined) clearTimeout(timeoutID);
       };
     
     const fetchData = await fetch("http://localhost:2358/submissions", {
@@ -45,28 +42,28 @@ export default async function getSubmissionResult (sourceCode: string, languageI
     
     const token = data.token;
 
-    timeoutId = setTimeout(() => {
-      cleanup()
+    const timeoutID = setTimeout(() => {
+      cleanup({timeoutID})
     }, 30_000)
 
     return await new Promise((resolve, reject) => {
-        intervalId = setInterval(() => {
+        const intervalID = setInterval(() => {
             fetch(`http://localhost:2358/submissions/${token}?base64_encoded=true`)
             .then(res => {
                 return res.json()
             })
             .then(result => {
                 if (result && result.status && result.status.id <= 2) {
-                console.log("Czekam...");
-                return;
+                  return;
                 }
-                cleanup()
+
                 resolve(result)
             })
             .catch((err) => {
-                console.log(err)
-                cleanup()
                 reject(err)
+            })
+            .finally(() => {
+              cleanup({intervalID, timeoutID})
             })
         }, 5000);
     })

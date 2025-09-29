@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Menu from "./menu";
 import Card from "./components/card";
 import AcademicCap from "./icons/academic-cap";
@@ -15,7 +14,7 @@ export default function Home() {
         <p className="text-white font-bold text-5xl opacity-0 animation-delay-500 animate-fade-slide-up">Visualize to explore</p>
         <p className="text-white font-bold text-5xl opacity-0 animation-delay-500 animate-fade-slide-up">Solve to master</p>
         <button className="opacity-0 animation-delay-750 animate-fade-slide-up btn">
-          Let's Explore
+          {"Let's Explore"}
         </button>
       </div>
       <div className="flex flex-row gap-5 max-w-5xl w-full opacity-0 animation-delay-750 animate-fade-slide-up" >

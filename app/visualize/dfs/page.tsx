@@ -3,7 +3,7 @@
 import { useState } from "react";
 import GraphDFS from "./GraphDFS";
 import { Editor } from "@monaco-editor/react";
-import _, { set } from "lodash";
+import _ from "lodash";
 import { Edge } from "../GraphTypes";
 
 type Nodes = Set<string>
@@ -67,7 +67,7 @@ export default function Visualize() {
         const edges: Edges = new Map()
 
         userEdges.split(/\s+/).filter(line => {
-            const [edge, weight] = line.trim().split(weightSeparator)
+            const [edge] = line.trim().split(weightSeparator)
             const isUndirected = line.includes(edgeSeparator.get("undirected") ?? "")
 
             const edgeType = isUndirected ? "undirected" : "directed"

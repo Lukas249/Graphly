@@ -1,8 +1,6 @@
 "use client"
 
 import Image from "next/image";
-import Chat from "../components/chat/chat";
-import Message from "../components/chat/message";
 import Quiz from "../components/quiz/quiz-card";
 import Menu from "../menu";
 import LearnCollapsibleVerticalMenu from "./collapsible-vertical-menu";

@@ -58,7 +58,7 @@ export default function Chat({ref, placeholder, onSend} : Props) {
                {
                 !messages.length ? 
                     <p className="absolute top-1/2 -translate-1/2 left-1/2 text-gray text-center text-xl">
-                        ASK AI ABOUT YOUR CODE, PROBLEM OR TESTCASES. YOU DON'T NEED TO PASTE ANYTHING.
+                        {"ASK AI ABOUT YOUR CODE, PROBLEM OR TESTCASES. YOU DON'T NEED TO PASTE ANYTHING."}
                     </p>
                 : ""
                }

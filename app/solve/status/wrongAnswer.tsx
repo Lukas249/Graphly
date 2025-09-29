@@ -1,8 +1,9 @@
 import { decodeUtf8Base64 } from "@/app/lib/decodeBase64"
+import { SubmissionResult } from "../submitCode"
 
-export default function WrongAnswer({ result, sourceCode } : {result: any, sourceCode: string}) {
+export default function WrongAnswer({ result } : { result: SubmissionResult }) {
 
-    const stderr = decodeUtf8Base64(result.stderr)
+    const stderr = decodeUtf8Base64(result.stderr ?? "")
     const stderrArray = stderr.split("\n")
 
     return (

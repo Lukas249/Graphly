@@ -1,9 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
- 
-export async function GET(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export async function GET() {
  
   const users = [
     { id: 1, name: 'Alice' },

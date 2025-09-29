@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useImperativeHandle, useRef, RefObject } from "react";
+import { useEffect, useImperativeHandle, useRef, RefObject, useMemo } from "react";
 import * as d3 from "d3";
 import _ from "lodash"
 import { Edge, Node, GraphHandle } from "./GraphTypes";
@@ -25,11 +25,11 @@ export default function GraphVisualization(
     const nodes: SimulationNode[] = _.cloneDeep(graphNodes)
     const edges: SimulationEdge[] = _.cloneDeep(graphEdges)
 
-    const colors = { ...graphColors, ...customColors };
-   
+    const colors = useMemo(() => ({ ...graphColors, ...customColors }), [customColors]);
+
     for(const edge of edges) {
-        edge.source = edge.source.id as any
-        edge.target = edge.target.id as any
+        edge.source = edge.source.id as Node & (string | number | SimulationNode)
+        edge.target = edge.target.id as Node & (string | number | SimulationNode)
     }
 
     const svgRef = useRef<SVGSVGElement>(null);
@@ -118,7 +118,7 @@ export default function GraphVisualization(
             .join("circle")
             .attr("r", 30)
             .attr("fill", colors.nodeFill)
-            .call(drag(simulation) as any);
+            .call(drag(simulation) as (selection: d3.Selection<d3.BaseType | SVGCircleElement, SimulationNode, SVGGElement, unknown>) => void);
     
         const nodeLabel = svg.append("g")
             .selectAll("text")
@@ -129,7 +129,7 @@ export default function GraphVisualization(
             .attr("style", "user-select: none")
             .attr("dy", 4)
             .attr("fill", colors.nodeLabel)
-            .call(drag(simulation) as any);
+            .call(drag(simulation) as (selection: d3.Selection<d3.BaseType | SVGCircleElement, SimulationNode, SVGGElement, unknown>) => void);
 
         nodesRef.current = node
         nodesLabelRef.current = nodeLabel
@@ -144,10 +144,10 @@ export default function GraphVisualization(
                 const target = d.target as SimulationNode
 
                 if (source.id === target.id) {
-                    let x1 = source.x ?? 0;
-                    let y1 = source.y ?? 0;
-                    let x2 = target.x ?? 0;
-                    let y2 = target.y ?? 0;
+                    const x1 = source.x ?? 0;
+                    const y1 = source.y ?? 0;
+                    const x2 = (target.x ?? 0) + 1;
+                    const y2 = (target.y ?? 0) + 1;
 
                     const xRotation = -45;
 
@@ -157,9 +157,6 @@ export default function GraphVisualization(
 
                     const drx = 40;
                     const dry = 30;
-
-                    x2 = x2 + 1;
-                    y2 = y2 + 1;
 
                     return "M" + x1 + "," + y1 + "A" + drx + "," + dry + " " + xRotation + "," + largeArc + "," + sweep + " " + x2 + "," + y2;
                 }
@@ -195,19 +192,18 @@ export default function GraphVisualization(
         function drag(simulation: Simulation<SimulationNode, undefined>) {
             return d3.drag()
                 .on("start", (event, d) => {
-                    const node = d as any
-                    
+                    const node = d as SimulationNode
                     if (!event.active) simulation.alphaTarget(0.3).restart();
                     node.fx = node.x;
                     node.fy = node.y;
                 })
                 .on("drag", (event, d) => {
-                    const node = d as any
+                    const node = d as SimulationNode
                     node.fx = event.x;
                     node.fy = event.y;
                 })
                 .on("end", (event, d) => {
-                    const node = d as any
+                    const node = d as SimulationNode
                     if (!event.active) simulation.alphaTarget(0);
                     node.fx = null;
                     node.fy = null;
@@ -223,7 +219,7 @@ export default function GraphVisualization(
             adjacency[edge.target.id].push(edge.source.id);
         });
 
-    }, [nodes, edges])
+    }, [nodes, edges, colors])
 
    
     function markNode(
