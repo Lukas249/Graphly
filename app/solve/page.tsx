@@ -196,7 +196,7 @@ export default function Solve() {
           <Allotment className="ml-0.5" vertical={true} separator={false}>
             <Allotment.Pane preferredSize="75%">
               <Tabs
-                className="h-full"
+                className="h-full flex flex-col"
                 tabs={codeTabs}
                 setTabs={setCodeTabs}
                 setCurrentTab={setCodeTabsCurrentTab}
@@ -206,7 +206,7 @@ export default function Solve() {
 
             <Allotment.Pane preferredSize="25%">
               <Tabs
-                className="mt-1 h-full"
+                className="mt-1 h-full flex flex-col"
                 tabs={testcasesTabs}
                 setTabs={setTestcasesTabs}
                 setCurrentTab={setTestcasesTabsCurrentTab}
