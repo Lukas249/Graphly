@@ -28,9 +28,6 @@ const askAI = (messages: MessageDetails[], contexts?: Record<string, string>) =>
       resolve(res.text)
     })
     .catch((e) => {
-      console.error('error name: ', e.name);
-      console.error('error message: ', e.message);
-      console.error('error status: ', e.status);
       reject(e)
     });
   }) 

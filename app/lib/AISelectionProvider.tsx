@@ -24,7 +24,7 @@ export default function AISelectionProvider(
       setButtonPosition({ left: ev.clientX, top: ev.clientY, display: true })
     }
 
-    const mouseDownHandler = (ev: MouseEvent) => {
+    const mouseDownHandler = () => {
       document.addEventListener("mousemove", mouseMoveHandler)
       document.addEventListener("mouseup", mouseUpHandler)
       const containerRect = containerRef.current?.getBoundingClientRect()
@@ -46,7 +46,7 @@ export default function AISelectionProvider(
   }, [])
 
   useEffect(() => {
-    const selectionChangeHandler = (ev: Event) => {
+    const selectionChangeHandler = () => {
       const selection = window.getSelection();
       
       if (!selection || !selection.rangeCount) {

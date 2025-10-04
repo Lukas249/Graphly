@@ -11,7 +11,7 @@ import { problem } from "./data";
 import { Tab, Tabs } from "../components/tabs";
 import Chat, { ChatRef } from "../components/chat/chat";
 import { MessageDetails } from "../components/chat/types";
-import getSubmissionResult, { SubmissionResult } from "./submitCode";
+import getSubmissionResult from "./submitCode";
 import { askAI } from "../lib/ai";
 import Result, { resultType } from "./result";
 

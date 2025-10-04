@@ -64,8 +64,6 @@ export default function Chat({ ref, onSend, defaultMessages = [], defaultContext
 
   const getContexts = () => contexts;
 
-  const getMessagesHistory = () => messages
-
   useEffect(() => {
     let i = messages.length - 1;
 
@@ -105,7 +103,7 @@ export default function Chat({ ref, onSend, defaultMessages = [], defaultContext
           {!messages.length && (
             <p className="text-gray absolute top-1/2 left-1/2 -translate-1/2 text-center text-xl">
                 <span>
-                  It's quiet here… ask me anything
+                  {"It's quiet here… ask me anything"}
                 </span>
             </p>
           )}
@@ -114,7 +112,7 @@ export default function Chat({ ref, onSend, defaultMessages = [], defaultContext
           {Object.keys(contexts).length > 0 && 
             <div className="flex gap-1 flex-wrap">
               {
-                Object.entries(contexts).map(([type, context], index) => {
+                Object.entries(contexts).map(([type, context]) => {
                   return (
                     context.closeable ? 
                       <ChipCloseable
