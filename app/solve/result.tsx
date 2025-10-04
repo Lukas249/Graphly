@@ -18,9 +18,11 @@ export function resultType(result: SubmissionResult) {
 export default function Result({
   result,
   sourceCode,
+  feedbackAI
 }: {
   result: SubmissionResult;
   sourceCode: string;
+  feedbackAI?: string;
 }) {
   const stderr = result.stderr ? decodeUtf8Base64(result.stderr) : "";
   const message = result.message ? decodeUtf8Base64(result.message) : "";
@@ -31,7 +33,7 @@ export default function Result({
   return (
     <div className="p-2">
       {(result.status.id === 3 && (
-        <Accepted result={result} sourceCode={sourceCode} />
+        <Accepted result={result} sourceCode={sourceCode} feedbackAI={feedbackAI} />
       )) ||
         (result.status.id === 6 && (
           <Error title={result.status.description} message={compile_output} />
