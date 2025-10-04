@@ -39,11 +39,15 @@ export function Tabs({
           ))}
         </div>
       </div>
-      <div className="bg-gray-dark h-full overflow-auto rounded-b-lg">
-        {currentTab >= 0 && currentTab < tabs.length
-          ? tabs[currentTab].content
-          : ""}
-      </div>
+      {tabs.map((tab, index) => (
+        <div
+          key={tab.id}
+          style={{ display: index === currentTab ? "block" : "none" }}
+          className="bg-gray-dark h-full overflow-auto rounded-b-lg"
+        >
+          {tab.content}
+        </div>
+      ))}
     </div>
   );
 }
