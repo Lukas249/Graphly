@@ -17,12 +17,16 @@ import Result, { resultType } from "./result";
 
 import { ToastContainer, toast } from "react-toastify";
 import AISelectionProvider from "../lib/AISelectionProvider";
-import { BeakerIcon, CodeBracketIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
+import {
+  BeakerIcon,
+  CodeBracketIcon,
+  DocumentTextIcon,
+} from "@heroicons/react/24/outline";
 
 type TabSection = "main" | "code" | "testcases";
 
 interface TabSetters {
-  setTabs:  React.Dispatch<React.SetStateAction<Tab[]>>;     
+  setTabs: React.Dispatch<React.SetStateAction<Tab[]>>;
   setCurrentTab: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -43,20 +47,20 @@ export default function Solve() {
     <Chat
       ref={chatRef}
       onSend={async (messages: MessageDetails[]) => {
-        const chatContexts = chatRef.current?.getContexts()
+        const chatContexts = chatRef.current?.getContexts();
 
-        const contexts: Record<string, string> = {}
+        const contexts: Record<string, string> = {};
 
-        if(chatContexts) {
-          for(const [key, value] of Object.entries(chatContexts)) {
-            contexts[key] = value.text
-          } 
-        } 
+        if (chatContexts) {
+          for (const [key, value] of Object.entries(chatContexts)) {
+            contexts[key] = value.text;
+          }
+        }
 
         const answer = await askAI(messages, contexts);
         chatRef.current?.addMessage({ type: "response", msg: answer });
       }}
-    />
+    />,
   );
 
   const [mainTabs, setMainTabs] = useState<Tab[]>([
@@ -66,7 +70,13 @@ export default function Solve() {
       content: (
         <AISelectionProvider
           buttonClickHandler={(__, selectedText) => {
-            chatRef.current?.addContext("description", {icon: <DocumentTextIcon className="size-3.5 fill-transparent stroke-primary" />, text: selectedText, closeable: true})
+            chatRef.current?.addContext("description", {
+              icon: (
+                <DocumentTextIcon className="stroke-primary size-3.5 fill-transparent" />
+              ),
+              text: selectedText,
+              closeable: true,
+            });
           }}
         >
           <ProblemDescription
@@ -93,21 +103,25 @@ export default function Solve() {
       content: (
         <AISelectionProvider
           buttonClickHandler={(__, selectedText) => {
-            chatRef.current?.addContext("testcases", {icon: <BeakerIcon className="size-3.5 stroke-primary" />, text: selectedText, closeable: true})
+            chatRef.current?.addContext("testcases", {
+              icon: <BeakerIcon className="stroke-primary size-3.5" />,
+              text: selectedText,
+              closeable: true,
+            });
           }}
         >
-        <Editor
-          height="100%"
-          defaultLanguage="plaintext"
-          defaultValue={testcases}
-          theme="vs-dark"
-          onChange={(val) => val && setTestcases(val)}
-          options={{
-            minimap: {
-              enabled: false,
-            },
-          }}
-        />
+          <Editor
+            height="100%"
+            defaultLanguage="plaintext"
+            defaultValue={testcases}
+            theme="vs-dark"
+            onChange={(val) => val && setTestcases(val)}
+            options={{
+              minimap: {
+                enabled: false,
+              },
+            }}
+          />
         </AISelectionProvider>
       ),
       closeable: false,
@@ -119,9 +133,13 @@ export default function Solve() {
       id: crypto.randomUUID(),
       title: "Code",
       content: (
-         <AISelectionProvider
+        <AISelectionProvider
           buttonClickHandler={(__, selectedText) => {
-            chatRef.current?.addContext("code", {icon: <CodeBracketIcon className="size-3.5 stroke-primary" />,text: selectedText, closeable: true})
+            chatRef.current?.addContext("code", {
+              icon: <CodeBracketIcon className="stroke-primary size-3.5" />,
+              text: selectedText,
+              closeable: true,
+            });
           }}
         >
           <Editor
@@ -129,7 +147,7 @@ export default function Solve() {
             defaultLanguage="c"
             defaultValue={sourceCode}
             theme="vs-dark"
-            onChange={(val) =>  val && setSourceCode(val)}
+            onChange={(val) => val && setSourceCode(val)}
             options={{
               minimap: {
                 enabled: false,
@@ -150,12 +168,15 @@ export default function Solve() {
       case "code":
         return { setTabs: setCodeTabs, setCurrentTab: setCodeTabsCurrentTab };
       case "testcases":
-        return { setTabs: setTestcasesTabs, setCurrentTab: setTestcasesTabsCurrentTab };
+        return {
+          setTabs: setTestcasesTabs,
+          setCurrentTab: setTestcasesTabsCurrentTab,
+        };
     }
   };
 
   const addTab = (tab: Tab, tabSection: TabSection) => {
-    const { setTabs, setCurrentTab } = getTabSetters(tabSection)
+    const { setTabs, setCurrentTab } = getTabSetters(tabSection);
 
     setTabs((tabs) => {
       const deepClone = lodash.cloneDeep(tabs);
@@ -173,17 +194,16 @@ export default function Solve() {
       testcases,
     );
 
-    if(result) {
+    if (result) {
       addTab(
         {
           id: crypto.randomUUID(),
           title: resultType(result),
-          content: 
-              <Result result={result} sourceCode={sourceCode} />,
+          content: <Result result={result} sourceCode={sourceCode} />,
           closeable: true,
         },
-        "testcases"
-      )
+        "testcases",
+      );
     }
   };
 
@@ -199,28 +219,31 @@ export default function Solve() {
       [
         {
           type: "question",
-          msg: `You are given the result of a user code submission. Write short feedback that will be displayed directly in a feedback field. Do not include introductions, titles, or bullet points. Write in plain markdown as smooth flowing text. Always state the time complexity and space complexity in a natural sentence. Only add a brief improvement suggestion if there is something meaningful to improve. If nothing needs improvement, stop after giving complexities without adding filler.`
-        }
+          msg: `You are given the result of a user code submission. Write short feedback that will be displayed directly in a feedback field. Do not include introductions, titles, or bullet points. Write in plain markdown as smooth flowing text. Always state the time complexity and space complexity in a natural sentence. Only add a brief improvement suggestion if there is something meaningful to improve. If nothing needs improvement, stop after giving complexities without adding filler.`,
+        },
       ],
       {
-        "submission": `
+        submission: `
           Code: ${sourceCode}
-        `
-      }
+        `,
+      },
     );
 
-    Promise.all([
-      result, 
-      feedbackAI.then((answer) => answer).catch(() => "")
-    ])
+    Promise.all([result, feedbackAI.then((answer) => answer).catch(() => "")])
       .then(([result, feedbackAI]) => {
-        if(!result) {
+        if (!result) {
           throw new Error("Failed to submit code");
         }
 
-        const content = feedbackAI ?
-          <Result result={result} sourceCode={sourceCode} feedbackAI={feedbackAI} /> :
+        const content = feedbackAI ? (
+          <Result
+            result={result}
+            sourceCode={sourceCode}
+            feedbackAI={feedbackAI}
+          />
+        ) : (
           <Result result={result} sourceCode={sourceCode} />
+        );
 
         addTab(
           {
@@ -229,12 +252,12 @@ export default function Solve() {
             content,
             closeable: true,
           },
-          "main"
-        )
+          "main",
+        );
       })
       .catch(() => {
         toast.error("Failed to submit code");
-      })
+      });
   };
 
   const handleCodeRun = async (
@@ -245,7 +268,11 @@ export default function Solve() {
   ) => {
     setCodeJudging(true);
 
-    return getSubmissionResult(sourceCode, langId, testcasesNumber + "\n" + testcases)
+    return getSubmissionResult(
+      sourceCode,
+      langId,
+      testcasesNumber + "\n" + testcases,
+    )
       .catch(() => {
         toast.error("Failed to submit code");
       })
@@ -292,7 +319,7 @@ export default function Solve() {
           <Allotment className="ml-0.5" vertical={true} separator={false}>
             <Allotment.Pane preferredSize="75%">
               <Tabs
-                className="h-full flex flex-col"
+                className="flex h-full flex-col"
                 tabs={codeTabs}
                 setTabs={setCodeTabs}
                 setCurrentTab={setCodeTabsCurrentTab}
@@ -302,7 +329,7 @@ export default function Solve() {
 
             <Allotment.Pane preferredSize="25%">
               <Tabs
-                className="mt-1 h-full flex flex-col"
+                className="mt-1 flex h-full flex-col"
                 tabs={testcasesTabs}
                 setTabs={setTestcasesTabs}
                 setCurrentTab={setTestcasesTabsCurrentTab}

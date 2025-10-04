@@ -6,10 +6,10 @@ interface CardProps {
   className?: string;
 }
 
-const Card = ({ title, children, className = "" } : CardProps) => {
+const Card = ({ title, children, className = "" }: CardProps) => {
   return (
     <div className={`bg-gray-dark rounded-lg p-3 text-white ${className}`}>
-      {title && <p className="text-xs pb-1 mb-1 text-primary">{title}</p>}
+      {title && <p className="text-primary mb-1 pb-1 text-xs">{title}</p>}
       <div>{children}</div>
     </div>
   );
@@ -18,7 +18,7 @@ const Card = ({ title, children, className = "" } : CardProps) => {
 export default function Accepted({
   result,
   sourceCode,
-  feedbackAI
+  feedbackAI,
 }: {
   result: SubmissionResult;
   sourceCode: string;
@@ -38,16 +38,14 @@ export default function Accepted({
 
         <div className="space-y-3">
           <Card title="Submitted code">
-            <pre>
-              {sourceCode}
-            </pre>
+            <pre>{sourceCode}</pre>
           </Card>
 
-          { feedbackAI && 
+          {feedbackAI && (
             <Card title="Feedback AI">
               <p>{feedbackAI}</p>
             </Card>
-          }
+          )}
         </div>
       </div>
     </>

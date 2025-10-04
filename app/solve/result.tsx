@@ -18,7 +18,7 @@ export function resultType(result: SubmissionResult) {
 export default function Result({
   result,
   sourceCode,
-  feedbackAI
+  feedbackAI,
 }: {
   result: SubmissionResult;
   sourceCode: string;
@@ -33,7 +33,11 @@ export default function Result({
   return (
     <div className="p-2">
       {(result.status.id === 3 && (
-        <Accepted result={result} sourceCode={sourceCode} feedbackAI={feedbackAI} />
+        <Accepted
+          result={result}
+          sourceCode={sourceCode}
+          feedbackAI={feedbackAI}
+        />
       )) ||
         (result.status.id === 6 && (
           <Error title={result.status.description} message={compile_output} />

@@ -1,6 +1,10 @@
 import Menu from "./menu";
 import Card from "./components/card";
-import { AcademicCapIcon, ChartBarIcon, CodeBracketIcon } from "@heroicons/react/24/outline";
+import {
+  AcademicCapIcon,
+  ChartBarIcon,
+  CodeBracketIcon,
+} from "@heroicons/react/24/outline";
 
 export default function Home() {
   return (

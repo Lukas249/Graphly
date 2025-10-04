@@ -1,6 +1,9 @@
 import { MessageDetails } from "../components/chat/types";
 
-export async function askAI(messages: MessageDetails[], contexts?: Record<string, string>): Promise<string> {
+export async function askAI(
+  messages: MessageDetails[],
+  contexts?: Record<string, string>,
+): Promise<string> {
   const response = await fetch("/api/gemini-ai", {
     method: "POST",
     headers: {
@@ -10,4 +13,4 @@ export async function askAI(messages: MessageDetails[], contexts?: Record<string
   });
 
   return await response.json();
-};
+}
