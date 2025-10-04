@@ -2,9 +2,9 @@
 
 import { Dispatch, SetStateAction } from "react";
 import lodash from "lodash";
-import XMarkIcon from "@/app/icons/x-mark";
 
 import { Tab } from ".";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 export default function TabCard({
   tab,

@@ -8,9 +8,9 @@ import React, {
   useState,
 } from "react";
 import Message from "./message";
-import PaperAirplane from "@/app/icons/paper-airplane";
 import { MessageDetails } from "./types";
 import Response from "./response";
+import { ArrowUpIcon } from "@heroicons/react/24/outline";
 
 export type ChatRef = {
   addMessage: (message: MessageDetails) => void;
@@ -88,7 +88,7 @@ export default function Chat({ ref, placeholder, onSend }: Props) {
             className="absolute top-1/2 right-2 -translate-y-1/2"
             onClick={() => handleSend({ type: "question", msg: input })}
           >
-            <PaperAirplane className="text-primary size-6" />
+              <ArrowUpIcon className="font-bold text-gray-dark size-5 stroke-2" />
           </button>
         </div>
       </div>

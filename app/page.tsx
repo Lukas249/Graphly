@@ -1,8 +1,6 @@
 import Menu from "./menu";
 import Card from "./components/card";
-import AcademicCap from "./icons/academic-cap";
-import ChartBar from "./icons/chart-bar";
-import CodeBracket from "./icons/code-bracket";
+import { AcademicCapIcon, ChartBarIcon, CodeBracketIcon } from "@heroicons/react/24/outline";
 
 export default function Home() {
   return (
@@ -27,17 +25,17 @@ export default function Home() {
       </div>
       <div className="animation-delay-750 animate-fade-slide-up flex w-full max-w-5xl flex-row gap-5 opacity-0">
         <Card
-          icon={AcademicCap()}
+          icon={<AcademicCapIcon className="size-5" />}
           title="Read"
           description="Learn core graph concepts and algorithms through well-structured articles, designed to clarify complexity without oversimplifying. Each topic is grounded in real-world relevance and supported by step-by-step explanations."
         />
         <Card
-          icon={ChartBar()}
+          icon={<ChartBarIcon className="size-5" />}
           title="Visualize"
           description="Observe the step-by-step execution of algorithms on graphs, exploring how nodes and edges are processed, decisions are made, and data structures evolve. Engage directly with dynamic, real-time visuals that clarify complex concepts and enhance intuitive learning."
         />
         <Card
-          icon={CodeBracket()}
+          icon={<CodeBracketIcon className="size-5" />}
           title="Solve"
           description="Test your understanding with interactive problem sets. Engage with algorithmic challenges that reinforce concepts and encourage deeper learning through experimentation and practice."
         />
