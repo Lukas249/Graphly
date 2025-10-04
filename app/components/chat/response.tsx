@@ -5,12 +5,13 @@ import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 
 export type MessageProps = {
+  id?: string;
   children: string;
 };
 
-export default function Response({ children }: MessageProps) {
+export default function Response({ id, children }: MessageProps) {
   return (
-    <span className="w-full p-2">
+    <span id={id} className="w-full p-2">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight]}
