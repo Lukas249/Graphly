@@ -29,7 +29,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/visualize/GraphVisualization.tsx",
-    "app/roadmap/page.js"
+    "app/roadmap/page.tsx"
   ],
   "exclude": ["node_modules"]
 }
