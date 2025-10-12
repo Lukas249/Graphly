@@ -1,0 +1,30 @@
+import { NextResponse } from "next/server";
+import pool from "@/app/lib/db";
+import { RowDataPacket } from "mysql2";
+
+export async function GET() {
+  const conn = await pool.getConnection();
+
+  try {
+    const [result] = await conn.query<RowDataPacket[]>(
+      `SELECT * FROM problems`,
+    );
+
+    conn.release();
+
+    for (const problem of result) {
+      problem["params"] = JSON.parse(problem["params"]);
+    }
+
+    return NextResponse.json(result);
+  } catch (err: unknown) {
+    if (typeof err === "object" && err && "sqlMessage" in err) {
+      return NextResponse.json({ error: err.sqlMessage }, { status: 400 });
+    }
+
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
+  }
+}
