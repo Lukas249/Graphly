@@ -1,14 +1,21 @@
-import { useState, RefObject, useRef, useMemo, useEffect, useImperativeHandle } from "react";
-import { GraphHandle } from "./GraphTypes";
+import {
+  useState,
+  RefObject,
+  useRef,
+  useMemo,
+  useEffect,
+  useImperativeHandle,
+} from "react";
+import { GraphHandle, MarkEdgeProps, MarkNodeProps } from "./GraphTypes";
 import HistoryState from "../lib/HistoryState";
 import _ from "lodash";
-import { graphColors } from "./defaultGraphColors";
+import { GraphColors } from "./defaultGraphColors";
 import useForceUpdate from "../hooks/useForceUpdate";
 
 export type TutorialStep<TutorialVariables extends Record<string, unknown>> = {
   description?: string;
-  nodeId?: string;
-  edge?: { source: string; target: string };
+  node?: MarkNodeProps;
+  edge?: MarkEdgeProps;
   isStep?: boolean;
   buttonText?: string;
   variables?: TutorialVariables;
@@ -27,12 +34,14 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
   ref,
   graphRef,
   variables,
-  pseudocode
+  pseudocode,
+  graphColors,
 }: {
   ref: RefObject<TutorialRef<TutorialVariables> | null>;
   graphRef: RefObject<GraphHandle | null>;
   variables: TutorialVariables;
   pseudocode: string;
+  graphColors: GraphColors;
 }) {
   const [codeVariables, setCodeVariables] = useState(variables);
 
@@ -45,7 +54,7 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
     () => new HistoryState<TutorialStep<TutorialVariables>>(),
     [],
   );
-  
+
   const forceUpdate = useForceUpdate();
 
   useEffect(() => {
@@ -72,7 +81,7 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
 
   function addTutorialStep({
     description,
-    nodeId,
+    node,
     edge,
     isStep = true,
     buttonText = "Next",
@@ -80,7 +89,7 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
   }: TutorialStep<TutorialVariables>) {
     historyStates.push({
       description,
-      nodeId,
+      node,
       edge,
       isStep,
       buttonText,
@@ -104,20 +113,46 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
 
         while (nextState && !nextState.isStep) {
           if (nextState?.edge) {
-            graphRef.current?.markEdge(
-              nextState.edge.source,
-              nextState.edge.target,
-              graphColors.markedEdge,
-              graphColors.markedEdgeLabel,
-              graphColors.markedEdgeHead,
-            );
+            graphRef.current?.markEdge({
+              sourceId: nextState.edge.sourceId,
+              destinationId: nextState.edge.destinationId,
+              directed: nextState.edge.directed,
+              edgeColor: nextState.edge.edgeColor,
+              edgeHeadColor: nextState.edge.edgeHeadColor,
+              edgeLabelColor: nextState.edge.edgeLabelColor,
+            });
+          }
+
+          if (nextState?.node) {
+            graphRef.current?.markNode({
+              nodeId: nextState.node.nodeId,
+              nodeColor: nextState.node.nodeColor,
+              nodeLabelColor: nextState.node.nodeLabelColor,
+              strokeColor: nextState.node.strokeColor,
+            });
           }
 
           nextState = historyStates.goForward();
         }
 
-        if (nextState?.nodeId) {
-          graphRef.current?.markNode(nextState.nodeId);
+        if (nextState?.edge) {
+          graphRef.current?.markEdge({
+            sourceId: nextState.edge.sourceId,
+            destinationId: nextState.edge.destinationId,
+            directed: nextState.edge.directed,
+            edgeColor: nextState.edge.edgeColor,
+            edgeHeadColor: nextState.edge.edgeHeadColor,
+            edgeLabelColor: nextState.edge.edgeLabelColor,
+          });
+        }
+
+        if (nextState?.node) {
+          graphRef.current?.markNode({
+            nodeId: nextState.node.nodeId,
+            nodeColor: nextState.node.nodeColor,
+            nodeLabelColor: nextState.node.nodeLabelColor,
+            strokeColor: nextState.node.strokeColor,
+          });
         }
 
         if (nextState?.description) setDescription(nextState.description);
@@ -134,24 +169,45 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
     let currentState = historyStates.current();
     let prevState = historyStates.goBack();
 
-    if (currentState?.nodeId) {
-      graphRef.current?.markNode(
-        currentState.nodeId,
-        graphColors.nodeFill,
-        graphColors.nodeStroke,
-        graphColors.nodeLabel,
-      );
+    if (currentState?.node) {
+      graphRef.current?.markNode({
+        nodeId: currentState.node.nodeId,
+        nodeColor: graphColors.nodeFill,
+        strokeColor: graphColors.nodeStroke,
+        nodeLabelColor: graphColors.nodeLabel,
+      });
+    }
+
+    if (currentState?.edge) {
+      graphRef.current?.markEdge({
+        sourceId: currentState.edge.sourceId,
+        destinationId: currentState.edge.destinationId,
+        directed: currentState.edge.directed,
+        edgeColor: graphColors.edge,
+        edgeLabelColor: graphColors.edgeLabel,
+        edgeHeadColor: graphColors.edgeHead,
+      });
     }
 
     while (prevState && !prevState.isStep) {
       if (prevState?.edge) {
-        graphRef.current?.markEdge(
-          prevState.edge.source,
-          prevState.edge.target,
-          graphColors.edge,
-          graphColors.edgeLabel,
-          graphColors.edgeHead,
-        );
+        graphRef.current?.markEdge({
+          sourceId: prevState.edge.sourceId,
+          destinationId: prevState.edge.destinationId,
+          directed: prevState.edge.directed,
+          edgeColor: graphColors.edge,
+          edgeLabelColor: graphColors.edgeLabel,
+          edgeHeadColor: graphColors.edgeHead,
+        });
+      }
+
+      if (prevState?.node) {
+        graphRef.current?.markNode({
+          nodeId: prevState.node.nodeId,
+          nodeColor: graphColors.nodeFill,
+          strokeColor: graphColors.nodeStroke,
+          nodeLabelColor: graphColors.nodeLabel,
+        });
       }
 
       currentState = historyStates.current();
@@ -175,7 +231,7 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
     );
   }
 
-  if(pseudocode) {
+  if (pseudocode) {
     codeLines.push(``, pseudocode);
   }
 

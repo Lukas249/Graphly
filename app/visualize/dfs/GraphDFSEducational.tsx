@@ -1,21 +1,18 @@
 "use client";
 
-import {
-  useEffect,
-  useRef
-} from "react";
+import { useEffect, useRef } from "react";
 
-import GraphVisualization from "./GraphVisualization";
-import { Edge, GraphHandle, Node } from "./GraphTypes";
-import _ from "lodash";
-import { TutorialRef, Tutorial } from "./Tutorial"
+import GraphVisualization from "../GraphVisualization";
+import { Edge, GraphHandle, Node } from "../GraphTypes";
+import { TutorialRef, Tutorial } from "../Tutorial";
+import { graphColors } from "../defaultGraphColors";
 
 const dfsPseudocode = `procedure DFS(node):
   visited.add(node)
   for each neighbour in neighbours(node):
     if neighbour not in visited:
       DFS(neighbour)
-`
+`;
 
 type Variables = {
   node: string;
@@ -23,24 +20,13 @@ type Variables = {
   visited: string[];
 };
 
-const nodes: Node[] = [
-  { id: "1" },
-  { id: "2" },
-  { id: "3" },
-  { id: "4" },
-  { id: "5" },
-  { id: "6" },
-];
-
-const edges: Edge[] = [
-  { source: { id: "1" }, target: { id: "2" } },
-  { source: { id: "1" }, target: { id: "3" } },
-  { source: { id: "2" }, target: { id: "4" } },
-  { source: { id: "3" }, target: { id: "5" } },
-  { source: { id: "5" }, target: { id: "6" } },
-];
-
-const GraphDFSEducational = () => {
+const GraphDFSEducational = ({
+  nodes,
+  edges,
+}: {
+  nodes: Node[];
+  edges: Edge[];
+}) => {
   const graphRef = useRef<GraphHandle>(null);
   const tutorialRef = useRef<TutorialRef<Variables>>(null);
 
@@ -59,9 +45,13 @@ const GraphDFSEducational = () => {
       adjacency[node.id] = [];
     }
 
-    for (const { source, target } of edges) {
-      adjacency[source.id].push(target.id);
-      adjacency[target.id].push(source.id);
+    for (const { source, target, directed } of edges) {
+      if (directed) {
+        adjacency[source.id].push(target.id);
+      } else {
+        adjacency[source.id].push(target.id);
+        adjacency[target.id].push(source.id);
+      }
     }
 
     tutorialRef.current?.addTutorialStep({
@@ -71,15 +61,21 @@ const GraphDFSEducational = () => {
       buttonText: "Start",
     });
 
+    const visitedEdges: Record<string, Record<string, boolean>> = {};
+
+    for (const node of nodes) {
+      visitedEdges[node.id] = {};
+    }
+
     async function dfs(startId: string, visited = new Set<string>()) {
       visited.add(startId);
 
-      graphRef.current?.markNode(startId);
+      graphRef.current?.markNode({ nodeId: startId });
 
       if (visited.size === 1)
         tutorialRef.current?.addTutorialStep({
           description: `Zaczynamy od Node ${startId}`,
-          nodeId: startId,
+          node: { nodeId: startId },
           variables: {
             visited: Array.from<string>(visited),
             neighbours: adjacency[startId],
@@ -89,7 +85,7 @@ const GraphDFSEducational = () => {
       else
         tutorialRef.current?.addTutorialStep({
           description: `Odwiedzamy Node ${startId}`,
-          nodeId: startId,
+          node: { nodeId: startId },
           variables: {
             visited: Array.from<string>(visited),
             neighbours: adjacency[startId],
@@ -98,6 +94,77 @@ const GraphDFSEducational = () => {
         });
 
       await waitOnClick();
+
+      for (const neighbor of adjacency[startId]) {
+        if (visited.has(neighbor)) {
+          if (
+            !visitedEdges[startId][neighbor] &&
+            !visitedEdges[neighbor][startId]
+          ) {
+            graphRef.current?.markEdge({
+              sourceId: startId,
+              destinationId: neighbor,
+              directed: false,
+              edgeColor: "gray",
+            });
+
+            tutorialRef.current?.addTutorialStep({
+              description: `Krawędź ${startId} -- ${neighbor}: Wierzchołek ${neighbor} był już odwiedzony, ale nie przez tę krawędź. Oznaczamy ją szaro, aby zaznaczyć, że została sprawdzona.`,
+              variables: {
+                visited: Array.from<string>(visited),
+                neighbours: adjacency[startId],
+                node: startId,
+              },
+              edge: {
+                sourceId: startId,
+                destinationId: neighbor,
+                directed: false,
+                edgeColor: "gray",
+              },
+            });
+
+            await waitOnClick();
+          } else {
+            tutorialRef.current?.addTutorialStep({
+              description: `Krawędź ${startId} -- ${neighbor}: Wierzchołek ${neighbor} został już odwiedzony tą krawędzią. Pomijamy ją, aby uniknąć powtórzeń.`,
+              variables: {
+                visited: Array.from<string>(visited),
+                neighbours: adjacency[startId],
+                node: startId,
+              },
+            });
+
+            await waitOnClick();
+          }
+          continue;
+        }
+
+        tutorialRef.current?.addTutorialStep({
+          description: `Krawędź ${startId} -- ${neighbor}: Przechodzimy do wierzchołka ${neighbor}, ponieważ nie był jeszcze odwiedzony. Jest to krawędź drzewa DFS.`,
+          variables: {
+            visited: Array.from<string>(visited),
+            neighbours: adjacency[startId],
+            node: startId,
+          },
+        });
+
+        await waitOnClick();
+
+        visitedEdges[startId][neighbor] = true;
+        visitedEdges[neighbor][startId] = true;
+
+        graphRef.current?.markEdge({
+          sourceId: startId,
+          destinationId: neighbor,
+          directed: false,
+        });
+        tutorialRef.current?.addTutorialStep({
+          edge: { sourceId: startId, destinationId: neighbor, directed: false },
+          isStep: false,
+        });
+
+        if (await dfs(neighbor, visited)) return true;
+      }
 
       if (visited.size === nodes.length) {
         tutorialRef.current?.addTutorialStep({
@@ -130,29 +197,6 @@ const GraphDFSEducational = () => {
         return true;
       }
 
-      for (const neighbor of adjacency[startId]) {
-        tutorialRef.current?.addTutorialStep({
-          description: `Przechodzimy z ${startId} do ${neighbor} jeśli wierzchołek ${neighbor} nie został jeszcze odwiedzony`,
-          variables: {
-            visited: Array.from<string>(visited),
-            neighbours: adjacency[startId],
-            node: startId,
-          },
-        });
-
-        await waitOnClick();
-
-        if (visited.has(neighbor)) continue;
-
-        graphRef.current?.markEdge(startId, neighbor);
-        tutorialRef.current?.addTutorialStep({
-          edge: { source: startId, target: neighbor },
-          isStep: false,
-        });
-
-        if (await dfs(neighbor, visited)) return true;
-      }
-
       tutorialRef.current?.addTutorialStep({
         description: `Brak kolejnych nieodwiedzonych sąsiadów dlatego wracamy z wierzchołka ${startId} do poprzednika.`,
         variables: {
@@ -168,10 +212,10 @@ const GraphDFSEducational = () => {
     tutorialRef.current?.setNextButtonOnceClickHanlder(() => {
       dfs("1");
     });
-  }, []);
+  }, [nodes, edges]);
 
   return (
-    <div className="flex h-full grow-0 flex-row items-center p-8">
+    <div className="flex h-full flex-row items-center p-8">
       <GraphVisualization
         graphNodes={nodes}
         graphEdges={edges}
@@ -183,6 +227,7 @@ const GraphDFSEducational = () => {
         graphRef={graphRef}
         variables={{ node: "", neighbours: [], visited: [] }}
         pseudocode={dfsPseudocode}
+        graphColors={graphColors}
       />
     </div>
   );

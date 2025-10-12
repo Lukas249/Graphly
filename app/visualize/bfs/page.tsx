@@ -1,11 +1,11 @@
 import Menu from "../../menu";
-import Educational from "./Educational";
+import GraphBFSEducational from "./GraphBFSEducational";
 
 export default function VisualizeBFSEducational() {
   return (
     <div className="flex h-screen flex-col">
       <Menu />
-      <Educational />
+      <GraphBFSEducational />
     </div>
   );
 }

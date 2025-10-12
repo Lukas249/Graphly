@@ -9,7 +9,14 @@ import {
 } from "react";
 import * as d3 from "d3";
 import _ from "lodash";
-import { Edge, Node, GraphHandle } from "./GraphTypes";
+import {
+  Edge,
+  Node,
+  GraphHandle,
+  MarkDirectedEdgeProps,
+  MarkEdgeProps,
+  MarkNodeProps,
+} from "./GraphTypes";
 import { SimulationNodeDatum, SimulationLinkDatum, Simulation } from "d3-force";
 import { GraphColors, graphColors } from "./defaultGraphColors";
 
@@ -73,6 +80,8 @@ export default function GraphVisualization({
   const edgesLabelsTextPathRef =
     useRef<d3.Selection<SVGTextPathElement, Edge, SVGGElement, unknown>>(null);
 
+  const simulationRef = useRef<d3.Simulation<SimulationNode, undefined>>(null);
+
   useEffect(() => {
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
@@ -103,6 +112,8 @@ export default function GraphVisualization({
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force("collide", d3.forceCollide().radius(60))
       .force("bounding-box", boundingBoxForce(width, height, nodeRadius));
+
+    simulationRef.current = simulation;
 
     window.addEventListener(
       "resize",
@@ -308,12 +319,12 @@ export default function GraphVisualization({
     });
   }, [nodes, edges, colors]);
 
-  function markNode(
-    nodeId: string,
+  function markNode({
+    nodeId,
     nodeColor = colors.markedNodeFill,
     strokeColor = colors.markedNodeStroke,
     nodeLabelColor = colors.markedNodeLabel,
-  ) {
+  }: MarkNodeProps) {
     nodesRef.current
       ?.filter((d) => d.id === nodeId)
       .transition()
@@ -326,13 +337,13 @@ export default function GraphVisualization({
       .attr("fill", nodeLabelColor);
   }
 
-  function markEdge(
-    sourceId: string,
-    destinationId: string,
+  function markDirectedEdge({
+    sourceId,
+    destinationId,
     edgeColor = colors.markedEdge,
     edgeLabelColor = colors.markedEdgeLabel,
     edgeHeadColor = colors.markedEdgeHead,
-  ) {
+  }: MarkDirectedEdgeProps) {
     edgesRef.current
       ?.filter((d) => d.source.id === sourceId && d.target.id === destinationId)
       .transition()
@@ -352,6 +363,40 @@ export default function GraphVisualization({
       .attr("fill", edgeHeadColor);
   }
 
+  function markEdge({
+    sourceId,
+    destinationId,
+    directed = true,
+    edgeColor = colors.markedEdge,
+    edgeLabelColor = colors.markedEdgeLabel,
+    edgeHeadColor = colors.markedEdgeHead,
+  }: MarkEdgeProps) {
+    if (directed) {
+      markDirectedEdge({
+        sourceId,
+        destinationId,
+        edgeColor,
+        edgeLabelColor,
+        edgeHeadColor,
+      });
+    } else {
+      markDirectedEdge({
+        sourceId,
+        destinationId,
+        edgeColor,
+        edgeLabelColor,
+        edgeHeadColor,
+      });
+      markDirectedEdge({
+        sourceId: destinationId,
+        destinationId: sourceId,
+        edgeColor,
+        edgeLabelColor,
+        edgeHeadColor,
+      });
+    }
+  }
+
   function resetMarks() {
     nodesRef.current
       ?.attr("stroke", colors.nodeStroke)
@@ -366,7 +411,27 @@ export default function GraphVisualization({
     edgesLabelsTextPathRef.current?.attr("fill", colors.edgeLabel);
   }
 
-  useImperativeHandle(ref, () => ({ markNode, markEdge, resetMarks }));
+  function transpose() {
+    for (const edge of edges) {
+      [edge.source, edge.target] = [edge.target, edge.source];
+    }
+
+    simulationRef.current?.force(
+      "link",
+      d3
+        .forceLink<SimulationNode, SimulationEdge>(edges)
+        .id((d) => d.id)
+        .distance(150),
+    );
+    simulationRef.current?.alpha(1).restart();
+  }
+
+  useImperativeHandle(ref, () => ({
+    markNode,
+    markEdge,
+    resetMarks,
+    transpose,
+  }));
 
   return <svg className={className} ref={svgRef}></svg>;
 }
