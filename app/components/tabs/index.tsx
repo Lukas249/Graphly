@@ -6,7 +6,8 @@ import TabCard from "./tab";
 export type Tab = {
   id: string;
   title: string;
-  content: ReactNode;
+  content?: ReactNode;
+  renderContent?: () => ReactNode;
   closeable: boolean;
 };
 
@@ -45,7 +46,7 @@ export function Tabs({
           style={{ display: index === currentTab ? "block" : "none" }}
           className="bg-gray-dark h-full overflow-auto rounded-b-lg"
         >
-          {tab.content}
+          {tab.renderContent ? tab.renderContent() : tab.content}
         </div>
       ))}
     </div>
