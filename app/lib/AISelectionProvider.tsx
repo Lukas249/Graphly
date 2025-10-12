@@ -122,15 +122,13 @@ export default function AISelectionProvider({
               top: buttonPosition?.top,
               left: buttonPosition?.left,
             }}
+            onClick={(event: React.MouseEvent<HTMLSpanElement>) => {
+              buttonClickHandler(event, selectedText);
+              setButtonPosition(() => ({ top: 0, left: 0, display: false }));
+              window.getSelection()?.removeAllRanges();
+            }}
           >
-            <span
-              className="bg-dark flex flex-row gap-1 rounded-lg px-2 py-1"
-              onClick={(event: React.MouseEvent<HTMLSpanElement>) => {
-                buttonClickHandler(event, selectedText);
-                setButtonPosition(() => ({ top: 0, left: 0, display: false }));
-                window.getSelection()?.removeAllRanges();
-              }}
-            >
+            <span className="bg-dark flex flex-row gap-1 rounded-lg px-2 py-1">
               Ask<span className="text-primary"> GraphlyAI</span>
             </span>
           </button>,
