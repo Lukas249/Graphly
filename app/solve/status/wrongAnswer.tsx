@@ -1,33 +1,48 @@
-import { decodeUtf8Base64 } from "@/app/lib/decodeBase64";
-import { SubmissionResult } from "../submitCode";
+import { TestcaseResult } from "../result";
+import React from "react";
 
-export default function WrongAnswer({ result }: { result: SubmissionResult }) {
-  const stderr = decodeUtf8Base64(result.stderr ?? "");
-  const stderrArray = stderr.split("\n");
-
+export default function WrongAnswer({
+  testcase,
+  params,
+}: {
+  testcase?: TestcaseResult;
+  params?: string[];
+}) {
   return (
     <>
-      <p className="my-2 ml-3 text-2xl text-red-400">{stderrArray[0]}</p>
+      <p className="my-2 ml-3 text-2xl text-red-400">Wrong Answer</p>
 
       <div className="bg-gray-dark-850 relative rounded-xl p-2">
-        <div className="border-primary border-b-2 px-1 py-2">
-          <p>Time: {result?.time * 1000} ms</p>
-          <p>Memory: {result?.memory} KB</p>
-        </div>
+        {testcase &&
+          params &&
+          testcase.args.map((variable, i) => {
+            return (
+              <React.Fragment key={i}>
+                <p className="px-1 py-2">{params[i]}</p>
+                <pre className="bg-gray-dark rounded-lg p-3 text-gray-100">
+                  {variable}
+                </pre>
+              </React.Fragment>
+            );
+          })}
 
-        <p className="px-1 py-2">Testcase</p>
-        <pre className="bg-gray-dark rounded-lg p-3 text-gray-100">
-          {stderrArray[1]}
-        </pre>
+        {testcase?.printed && (
+          <>
+            <p className="px-1 py-2">Console</p>
+            <pre className="bg-gray-dark rounded-lg p-3 text-gray-100">
+              {testcase?.printed}
+            </pre>
+          </>
+        )}
 
         <p className="px-1 py-2">Output</p>
         <pre className="bg-gray-dark rounded-lg p-3 text-gray-100">
-          {stderrArray[2]}
+          {testcase?.got}
         </pre>
 
         <p className="px-1 py-2">Expected</p>
         <pre className="bg-gray-dark rounded-lg p-3 text-gray-100">
-          {stderrArray[3]}
+          {testcase?.expected}
         </pre>
       </div>
     </>

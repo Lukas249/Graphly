@@ -38,7 +38,7 @@ export default function Accepted({
 
         <div className="space-y-3">
           <Card title="Submitted code">
-            <pre>{sourceCode}</pre>
+            <pre className="whitespace-pre-wrap">{sourceCode}</pre>
           </Card>
 
           {feedbackAI && (

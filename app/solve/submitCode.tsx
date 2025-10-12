@@ -24,40 +24,34 @@ export default async function getSubmissionResult(
   languageId: number,
   testcases: string,
 ): Promise<SubmissionResult> {
-  const cleanup = ({
-    intervalID,
-    timeoutID,
-  }: {
-    intervalID?: NodeJS.Timeout;
-    timeoutID?: NodeJS.Timeout;
-  }) => {
+  const cleanup = ({ intervalID }: { intervalID?: NodeJS.Timeout }) => {
     if (intervalID !== undefined) clearInterval(intervalID);
-    if (timeoutID !== undefined) clearTimeout(timeoutID);
   };
 
-  const fetchData = await fetch("http://localhost:2358/submissions", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      source_code: sourceCode,
-      language_id: languageId,
-      stdin: testcases,
-      base64_encoded: true,
-      callback_url: "http://localhost:3000",
-    }),
-  });
+  const fetchData = await fetch(
+    `${process.env.NEXT_PUBLIC_JUDGE0_URL}/submissions`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        source_code: sourceCode,
+        language_id: languageId,
+        stdin: testcases,
+        base64_encoded: true,
+        callback_url: process.env.NEXT_PUBLIC_BASE_URL,
+      }),
+    },
+  );
 
   const data = await fetchData.json();
 
   const token = data.token;
 
-  const timeoutID = setTimeout(() => {
-    cleanup({ timeoutID });
-  }, 30_000);
-
   return await new Promise((resolve, reject) => {
     const intervalID = setInterval(() => {
-      fetch(`http://localhost:2358/submissions/${token}?base64_encoded=true`)
+      fetch(
+        `${process.env.NEXT_PUBLIC_JUDGE0_URL}/submissions/${token}?base64_encoded=true`,
+      )
         .then((res) => {
           return res.json();
         })
@@ -66,13 +60,12 @@ export default async function getSubmissionResult(
             return;
           }
 
+          cleanup({ intervalID });
           resolve(result);
         })
         .catch((err) => {
+          cleanup({ intervalID });
           reject(err);
-        })
-        .finally(() => {
-          cleanup({ intervalID, timeoutID });
         });
     }, 5000);
   });

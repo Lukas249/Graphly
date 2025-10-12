@@ -1,27 +1,29 @@
 "use client";
+
 import lodash from "lodash";
 import Editor from "@monaco-editor/react";
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 import React, { useRef, useState } from "react";
-import ProblemDescription from "./problemDescription";
-import Menu from "../menu";
+import ProblemDescription from "../problemDescription";
+import Menu from "../../menu";
 
-import { problem } from "./data";
-import { Tab, Tabs } from "../components/tabs";
-import Chat, { ChatRef } from "../components/chat/chat";
-import { MessageDetails } from "../components/chat/types";
-import getSubmissionResult from "./submitCode";
-import { askAI } from "../lib/ai";
-import Result, { resultType } from "./result";
+import { Tab, Tabs } from "../../components/tabs";
+import Chat, { ChatRef } from "../../components/chat/chat";
+import { MessageDetails } from "../../components/chat/types";
+import getSubmissionResult from "../submitCode";
+import { askAI } from "../../lib/ai";
+import Result, { resultType } from "../result";
 
 import { ToastContainer, toast } from "react-toastify";
-import AISelectionProvider from "../lib/AISelectionProvider";
+import AISelectionProvider from "../../lib/AISelectionProvider";
 import {
   BeakerIcon,
   CodeBracketIcon,
   DocumentTextIcon,
 } from "@heroicons/react/24/outline";
+import type { Problem } from "@/app/data/types/problems";
+import { languages } from "./languages";
 
 type TabSection = "main" | "code" | "testcases";
 
@@ -30,16 +32,24 @@ interface TabSetters {
   setCurrentTab: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function Solve() {
+export default function Problem({
+  problem,
+  defaultLanguage = "Python3",
+}: {
+  problem: Problem;
+  defaultLanguage?: string;
+}) {
   const [mainTabsCurrentTab, setMainTabsCurrentTab] = useState(0);
   const [codeTabsCurrentTab, setCodeTabsCurrentTab] = useState(0);
   const [testcasesTabsCurrentTab, setTestcasesTabsCurrentTab] = useState(0);
 
-  const [testcases, setTestcases] = useState(problem.testcases.join("\n"));
+  const [testcases, setTestcases] = useState(problem.testcases);
 
   const [sourceCode, setSourceCode] = useState(problem.code);
 
   const [codeJudging, setCodeJudging] = useState(false);
+
+  const [language] = useState(languages[defaultLanguage]);
 
   const chatRef = useRef<ChatRef>(null);
 
@@ -100,7 +110,7 @@ export default function Solve() {
     {
       id: crypto.randomUUID(),
       title: "Testcases",
-      content: (
+      renderContent: () => (
         <AISelectionProvider
           buttonClickHandler={(__, selectedText) => {
             chatRef.current?.addContext("testcases", {
@@ -112,11 +122,17 @@ export default function Solve() {
         >
           <Editor
             height="100%"
-            defaultLanguage="plaintext"
-            defaultValue={testcases}
+            language="plaintext"
+            value={testcases}
             theme="vs-dark"
             onChange={(val) => val && setTestcases(val)}
             options={{
+              stickyScroll: {
+                enabled: false,
+              },
+              tabSize: 2,
+              detectIndentation: false,
+              wordWrap: "on",
               minimap: {
                 enabled: false,
               },
@@ -132,7 +148,7 @@ export default function Solve() {
     {
       id: crypto.randomUUID(),
       title: "Code",
-      content: (
+      renderContent: () => (
         <AISelectionProvider
           buttonClickHandler={(__, selectedText) => {
             chatRef.current?.addContext("code", {
@@ -144,11 +160,17 @@ export default function Solve() {
         >
           <Editor
             height="100%"
-            defaultLanguage="c"
-            defaultValue={sourceCode}
+            language={language.editorLanguage}
+            value={sourceCode}
             theme="vs-dark"
             onChange={(val) => val && setSourceCode(val)}
             options={{
+              stickyScroll: {
+                enabled: false,
+              },
+              tabSize: 2,
+              detectIndentation: false,
+              wordWrap: "on",
               minimap: {
                 enabled: false,
               },
@@ -189,9 +211,9 @@ export default function Solve() {
   const handleRun = async () => {
     const result = await handleCodeRun(
       problem.header + "\n" + sourceCode + "\n" + problem.driver,
-      54,
-      testcases.length,
+      language.id,
       testcases,
+      problem.params.length,
     );
 
     if (result) {
@@ -199,7 +221,13 @@ export default function Solve() {
         {
           id: crypto.randomUUID(),
           title: resultType(result),
-          content: <Result result={result} sourceCode={sourceCode} />,
+          content: (
+            <Result
+              result={result}
+              params={problem.params}
+              sourceCode={sourceCode}
+            />
+          ),
           closeable: true,
         },
         "testcases",
@@ -210,9 +238,9 @@ export default function Solve() {
   const handleSubmit = async () => {
     const result = handleCodeRun(
       problem.header + "\n" + sourceCode + "\n" + problem.driver,
-      54,
-      problem.testcases.length,
-      problem.testcases.join("\n"),
+      language.id,
+      problem.all_testcases,
+      problem.params.length,
     );
 
     const feedbackAI = askAI(
@@ -263,15 +291,15 @@ export default function Solve() {
   const handleCodeRun = async (
     sourceCode: string,
     langId: number,
-    testcasesNumber: number,
     testcases: string,
+    paramsCount: number,
   ) => {
     setCodeJudging(true);
 
     return getSubmissionResult(
       sourceCode,
       langId,
-      testcasesNumber + "\n" + testcases,
+      testcases.split("\n").length / paramsCount + "\n" + testcases,
     )
       .catch(() => {
         toast.error("Failed to submit code");

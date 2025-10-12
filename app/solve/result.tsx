@@ -5,10 +5,24 @@ import TLE from "./status/tle";
 import WrongAnswer from "./status/wrongAnswer";
 import { SubmissionResult } from "./submitCode";
 
-export function resultType(result: SubmissionResult) {
-  const stderr = result.stderr ? decodeUtf8Base64(result.stderr) : "";
+export type TestcaseResult = {
+  args: string[];
+  got: string;
+  expected: string;
+  printed: string;
+};
 
-  if (result.stderr && /Wrong Answer/.test(stderr)) {
+export type StdOutResult = {
+  status: string;
+  testcase?: TestcaseResult;
+};
+
+export function resultType(result: SubmissionResult) {
+  const stdout: StdOutResult = result.stdout
+    ? JSON.parse(decodeUtf8Base64(result.stdout))
+    : {};
+
+  if (/Wrong Answer/.test(stdout.status) && stdout.testcase) {
     return "Wrong Answer";
   }
 
@@ -19,31 +33,41 @@ export default function Result({
   result,
   sourceCode,
   feedbackAI,
+  params,
 }: {
   result: SubmissionResult;
   sourceCode: string;
   feedbackAI?: string;
+  params?: string[];
 }) {
-  const stderr = result.stderr ? decodeUtf8Base64(result.stderr) : "";
+  const stdout: StdOutResult = result.stdout
+    ? JSON.parse(decodeUtf8Base64(result.stdout))
+    : {};
   const message = result.message ? decodeUtf8Base64(result.message) : "";
   const compile_output = result.compile_output
     ? decodeUtf8Base64(result.compile_output)
     : "";
 
+  if (stdout.testcase) {
+    stdout.testcase.args.map((val) => JSON.stringify(val));
+    stdout.testcase.expected = JSON.stringify(stdout.testcase.expected);
+    stdout.testcase.got = JSON.stringify(stdout.testcase.got);
+  }
+
   return (
     <div className="p-2">
-      {(result.status.id === 3 && (
-        <Accepted
-          result={result}
-          sourceCode={sourceCode}
-          feedbackAI={feedbackAI}
-        />
+      {(/Wrong Answer/.test(stdout.status) && (
+        <WrongAnswer testcase={stdout.testcase} params={params} />
       )) ||
+        (result.status.id === 3 && (
+          <Accepted
+            result={result}
+            sourceCode={sourceCode}
+            feedbackAI={feedbackAI}
+          />
+        )) ||
         (result.status.id === 6 && (
           <Error title={result.status.description} message={compile_output} />
-        )) ||
-        (result.stderr && /Wrong Answer/.test(stderr) && (
-          <WrongAnswer result={result} />
         )) ||
         (result.status.id === 5 && result.message && (
           <TLE title={result.status.description} message={message} />
