@@ -1,13 +1,35 @@
+import { Problem } from "../data/types/problems";
+
+class HttpError extends Error {
+  status;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "HttpError";
+    this.status = status;
+  }
+}
+
 export async function fetchAllProblems() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/problems`);
-  const data = await res.json();
-  return data;
+  return handleJSONResponse<Problem[]>(
+    await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/problems`
+    )
+  )
 }
 
 export async function fetchProblem(problem: string) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/problems/${problem}`,
-  );
-  const data = await res.json();
-  return data;
+  return handleJSONResponse<Problem>(
+    await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/problems/${problem}`,
+    )
+  )
+}
+
+async function handleJSONResponse<T>(response: Response): Promise<T> {
+  if (!response.ok) {
+    const error = await response.json();
+    throw new HttpError(error.error, response.status);
+  }
+  return await response.json();
 }
