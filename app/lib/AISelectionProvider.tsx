@@ -116,7 +116,7 @@ export default function AISelectionProvider({
         buttonPosition.display &&
         createPortal(
           <button
-            className={`absolute z-10 cursor-pointer text-sm`}
+            className={`fixed z-10 cursor-pointer text-sm`}
             style={{
               transform: "translate(0, -150%)",
               top: buttonPosition?.top,
