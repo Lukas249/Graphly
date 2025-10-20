@@ -6,7 +6,12 @@ import {
   useEffect,
   useImperativeHandle,
 } from "react";
-import { GraphHandle, MarkEdgeProps, MarkNodeProps } from "./GraphTypes";
+import {
+  GraphHandle,
+  MarkEdgeProps,
+  Markings,
+  MarkNodeProps,
+} from "./GraphTypes";
 import HistoryState from "../lib/HistoryState";
 import _ from "lodash";
 import { GraphColors } from "./defaultGraphColors";
@@ -16,6 +21,9 @@ export type TutorialStep<TutorialVariables extends Record<string, unknown>> = {
   description?: string;
   node?: MarkNodeProps;
   edge?: MarkEdgeProps;
+  transpose?: boolean;
+  prevMarkings?: Markings;
+  nextMarkings?: Markings;
   isStep?: boolean;
   buttonText?: string;
   variables?: TutorialVariables;
@@ -86,6 +94,9 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
     isStep = true,
     buttonText = "Next",
     variables,
+    transpose = false,
+    prevMarkings = undefined,
+    nextMarkings = undefined,
   }: TutorialStep<TutorialVariables>) {
     historyStates.push({
       description,
@@ -94,6 +105,9 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
       isStep,
       buttonText,
       variables,
+      transpose,
+      prevMarkings,
+      nextMarkings,
     });
     if (description) setDescription(description);
     if (nextButtonText != buttonText) setNextButtonText(buttonText);
@@ -132,6 +146,14 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
             });
           }
 
+          if (nextState?.transpose) {
+            graphRef.current?.transpose();
+          }
+
+          if (nextState?.nextMarkings) {
+            graphRef.current?.setMarkings(nextState.nextMarkings);
+          }
+
           nextState = historyStates.goForward();
         }
 
@@ -155,11 +177,18 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
           });
         }
 
+        if (nextState?.transpose) {
+          graphRef.current?.transpose();
+        }
+
+        if (nextState?.nextMarkings) {
+          graphRef.current?.setMarkings(nextState.nextMarkings);
+        }
+
         if (nextState?.description) setDescription(nextState.description);
         setNextButtonText(nextState?.buttonText ?? "Next");
         if (nextState?.variables) setCodeVariables(nextState.variables);
       } else {
-        nextButtonRef.current!.onclick = null;
         handler();
       }
     };
@@ -189,6 +218,14 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
       });
     }
 
+    if (currentState?.transpose) {
+      graphRef.current?.transpose();
+    }
+
+    if (currentState?.prevMarkings) {
+      graphRef.current?.setMarkings(currentState.prevMarkings);
+    }
+
     while (prevState && !prevState.isStep) {
       if (prevState?.edge) {
         graphRef.current?.markEdge({
@@ -208,6 +245,14 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
           strokeColor: graphColors.nodeStroke,
           nodeLabelColor: graphColors.nodeLabel,
         });
+      }
+
+      if (prevState?.transpose) {
+        graphRef.current?.transpose();
+      }
+
+      if (prevState?.prevMarkings) {
+        graphRef.current?.setMarkings(prevState.prevMarkings);
       }
 
       currentState = historyStates.current();
@@ -248,26 +293,12 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
   }));
 
   return (
-    <div className="flex w-[40rem] flex-col gap-2">
+    <div className="flex w-full flex-col gap-2 px-2">
       <div className="bg-gray-dark flex w-full flex-col items-center justify-between gap-5 rounded-lg p-5">
         <p>{description}</p>
-        <div className="flex flex-row gap-2">
-          {historyStates.canGoBack() && (
-            <button
-              className="btn inline-block"
-              ref={prevButtonRef}
-              onClick={prevButtonClickHandler}
-            >
-              Previous
-            </button>
-          )}
-          <button className="btn inline-block" ref={nextButtonRef}>
-            {nextButtonText}
-          </button>
-        </div>
       </div>
 
-      <div className="bg-gray-dark flex w-full flex-col items-start justify-between gap-5 rounded-lg p-5 text-sm">
+      <div className="bg-gray-dark-850 flex w-full flex-col items-start justify-between gap-5 rounded-lg p-5 text-sm">
         <pre className="w-full">
           {codeLines.map((line, i) => (
             <div
@@ -280,6 +311,21 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
             </div>
           ))}
         </pre>
+      </div>
+
+      <div className="flex flex-row items-center justify-center gap-2">
+        {historyStates.canGoBack() && (
+          <button
+            className="btn inline-block"
+            ref={prevButtonRef}
+            onClick={prevButtonClickHandler}
+          >
+            Previous
+          </button>
+        )}
+        <button className="btn inline-block" ref={nextButtonRef}>
+          {nextButtonText}
+        </button>
       </div>
     </div>
   );
