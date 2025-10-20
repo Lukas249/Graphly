@@ -1,11 +1,18 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import GraphVisualization from "../GraphVisualization";
 import { Edge, GraphHandle, Node } from "../GraphTypes";
 import { TutorialRef, Tutorial } from "../Tutorial";
 import { graphColors } from "../defaultGraphColors";
+import { Allotment } from "allotment";
+import "allotment/dist/style.css";
+import { Tab, Tabs } from "@/app/components/tabs";
+import GraphEditor from "../custom/graphEditor";
+import Chat, { ChatRef } from "@/app/components/chat/chat";
+import { askAI } from "@/app/lib/ai";
+import { MessageDetails } from "@/app/components/chat/types";
 
 const dfsPseudocode = `procedure DFS(node):
   visited.add(node)
@@ -21,14 +28,79 @@ type Variables = {
 };
 
 const GraphDFSEducational = ({
-  nodes,
-  edges,
+  graphNodes,
+  graphEdges,
 }: {
-  nodes: Node[];
-  edges: Edge[];
+  graphNodes: Node[];
+  graphEdges: Edge[];
 }) => {
+  const [nodes, setNodes] = useState(graphNodes);
+  const [edges, setEdges] = useState(graphEdges);
+
   const graphRef = useRef<GraphHandle>(null);
   const tutorialRef = useRef<TutorialRef<Variables>>(null);
+
+  const [tutorialTabsCurrentTab, setTutorialTabsCurrentTab] = useState(0);
+
+  const tutorial = (
+    <Tutorial
+      ref={tutorialRef}
+      graphRef={graphRef}
+      variables={{ node: "", neighbours: [], visited: [] }}
+      pseudocode={dfsPseudocode}
+      graphColors={graphColors}
+    />
+  );
+
+  const chatRef = useRef<ChatRef>(null);
+
+  const [tutorialTabs, setTutorialTabs] = useState<Tab[]>([
+    {
+      id: crypto.randomUUID(),
+      title: "Tutorial",
+      content: tutorial,
+      closeable: false,
+    },
+    {
+      id: crypto.randomUUID(),
+      title: "Graph",
+      renderContent: () => (
+        <GraphEditor
+          userNodes={nodes}
+          userEdges={edges}
+          onChange={(nodes, edges) => {
+            setNodes(nodes);
+            setEdges(edges);
+          }}
+        />
+      ),
+      closeable: false,
+    },
+    {
+      id: crypto.randomUUID(),
+      title: "Graphly AI",
+      content: (
+        <Chat
+          ref={chatRef}
+          onSend={async (messages: MessageDetails[]) => {
+            const chatContexts = chatRef.current?.getContexts();
+
+            const contexts: Record<string, string> = {};
+
+            if (chatContexts) {
+              for (const [key, value] of Object.entries(chatContexts)) {
+                contexts[key] = value.text;
+              }
+            }
+
+            const answer = await askAI(messages, contexts);
+            chatRef.current?.addMessage({ type: "response", msg: answer });
+          }}
+        />
+      ),
+      closeable: false,
+    },
+  ]);
 
   const waitOnClick = () => {
     return new Promise((resolve) => {
@@ -163,38 +235,7 @@ const GraphDFSEducational = ({
           isStep: false,
         });
 
-        if (await dfs(neighbor, visited)) return true;
-      }
-
-      if (visited.size === nodes.length) {
-        tutorialRef.current?.addTutorialStep({
-          description: `Wszystkie wierzchołki zostały odwiedzone.`,
-          buttonText: "Restart",
-        });
-
-        const buttonClickHandler = () => {
-          tutorialRef.current?.resetTutorialSteps();
-          graphRef.current?.resetMarks();
-
-          tutorialRef.current?.addTutorialStep({
-            description:
-              "DFS polega na eksploracji grafu najpierw w głąb. Wybieramy dowolny wierzchołek i z niego idziemy do kolejnych w obojętnej kolejności, ale nie możemy odwiedzic tego samego wierzchołka dwa razy.",
-            variables: { visited: [], neighbours: [], node: "" },
-            buttonText: "Start",
-          });
-
-          const nextButtonClickHandler = () => {
-            dfs("1");
-          };
-
-          tutorialRef.current?.setNextButtonOnceClickHanlder(
-            nextButtonClickHandler,
-          );
-        };
-
-        tutorialRef.current?.setNextButtonOnceClickHanlder(buttonClickHandler);
-
-        return true;
+        await dfs(neighbor, visited);
       }
 
       tutorialRef.current?.addTutorialStep({
@@ -209,26 +250,75 @@ const GraphDFSEducational = ({
       await waitOnClick();
     }
 
-    tutorialRef.current?.setNextButtonOnceClickHanlder(() => {
-      dfs("1");
-    });
+    async function runAlgorithm() {
+      await dfs("1");
+
+      tutorialRef.current?.addTutorialStep({
+        description: `Wszystkie wierzchołki zostały odwiedzone.`,
+        buttonText: "Restart",
+      });
+
+      const buttonClickHandler = () => {
+        tutorialRef.current?.resetTutorialSteps();
+        graphRef.current?.resetMarks();
+
+        tutorialRef.current?.addTutorialStep({
+          description:
+            "DFS polega na eksploracji grafu najpierw w głąb. Wybieramy dowolny wierzchołek i z niego idziemy do kolejnych w obojętnej kolejności, ale nie możemy odwiedzic tego samego wierzchołka dwa razy.",
+          variables: { visited: [], neighbours: [], node: "" },
+          buttonText: "Start",
+        });
+
+        const nextButtonClickHandler = async () => {
+          await runAlgorithm();
+        };
+
+        tutorialRef.current?.setNextButtonOnceClickHanlder(
+          nextButtonClickHandler,
+        );
+      };
+
+      tutorialRef.current?.setNextButtonOnceClickHanlder(buttonClickHandler);
+    }
+
+    tutorialRef.current?.setNextButtonOnceClickHanlder(runAlgorithm);
   }, [nodes, edges]);
 
-  return (
-    <div className="flex h-full flex-row items-center p-8">
+  const graphVisualization = useMemo(
+    () => (
       <GraphVisualization
         graphNodes={nodes}
         graphEdges={edges}
         ref={graphRef}
-        className={"h-full w-full grow"}
+        className="h-full w-full grow"
       />
-      <Tutorial
-        ref={tutorialRef}
-        graphRef={graphRef}
-        variables={{ node: "", neighbours: [], visited: [] }}
-        pseudocode={dfsPseudocode}
-        graphColors={graphColors}
-      />
+    ),
+    [nodes, edges],
+  );
+
+  return (
+    <div className="flex h-full flex-row items-center p-8">
+      <Allotment
+        className="h-full w-full"
+        vertical={false}
+        onChange={() => {
+          graphRef.current?.handleResize();
+        }}
+      >
+        <Allotment.Pane preferredSize="75%">
+          {graphVisualization}
+        </Allotment.Pane>
+
+        <Allotment.Pane preferredSize="25%" className="bg-gray-dark">
+          <Tabs
+            className="flex h-full flex-col"
+            tabs={tutorialTabs}
+            setTabs={setTutorialTabs}
+            setCurrentTab={setTutorialTabsCurrentTab}
+            currentTab={tutorialTabsCurrentTab}
+          />
+        </Allotment.Pane>
+      </Allotment>
     </div>
   );
 };

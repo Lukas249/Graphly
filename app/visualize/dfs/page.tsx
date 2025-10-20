@@ -26,7 +26,7 @@ export default function Visualize() {
   return (
     <div className="flex h-screen flex-col">
       <Menu />
-      <GraphDFSEducational nodes={nodes} edges={edges} />
+      <GraphDFSEducational graphNodes={nodes} graphEdges={edges} />
     </div>
   );
 }
