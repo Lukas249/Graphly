@@ -12,18 +12,14 @@ class HttpError extends Error {
 
 export async function fetchAllProblems() {
   return handleJSONResponse<Problem[]>(
-    await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/problems`
-    )
-  )
+    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/problems`),
+  );
 }
 
 export async function fetchProblem(problem: string) {
   return handleJSONResponse<Problem>(
-    await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/problems/${problem}`,
-    )
-  )
+    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/problems/${problem}`),
+  );
 }
 
 async function handleJSONResponse<T>(response: Response): Promise<T> {

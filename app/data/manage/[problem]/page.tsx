@@ -1,6 +1,5 @@
-"use client"
+"use client";
 
-import { notFound } from "next/navigation";
 import ProblemConfig from "./problemConfig";
 import { fetchProblem } from "@/app/lib/problems";
 import { use, useMemo } from "react";
@@ -14,16 +13,15 @@ interface PageProps {
 export default function Page({ params }: PageProps) {
   const { problem } = use(params);
 
-  try {
-    const { data, error, loading } = useAsync(useMemo(() => () => fetchProblem(problem), [problem]))
-    return (
-      <div className="w-full min-h-screen">
-        {data && <ProblemConfig problem={data} />}
-        {loading && "Loading..."}
-        {error && <Error statusCode={error.status} title={error.message} />}
-      </div>
-    );
-  } catch(err) {
-    return notFound()
-  }
+  const { data, error, loading } = useAsync(
+    useMemo(() => () => fetchProblem(problem), [problem]),
+  );
+
+  return (
+    <div className="min-h-screen w-full">
+      {data && <ProblemConfig problem={data} />}
+      {loading && "Loading..."}
+      {error && <Error statusCode={error.status} title={error.message} />}
+    </div>
+  );
 }

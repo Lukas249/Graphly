@@ -49,7 +49,9 @@ export default function Result({
     : "";
 
   if (stdout.testcase) {
-    stdout.testcase.args.map((val) => JSON.stringify(val));
+    stdout.testcase.args = stdout.testcase.args.map((val) =>
+      JSON.stringify(val),
+    );
     stdout.testcase.expected = JSON.stringify(stdout.testcase.expected);
     stdout.testcase.got = JSON.stringify(stdout.testcase.got);
   }
