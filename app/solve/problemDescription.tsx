@@ -1,3 +1,5 @@
+import "./problemDescription.css";
+
 export default function ProblemDescription({
   id,
   title,
@@ -7,10 +9,12 @@ export default function ProblemDescription({
   title: string;
   description: string;
 }) {
-  const htmlString =
-    `<h1 style="font-size:1.5rem">${id}. ${title}</h1>` + description;
+  const htmlString = `<h1 class="title">${id}. ${title}</h1>` + description;
 
   return (
-    <div className="p-5" dangerouslySetInnerHTML={{ __html: htmlString }}></div>
+    <div
+      className="problemDescription"
+      dangerouslySetInnerHTML={{ __html: htmlString }}
+    ></div>
   );
 }
