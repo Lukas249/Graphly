@@ -16,24 +16,12 @@ import {
   MarkDirectedEdgeProps,
   MarkEdgeProps,
   MarkNodeProps,
+  Markings,
+  SimulationNode,
+  SimulationEdge,
 } from "./GraphTypes";
-import { SimulationNodeDatum, SimulationLinkDatum, Simulation } from "d3-force";
+import { Simulation } from "d3-force";
 import { GraphColors, graphColors } from "./defaultGraphColors";
-
-type D3 = typeof d3;
-
-function onResize(
-  svg: SVGElement,
-  d3: D3,
-  simulation: Simulation<SimulationNode, undefined>,
-) {
-  const { width, height } = svg.getBoundingClientRect();
-  simulation.force("center", d3.forceCenter(width / 2, height / 2));
-  simulation.restart();
-}
-
-type SimulationNode = Node & SimulationNodeDatum;
-type SimulationEdge = Edge & SimulationLinkDatum<SimulationNode>;
 
 export default function GraphVisualization({
   graphNodes,
@@ -61,6 +49,70 @@ export default function GraphVisualization({
     edge.target = edge.target.id as Node & (string | number | SimulationNode);
   }
 
+  const defaultMarkings: Markings = {
+    nodes: {},
+    edges: {},
+  };
+
+  for (const node of graphNodes) {
+    defaultMarkings.nodes[node.id] = {
+      fill: colors.nodeFill,
+      stroke: colors.nodeStroke,
+      label: colors.nodeLabel,
+    };
+  }
+
+  for (const edge of graphEdges) {
+    if (!defaultMarkings.edges[edge.source.id])
+      defaultMarkings.edges[edge.source.id] = {};
+    if (!defaultMarkings.edges[edge.target.id])
+      defaultMarkings.edges[edge.target.id] = {};
+
+    defaultMarkings.edges[edge.source.id][edge.target.id] = {
+      fill: colors.edge,
+      head: colors.edgeHead,
+      label: colors.edgeLabel,
+    };
+    defaultMarkings.edges[edge.target.id][edge.source.id] = {
+      fill: colors.edge,
+      head: colors.edgeHead,
+      label: colors.edgeLabel,
+    };
+  }
+
+  let markings: Markings = getDefaultMarkings();
+
+  function getDefaultMarkings() {
+    return _.cloneDeep(defaultMarkings);
+  }
+
+  function getMarkings() {
+    return _.cloneDeep(markings);
+  }
+
+  function setMarkings(markings: Markings) {
+    for (const [nodeId, nodeMarkings] of Object.entries(markings.nodes)) {
+      markNode({
+        nodeId,
+        nodeColor: nodeMarkings.fill,
+        strokeColor: nodeMarkings.stroke,
+        nodeLabelColor: nodeMarkings.label,
+      });
+    }
+
+    for (const [sourceId, edge] of Object.entries(markings.edges)) {
+      for (const [destinationId, edgeMarkings] of Object.entries(edge)) {
+        markEdge({
+          sourceId,
+          destinationId,
+          edgeColor: edgeMarkings.fill,
+          edgeHeadColor: edgeMarkings.head,
+          edgeLabelColor: edgeMarkings.label,
+        });
+      }
+    }
+  }
+
   const svgRef = useRef<SVGSVGElement>(null);
 
   const nodesRef =
@@ -82,9 +134,10 @@ export default function GraphVisualization({
 
   const simulationRef = useRef<d3.Simulation<SimulationNode, undefined>>(null);
 
+  const handleResizeRef = useRef<() => void>(null);
+
   useEffect(() => {
     const svg = d3.select(svgRef.current);
-    svg.selectAll("*").remove();
 
     const { width, height } = svgRef.current!.getBoundingClientRect();
 
@@ -115,10 +168,18 @@ export default function GraphVisualization({
 
     simulationRef.current = simulation;
 
-    window.addEventListener(
-      "resize",
-      _.debounce(onResize.bind(null, svgRef.current!, d3, simulation), 200),
-    );
+    const handleResize = () => {
+      if (!svgRef.current) return;
+      const { width, height } = svgRef.current.getBoundingClientRect();
+      simulation
+        .force("center", d3.forceCenter(width / 2, height / 2))
+        .force("bounding-box", boundingBoxForce(width, height, nodeRadius));
+      simulation.restart();
+    };
+
+    handleResizeRef.current = _.throttle(handleResize, 50);
+
+    window.addEventListener("resize", handleResizeRef.current);
 
     const edgesHead = svg
       .append("defs")
@@ -317,6 +378,10 @@ export default function GraphVisualization({
       adjacency[edge.source.id].push(edge.target.id);
       adjacency[edge.target.id].push(edge.source.id);
     });
+
+    return () => {
+      svg.selectAll("*").remove();
+    };
   }, [nodes, edges, colors]);
 
   function markNode({
@@ -325,6 +390,12 @@ export default function GraphVisualization({
     strokeColor = colors.markedNodeStroke,
     nodeLabelColor = colors.markedNodeLabel,
   }: MarkNodeProps) {
+    markings.nodes[nodeId] = {
+      fill: nodeColor,
+      stroke: strokeColor,
+      label: nodeLabelColor,
+    };
+
     nodesRef.current
       ?.filter((d) => d.id === nodeId)
       .transition()
@@ -344,6 +415,12 @@ export default function GraphVisualization({
     edgeLabelColor = colors.markedEdgeLabel,
     edgeHeadColor = colors.markedEdgeHead,
   }: MarkDirectedEdgeProps) {
+    markings.edges[sourceId][destinationId] = {
+      fill: edgeColor,
+      head: edgeHeadColor,
+      label: edgeHeadColor,
+    };
+
     edgesRef.current
       ?.filter((d) => d.source.id === sourceId && d.target.id === destinationId)
       .transition()
@@ -409,6 +486,8 @@ export default function GraphVisualization({
     edgesHeadRef.current?.attr("fill", colors.edgeHead);
 
     edgesLabelsTextPathRef.current?.attr("fill", colors.edgeLabel);
+
+    markings = getDefaultMarkings();
   }
 
   function transpose() {
@@ -423,7 +502,7 @@ export default function GraphVisualization({
         .id((d) => d.id)
         .distance(150),
     );
-    simulationRef.current?.alpha(1).restart();
+    simulationRef.current?.alpha(0).restart();
   }
 
   useImperativeHandle(ref, () => ({
@@ -431,6 +510,10 @@ export default function GraphVisualization({
     markEdge,
     resetMarks,
     transpose,
+    getMarkings,
+    setMarkings,
+    getDefaultMarkings,
+    handleResize: () => handleResizeRef.current && handleResizeRef.current(),
   }));
 
   return <svg className={className} ref={svgRef}></svg>;

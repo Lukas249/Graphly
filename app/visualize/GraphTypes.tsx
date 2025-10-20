@@ -1,3 +1,8 @@
+import { SimulationLinkDatum, SimulationNodeDatum } from "d3";
+
+export type SimulationNode = Node & SimulationNodeDatum;
+export type SimulationEdge = Edge & SimulationLinkDatum<SimulationNode>;
+
 export type MarkDirectedEdgeProps = {
   sourceId: string;
   destinationId: string;
@@ -13,6 +18,15 @@ export type MarkNodeProps = {
   nodeColor?: string;
   strokeColor?: string;
   nodeLabelColor?: string;
+};
+
+export type Markings = {
+  nodes: { [key: string]: { fill: string; stroke: string; label: string } };
+  edges: {
+    [key: string]: {
+      [key: string]: { fill: string; head: string; label: string };
+    };
+  };
 };
 
 export interface GraphHandle {
@@ -32,6 +46,10 @@ export interface GraphHandle {
   }: MarkEdgeProps) => void;
   resetMarks: () => void;
   transpose: () => void;
+  getMarkings: () => Markings;
+  setMarkings: (markings: Markings) => void;
+  getDefaultMarkings: () => Markings;
+  handleResize: () => void;
 }
 
 export interface Node {
