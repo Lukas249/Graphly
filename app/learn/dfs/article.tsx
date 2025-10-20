@@ -52,7 +52,7 @@ export default function ArticleDFS() {
   ));
 
   return (
-    <div className="bg-base-200 max-w-5xl rounded-sm p-8">
+    <div className="bg-base-200 rounded-sm p-8">
       <h1 className="text-2xl font-semibold text-white">DFS</h1>
       <p className="my-4">
         W algorytmie DFS (przeszukiwanie w głąb) przeszukujemy graf, odwiedzając

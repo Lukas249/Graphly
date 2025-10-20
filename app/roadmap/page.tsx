@@ -461,12 +461,12 @@ function GraphRoadmap() {
 
   return (
     <div className="flex flex-1 overflow-hidden">
-      <div className="flex-1">
+      <div className="max-w-layout mx-auto flex-1">
         <ReactFlow
           nodes={nodes}
           edges={edges}
           onNodeClick={(_, node) => setSelectedNode(node.id)}
-          fitView
+          fitView={true}
           nodesDraggable={false}
           nodesConnectable={false}
           elementsSelectable={false}

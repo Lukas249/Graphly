@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function Menu() {
   return (
     <nav className="w-full">
-      <div className="mx-auto flex flex-wrap items-center justify-between py-4">
+      <div className="max-w-menu mx-auto flex flex-wrap items-center justify-between p-4">
         <span className="self-center text-2xl font-semibold whitespace-nowrap">
           Graphly
         </span>

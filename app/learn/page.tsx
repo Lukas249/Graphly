@@ -95,7 +95,7 @@ export default function Learn() {
     <div className="flex min-h-screen flex-col items-center">
       <Menu />
 
-      <div className="my-8 flex w-full max-w-5xl flex-row gap-5">
+      <div className="max-w-article my-8 flex w-full flex-row gap-5">
         <LearnCollapsibleVerticalMenu />
         <div className="bg-base-200 h-auto w-full rounded-lg">
           <Tabs

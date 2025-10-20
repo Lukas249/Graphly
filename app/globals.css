@@ -33,6 +33,11 @@
   --color-gray-dark-850: #252526;
   --color-dark: #0a0a0a;
   --color-gray: #6a7282;
+  --container-8xl: 88rem;
+  --container-9xl: 96rem;
+  --container-menu: var(--container-9xl);
+  --container-layout: var(--container-8xl);
+  --container-article: var(--container-6xl);
 }
 
 @theme inline {
