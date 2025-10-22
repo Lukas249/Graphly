@@ -17,16 +17,22 @@ export function Tabs({
   setCurrentTab,
   className = "",
   currentTab = 0,
+  tabBackground = "bg-gray-dark",
+  tabListBackground = "bg-gray-dark-850",
 }: {
   tabs: Tab[];
   setTabs: Dispatch<SetStateAction<Tab[]>>;
   setCurrentTab: Dispatch<SetStateAction<number>>;
   className?: string;
   currentTab?: number;
+  tabBackground?: string;
+  tabListBackground?: string;
 }) {
   return (
     <div className={className}>
-      <div className="bg-gray-dark-850 flex flex-row items-center gap-3 rounded-t-lg p-1.5">
+      <div
+        className={`${tabListBackground} flex flex-row items-center gap-3 rounded-t-lg p-1.5`}
+      >
         <div className="flex gap-3 overflow-hidden">
           {tabs.map((tab, index) => (
             <TabCard
@@ -44,7 +50,7 @@ export function Tabs({
         <div
           key={tab.id}
           style={{ display: index === currentTab ? "block" : "none" }}
-          className="bg-gray-dark h-full overflow-auto rounded-b-lg"
+          className={`${tabBackground} h-full overflow-auto rounded-b-lg`}
         >
           {tab.renderContent ? tab.renderContent() : tab.content}
         </div>

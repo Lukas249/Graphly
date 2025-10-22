@@ -58,6 +58,7 @@ export default function Learn() {
         const answer = await askAI(messages, contexts);
         chatRef.current?.addMessage({ type: "response", msg: answer });
       }}
+      background="bg-base-200"
     />,
   );
 
@@ -85,7 +86,7 @@ export default function Learn() {
     {
       id: crypto.randomUUID(),
       title: "Graphly AI",
-      content: chat,
+      content: <div className="h-[calc(100vh-180px)]">{chat}</div>,
       closeable: false,
     },
   ]);
@@ -95,15 +96,17 @@ export default function Learn() {
     <div className="flex min-h-screen flex-col items-center">
       <Menu />
 
-      <div className="max-w-article my-8 flex w-full flex-row gap-5">
+      <div className="max-w-article my-8 flex max-h-full w-full flex-grow flex-row gap-5">
         <LearnCollapsibleVerticalMenu />
-        <div className="bg-base-200 h-auto w-full rounded-lg">
+        <div className="bg-base-200 h-min w-full rounded-lg">
           <Tabs
             className="flex h-full flex-col"
             tabs={articleTabs}
             setTabs={setArticleTabs}
             setCurrentTab={setArticleTabsCurrentTab}
             currentTab={articleTabsCurrentTab}
+            tabBackground="bg-base-200"
+            tabListBackground="bg-base-100"
           />
         </div>
       </div>

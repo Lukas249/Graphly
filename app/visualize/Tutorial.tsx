@@ -299,7 +299,7 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
       </div>
 
       <div className="bg-gray-dark-850 flex w-full flex-col items-start justify-between gap-5 rounded-lg p-5 text-sm">
-        <pre className="w-full">
+        <pre className="w-full whitespace-pre-wrap">
           {codeLines.map((line, i) => (
             <div
               key={i}

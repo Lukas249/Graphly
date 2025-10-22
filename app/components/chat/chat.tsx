@@ -32,6 +32,7 @@ type Props = {
   onSend?: (messages: MessageDetails[]) => void;
   defaultMessages?: MessageDetails[];
   defaultContexts?: Record<string, Context>;
+  background?: string;
 };
 
 export default function Chat({
@@ -39,6 +40,7 @@ export default function Chat({
   onSend,
   defaultMessages = [],
   defaultContexts = {},
+  background = "bg-gray-dark",
 }: Props) {
   const [messages, setMessages] = useState<MessageDetails[]>(defaultMessages);
   const [contexts, setContexts] = useState(defaultContexts);
@@ -97,7 +99,7 @@ export default function Chat({
   });
 
   return (
-    <div className="bg-gray-dark flex h-full w-full flex-col p-1">
+    <div className={`${background} flex h-full w-full flex-col p-1`}>
       <div className="relative flex max-h-full flex-1 flex-col justify-end overflow-y-auto">
         <div
           ref={chatMessagesRef}

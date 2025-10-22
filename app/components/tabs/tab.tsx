@@ -21,7 +21,7 @@ export default function TabCard({
 }) {
   return (
     <div
-      className="bg-gray-dark-850 flex flex-none cursor-pointer flex-row items-center gap-1 rounded-sm px-2 py-1 hover:bg-[rgba(255,255,255,0.1)]"
+      className="flex flex-none cursor-pointer flex-row items-center gap-1 rounded-sm px-2 py-1 hover:bg-[rgba(255,255,255,0.1)]"
       onClick={() => {
         setCurrentTab(index);
       }}
