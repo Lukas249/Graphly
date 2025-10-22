@@ -24,17 +24,8 @@ export default function LearnCollapsibleVerticalMenu() {
               <li>
                 <a>Dijkstra</a>
               </li>
-              <li>
-                <a>Bellman-Ford</a>
-              </li>
-              <li>
-                <a>A*</a>
-              </li>
             </ul>
           </details>
-        </li>
-        <li>
-          <a>Topological Sort</a>
         </li>
         <li>
           <a>Eulerian Path/Cycle</a>
