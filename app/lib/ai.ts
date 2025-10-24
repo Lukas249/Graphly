@@ -1,5 +1,10 @@
 import { MessageDetails } from "../components/chat/types";
 
+export type AskAI = (
+  messages: MessageDetails[],
+  contexts?: Record<string, string>,
+) => Promise<string>;
+
 export async function askAI(
   messages: MessageDetails[],
   contexts?: Record<string, string>,

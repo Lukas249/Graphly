@@ -14,15 +14,20 @@ import Chat, { ChatRef } from "@/app/components/chat/chat";
 import { askAI } from "@/app/lib/ai";
 import { MessageDetails } from "@/app/components/chat/types";
 import { MinPriorityQueue } from "@datastructures-js/priority-queue";
+import AISelectionProvider from "@/app/lib/AISelectionProvider";
+import { DocumentTextIcon, MapIcon } from "@heroicons/react/24/outline";
+import { stringifyGraph } from "@/app/lib/graph/graphSerializer";
+import { defaultEdgeSeparator, defaultWeightSeparator } from "@/app/lib/graph/graphFormatConfig";
+import { sendHandler } from "@/app/components/chat/sendHandler";
 
-const dfsPseudocode = `procedure DIJKSTRA(start):
+const dfsPseudocode = `procedure Dijkstra(startNode):
   for each vertex v in Graph:
     distance[v] <- ∞
     previous[v] <- undefined
-  distance[start] <- 0
+  distance[startNode] <- 0
 
   priorityQueue <- empty min-priority queue
-  priorityQueue.insert(start, 0)
+  priorityQueue.insert(startNode, 0)
 
   while priorityQueue is not empty:
     node <- priorityQueue.extractMin()
@@ -35,8 +40,8 @@ const dfsPseudocode = `procedure DIJKSTRA(start):
     for each neighbour in neighbours(node):
       newDistance <- distance[node] + weight(node, neighbour)
       if newDistance < distance[neighbour]:
-        distance[neighbour] ← newDistance
-        previous[neighbour] ← node
+        distance[neighbour] <- newDistance
+        previous[neighbour] <- node
         priorityQueue.insert(neighbour, newDistance)`;
 
 type Variables = {
@@ -50,6 +55,8 @@ type NodeDetails = {
   nodeId: string;
   weight: string;
 };
+
+const graphTypeContext = `"Graph represented as text where '--' means undirected edge and '->' means directed edge. Weight is separated by ':'"`
 
 const GraphDijkstraEducational = ({
   graphNodes,
@@ -77,12 +84,23 @@ const GraphDijkstraEducational = ({
   );
 
   const chatRef = useRef<ChatRef>(null);
-
+ 
   const [tutorialTabs, setTutorialTabs] = useState<Tab[]>([
     {
       id: crypto.randomUUID(),
       title: "Tutorial",
-      content: tutorial,
+      content: <AISelectionProvider
+                buttonClickHandler={(__, selectedText) => {
+                  chatRef.current?.addContext("description", {
+                    icon: (
+                      <DocumentTextIcon className="stroke-primary size-3.5 fill-transparent" />
+                    ),
+                    text: selectedText,
+                    closeable: true,
+                  });
+                }}
+              >{tutorial}
+              </AISelectionProvider>,
       closeable: false,
     },
     {
@@ -95,6 +113,19 @@ const GraphDijkstraEducational = ({
           onChange={(nodes, edges) => {
             setNodes(nodes);
             setEdges(edges);
+            chatRef.current?.addContext(
+              graphTypeContext, 
+              {
+                icon: <MapIcon className="stroke-primary size-3.5 fill-transparent" />,
+                text: stringifyGraph(
+                  nodes, 
+                  edges, 
+                  defaultWeightSeparator,
+                  defaultEdgeSeparator
+                ),
+                closeable: false
+              }
+            )
           }}
         />
       ),
@@ -106,20 +137,21 @@ const GraphDijkstraEducational = ({
       content: (
         <Chat
           ref={chatRef}
-          onSend={async (messages: MessageDetails[]) => {
-            const chatContexts = chatRef.current?.getContexts();
-
-            const contexts: Record<string, string> = {};
-
-            if (chatContexts) {
-              for (const [key, value] of Object.entries(chatContexts)) {
-                contexts[key] = value.text;
-              }
+          onSend={(messages: MessageDetails[]) => sendHandler(chatRef, messages, askAI)}
+          defaultContexts={
+            {
+              [graphTypeContext]: { 
+                  icon: <MapIcon className="stroke-primary size-3.5 fill-transparent" />,
+                  text: stringifyGraph(
+                    nodes, 
+                    edges, 
+                    defaultWeightSeparator,
+                    defaultEdgeSeparator
+                  ),
+                  closeable: false
+                }
             }
-
-            const answer = await askAI(messages, contexts);
-            chatRef.current?.addMessage({ type: "response", msg: answer });
-          }}
+          }
         />
       ),
       closeable: false,
@@ -149,13 +181,6 @@ const GraphDijkstraEducational = ({
         adjacency[target.id].push({ nodeId: source.id, weight: weight ?? "" });
       }
     }
-
-    tutorialRef.current?.addTutorialStep({
-      description:
-        "Dijkstra polega na znajdowaniu najkrótszej ścieżki od jednego wierzchołka do wszystkich pozostałych w grafie z dodatnimi wagami krawędzi. Zaczynamy od wierzchołka startowego i stopniowo odwiedzamy te wierzchołki, do których droga jest obecnie najkrótsza. Dla każdego z nich aktualizujemy odległości do sąsiadów, aż znajdziemy najkrótsze trasy do wszystkich punktów.",
-      variables: { queue: [], visited: [], neighbours: [], node: "" },
-      buttonText: "Start",
-    });
 
     const visitedEdges: Record<string, Record<string, boolean>> = {};
 
@@ -271,6 +296,29 @@ const GraphDijkstraEducational = ({
       }
     }
 
+    async function startTutorial() {
+      tutorialRef.current?.addTutorialStep({
+        description:
+          "Dijkstra polega na znajdowaniu najkrótszej ścieżki od jednego wierzchołka do wszystkich pozostałych w grafie z dodatnimi wagami krawędzi. Zaczynamy od wierzchołka startowego i stopniowo odwiedzamy te wierzchołki, do których droga jest obecnie najkrótsza. Dla każdego z nich aktualizujemy odległości do sąsiadów, aż znajdziemy najkrótsze trasy do wszystkich punktów.",
+        variables: { queue: [], visited: [], neighbours: [], node: "" },
+        buttonText: "Start",
+      });
+
+      const nextButtonClickHandler = async () => {
+        await runAlgorithm();
+      };
+
+      tutorialRef.current?.setNextButtonOnceClickHanlder(
+        nextButtonClickHandler,
+      );
+    }
+
+    async function resetTutorial() {
+      tutorialRef.current?.resetTutorialSteps();
+      graphRef.current?.resetMarks();
+      await startTutorial()
+    }
+
     async function runAlgorithm() {
       await dijkstra("1");
 
@@ -279,30 +327,10 @@ const GraphDijkstraEducational = ({
         buttonText: "Restart",
       });
 
-      const buttonClickHandler = () => {
-        tutorialRef.current?.resetTutorialSteps();
-        graphRef.current?.resetMarks();
-
-        tutorialRef.current?.addTutorialStep({
-          description:
-            "Dijkstra polega na znajdowaniu najkrótszej ścieżki od jednego wierzchołka do wszystkich pozostałych w grafie z dodatnimi wagami krawędzi. Zaczynamy od wierzchołka startowego i stopniowo odwiedzamy te wierzchołki, do których droga jest obecnie najkrótsza. Dla każdego z nich aktualizujemy odległości do sąsiadów, aż znajdziemy najkrótsze trasy do wszystkich punktów.",
-          variables: { queue: [], visited: [], neighbours: [], node: "" },
-          buttonText: "Start",
-        });
-
-        const nextButtonClickHandler = async () => {
-          await runAlgorithm();
-        };
-
-        tutorialRef.current?.setNextButtonOnceClickHanlder(
-          nextButtonClickHandler,
-        );
-      };
-
-      tutorialRef.current?.setNextButtonOnceClickHanlder(buttonClickHandler);
+      tutorialRef.current?.setNextButtonOnceClickHanlder(resetTutorial);
     }
 
-    tutorialRef.current?.setNextButtonOnceClickHanlder(runAlgorithm);
+    startTutorial()
   }, [nodes, edges]);
 
   const graphVisualization = useMemo(
