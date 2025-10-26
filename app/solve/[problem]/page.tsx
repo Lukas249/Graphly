@@ -3,7 +3,7 @@
 import Problem from "./problem";
 import { use, useMemo } from "react";
 import { useAsync } from "@/app/hooks/useAsync";
-import { fetchProblem } from "@/app/lib/problems";
+import { fetchProblem } from "@/app/lib/problems/problems";
 import Error from "next/error";
 
 interface PageProps {

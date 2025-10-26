@@ -1,12 +1,12 @@
-import { TestcaseResult } from "../result";
+import { TestcaseResult } from "./result";
 import React from "react";
 
 export default function WrongAnswer({
   testcase,
-  params,
+  paramsNames,
 }: {
   testcase?: TestcaseResult;
-  params?: string[];
+  paramsNames?: string[];
 }) {
   return (
     <>
@@ -14,11 +14,11 @@ export default function WrongAnswer({
 
       <div className="bg-gray-dark-850 relative rounded-xl p-2">
         {testcase &&
-          params &&
+          paramsNames &&
           testcase.args.map((variable, i) => {
             return (
               <React.Fragment key={i}>
-                <p className="px-1 py-2">{params[i]}</p>
+                <p className="px-1 py-2">{paramsNames[i]}</p>
                 <pre className="bg-gray-dark rounded-lg p-3 text-gray-100">
                   {variable}
                 </pre>

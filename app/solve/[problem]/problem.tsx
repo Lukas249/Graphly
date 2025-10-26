@@ -5,15 +5,14 @@ import Editor from "@monaco-editor/react";
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 import React, { useRef, useState } from "react";
-import ProblemDescription from "../problemDescription";
+import ProblemDescription from "../../components/problemDescription/problemDescription";
 import Menu from "../../menu";
 
 import { Tab, Tabs } from "../../components/tabs";
 import Chat, { ChatRef } from "../../components/chat/chat";
 import { MessageDetails } from "../../components/chat/types";
-import getSubmissionResult from "../submitCode";
 import { askAI } from "../../lib/ai";
-import Result, { resultType } from "../result";
+import Result, { resultType } from "../status/result";
 
 import { ToastContainer, toast } from "react-toastify";
 import AISelectionProvider from "../../lib/AISelectionProvider";
@@ -22,8 +21,8 @@ import {
   CodeBracketIcon,
   DocumentTextIcon,
 } from "@heroicons/react/24/outline";
-import type { Problem } from "@/app/data/types/problems";
 import { languages } from "./languages";
+import type { Problem } from "@/app/lib/problems/types";
 
 type TabSection = "main" | "code" | "testcases";
 
@@ -210,10 +209,10 @@ export default function Problem({
 
   const handleRun = async () => {
     const result = await handleCodeRun(
-      problem.header + "\n" + sourceCode + "\n" + problem.driver,
+      problem.id,
+      sourceCode,
       language.id,
       testcases,
-      problem.params.length,
     );
 
     if (result) {
@@ -224,7 +223,7 @@ export default function Problem({
           content: (
             <Result
               result={result}
-              params={problem.params}
+              paramsNames={problem.params}
               sourceCode={sourceCode}
             />
           ),
@@ -236,12 +235,7 @@ export default function Problem({
   };
 
   const handleSubmit = async () => {
-    const result = handleCodeRun(
-      problem.header + "\n" + sourceCode + "\n" + problem.driver,
-      language.id,
-      problem.all_testcases,
-      problem.params.length,
-    );
+    const result = handleCodeSubmit(problem.id, sourceCode, language.id);
 
     const feedbackAI = askAI(
       [
@@ -268,9 +262,14 @@ export default function Problem({
             result={result}
             sourceCode={sourceCode}
             feedbackAI={feedbackAI}
+            paramsNames={problem.params}
           />
         ) : (
-          <Result result={result} sourceCode={sourceCode} />
+          <Result
+            result={result}
+            sourceCode={sourceCode}
+            paramsNames={problem.params}
+          />
         );
 
         addTab(
@@ -288,25 +287,56 @@ export default function Problem({
       });
   };
 
-  const handleCodeRun = async (
+  const handleCodeJudge = async (url: string, body: string) => {
+    return fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body,
+    })
+      .then((res) => res.json())
+      .catch(() => {
+        toast.error("Failed to submit code");
+      });
+  };
+
+  const handleCodeSubmit = async (
+    problemID: number,
     sourceCode: string,
     langId: number,
-    testcases: string,
-    paramsCount: number,
   ) => {
     setCodeJudging(true);
 
-    return getSubmissionResult(
-      sourceCode,
-      langId,
-      testcases.split("\n").length / paramsCount + "\n" + testcases,
-    )
-      .catch(() => {
-        toast.error("Failed to submit code");
-      })
-      .finally(() => {
-        setCodeJudging(false);
-      });
+    return handleCodeJudge(
+      "/api/judge0/submit",
+      JSON.stringify({
+        problemID,
+        sourceCode,
+        languageId: langId,
+      }),
+    ).finally(() => {
+      setCodeJudging(false);
+    });
+  };
+
+  const handleCodeRun = async (
+    problemID: number,
+    sourceCode: string,
+    langId: number,
+    testcases: string,
+  ) => {
+    setCodeJudging(true);
+
+    return handleCodeJudge(
+      "/api/judge0/run",
+      JSON.stringify({
+        problemID,
+        sourceCode,
+        languageId: langId,
+        testcases,
+      }),
+    ).finally(() => {
+      setCodeJudging(false);
+    });
   };
 
   return (

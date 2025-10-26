@@ -1,4 +1,4 @@
-import { Problem } from "../data/types/problems";
+import { Problem } from "./types";
 
 class HttpError extends Error {
   status;

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ArticleParagraph, VisualizationImageWithStep } from "../page";
+import { ArticleParagraph, VisualizationImageWithStep } from "./page";
 import Quiz from "@/app/components/quiz/quiz-card";
 import { quizDFS } from "./quizData";
 

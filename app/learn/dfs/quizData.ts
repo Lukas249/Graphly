@@ -15,7 +15,7 @@ export const quizDFS: Question[] = [
   },
   {
     question:
-      "Jaka struktura danych jest najczęściej używana do implementacji DFS w sposób iteracyjny?",
+      "Jaka struktura danych jest używana do implementacji DFS w sposób iteracyjny?",
     answers: [
       "Kolejka (Queue)",
       "Stos (Stack)",
@@ -35,7 +35,8 @@ export const quizDFS: Question[] = [
       "DFS odwiedza każdy wierzchołek i każdą krawędź dokładnie raz, co daje złożoność O(V + E).",
   },
   {
-    question: "Dlaczego w DFS potrzebna jest tablica lub zbiór visited?",
+    question:
+      "Dlaczego w DFS potrzebna jest tablica odwiedzonych wierzchołków?",
     answers: [
       "Aby przechowywać wartości wierzchołków",
       "Aby uniknąć wielokrotnego odwiedzania tego samego wierzchołka",
@@ -47,10 +48,11 @@ export const quizDFS: Question[] = [
       "Zbiór lub tablica visited zapobiega odwiedzaniu tych samych wierzchołków wielokrotnie, co chroni przed nieskończoną pętlą w grafach z cyklami.",
   },
   {
-    question: "Któremu sposobowi przechodzenia drzewa odpowiada DFS?",
+    question:
+      "Któremu sposobowi przechodzenia drzewa odpowiada DFS - jeśli najpierw dodaje wierzchołek do odwiedzonych, a dopiero potem przechodzi do pozostałych wierzchołków.",
     answers: ["Post-order", "Pre-order", "In-order", "Level-order"],
     correctAnswer: 2,
     explanation:
-      "DFS jest podobny do przechodzenia drzewa w trybie pre-order, gdzie najpierw odwiedzamy początkowy wierzchołek i schodzimy jak najgłębiej, zanim przejdziemy do kolejnych gałęzi.",
+      "Podobny jest do przechodzenia grafu w trybie pre-order, gdzie najpierw odwiedzamy początkowy wierzchołek i schodzimy jak najgłębiej, zanim przejdziemy do kolejnych gałęzi.",
   },
 ];

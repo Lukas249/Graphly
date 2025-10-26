@@ -15,6 +15,7 @@ import Menu from "../menu";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
 import "./problems-table.css";
+import { ProblemDifficulty } from "../lib/problems/types";
 
 const nodeWidth = 200;
 const nodeHeight = 50;
@@ -146,8 +147,6 @@ const rawEdges: Edge[] = [
   { id: "e9", source: "shortest", target: "bellman" },
   { id: "e10", source: "shortest", target: "floyd" },
 ];
-
-type ProblemDifficulty = "Easy" | "Medium" | "Hard";
 
 type Problem = {
   title: string;
@@ -494,7 +493,7 @@ function GraphRoadmap() {
           <div className="m-3">
             <table className="problems-table">
               <thead>
-                <tr className="bg-[rgba(255,255,255,0.1)]">
+                <tr>
                   <th>Problem</th>
                   <th>Difficulty</th>
                 </tr>

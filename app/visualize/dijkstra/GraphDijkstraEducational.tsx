@@ -17,7 +17,10 @@ import { MinPriorityQueue } from "@datastructures-js/priority-queue";
 import AISelectionProvider from "@/app/lib/AISelectionProvider";
 import { DocumentTextIcon, MapIcon } from "@heroicons/react/24/outline";
 import { stringifyGraph } from "@/app/lib/graph/graphSerializer";
-import { defaultEdgeSeparator, defaultWeightSeparator } from "@/app/lib/graph/graphFormatConfig";
+import {
+  defaultEdgeSeparator,
+  defaultWeightSeparator,
+} from "@/app/lib/graph/graphFormatConfig";
 import { sendHandler } from "@/app/components/chat/sendHandler";
 
 const dfsPseudocode = `procedure Dijkstra(startNode):
@@ -56,7 +59,7 @@ type NodeDetails = {
   weight: string;
 };
 
-const graphTypeContext = `"Graph represented as text where '--' means undirected edge and '->' means directed edge. Weight is separated by ':'"`
+const graphTypeContext = `"Graph represented as text where '--' means undirected edge and '->' means directed edge. Weight is separated by ':'"`;
 
 const GraphDijkstraEducational = ({
   graphNodes,
@@ -84,23 +87,26 @@ const GraphDijkstraEducational = ({
   );
 
   const chatRef = useRef<ChatRef>(null);
- 
+
   const [tutorialTabs, setTutorialTabs] = useState<Tab[]>([
     {
       id: crypto.randomUUID(),
       title: "Tutorial",
-      content: <AISelectionProvider
-                buttonClickHandler={(__, selectedText) => {
-                  chatRef.current?.addContext("description", {
-                    icon: (
-                      <DocumentTextIcon className="stroke-primary size-3.5 fill-transparent" />
-                    ),
-                    text: selectedText,
-                    closeable: true,
-                  });
-                }}
-              >{tutorial}
-              </AISelectionProvider>,
+      content: (
+        <AISelectionProvider
+          buttonClickHandler={(__, selectedText) => {
+            chatRef.current?.addContext("description", {
+              icon: (
+                <DocumentTextIcon className="stroke-primary size-3.5 fill-transparent" />
+              ),
+              text: selectedText,
+              closeable: true,
+            });
+          }}
+        >
+          {tutorial}
+        </AISelectionProvider>
+      ),
       closeable: false,
     },
     {
@@ -113,19 +119,18 @@ const GraphDijkstraEducational = ({
           onChange={(nodes, edges) => {
             setNodes(nodes);
             setEdges(edges);
-            chatRef.current?.addContext(
-              graphTypeContext, 
-              {
-                icon: <MapIcon className="stroke-primary size-3.5 fill-transparent" />,
-                text: stringifyGraph(
-                  nodes, 
-                  edges, 
-                  defaultWeightSeparator,
-                  defaultEdgeSeparator
-                ),
-                closeable: false
-              }
-            )
+            chatRef.current?.addContext(graphTypeContext, {
+              icon: (
+                <MapIcon className="stroke-primary size-3.5 fill-transparent" />
+              ),
+              text: stringifyGraph(
+                nodes,
+                edges,
+                defaultWeightSeparator,
+                defaultEdgeSeparator,
+              ),
+              closeable: false,
+            });
           }}
         />
       ),
@@ -137,21 +142,23 @@ const GraphDijkstraEducational = ({
       content: (
         <Chat
           ref={chatRef}
-          onSend={(messages: MessageDetails[]) => sendHandler(chatRef, messages, askAI)}
-          defaultContexts={
-            {
-              [graphTypeContext]: { 
-                  icon: <MapIcon className="stroke-primary size-3.5 fill-transparent" />,
-                  text: stringifyGraph(
-                    nodes, 
-                    edges, 
-                    defaultWeightSeparator,
-                    defaultEdgeSeparator
-                  ),
-                  closeable: false
-                }
-            }
+          onSend={(messages: MessageDetails[]) =>
+            sendHandler(chatRef, messages, askAI)
           }
+          defaultContexts={{
+            [graphTypeContext]: {
+              icon: (
+                <MapIcon className="stroke-primary size-3.5 fill-transparent" />
+              ),
+              text: stringifyGraph(
+                nodes,
+                edges,
+                defaultWeightSeparator,
+                defaultEdgeSeparator,
+              ),
+              closeable: false,
+            },
+          }}
         />
       ),
       closeable: false,
@@ -316,7 +323,7 @@ const GraphDijkstraEducational = ({
     async function resetTutorial() {
       tutorialRef.current?.resetTutorialSteps();
       graphRef.current?.resetMarks();
-      await startTutorial()
+      await startTutorial();
     }
 
     async function runAlgorithm() {
@@ -330,7 +337,7 @@ const GraphDijkstraEducational = ({
       tutorialRef.current?.setNextButtonOnceClickHanlder(resetTutorial);
     }
 
-    startTutorial()
+    startTutorial();
   }, [nodes, edges]);
 
   const graphVisualization = useMemo(

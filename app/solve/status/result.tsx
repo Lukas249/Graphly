@@ -1,9 +1,9 @@
-import { decodeUtf8Base64 } from "../lib/decodeBase64";
-import Accepted from "./status/accepted";
-import Error from "./status/error";
-import TLE from "./status/tle";
-import WrongAnswer from "./status/wrongAnswer";
-import { SubmissionResult } from "./submitCode";
+import { SubmissionResult } from "@/app/lib/judge0/types";
+import { decodeUtf8Base64 } from "../../lib/decodeBase64";
+import Accepted from "./accepted";
+import Error from "./error";
+import TLE from "./tle";
+import WrongAnswer from "./wrongAnswer";
 
 export type TestcaseResult = {
   args: string[];
@@ -33,12 +33,12 @@ export default function Result({
   result,
   sourceCode,
   feedbackAI,
-  params,
+  paramsNames,
 }: {
   result: SubmissionResult;
   sourceCode: string;
   feedbackAI?: string;
-  params?: string[];
+  paramsNames?: string[];
 }) {
   const stdout: StdOutResult = result.stdout
     ? JSON.parse(decodeUtf8Base64(result.stdout))
@@ -47,6 +47,7 @@ export default function Result({
   const compile_output = result.compile_output
     ? decodeUtf8Base64(result.compile_output)
     : "";
+  const stderr = decodeUtf8Base64(result.stderr ?? "");
 
   if (stdout.testcase) {
     stdout.testcase.args = stdout.testcase.args.map((val) =>
@@ -56,27 +57,32 @@ export default function Result({
     stdout.testcase.got = JSON.stringify(stdout.testcase.got);
   }
 
-  return (
-    <div className="p-2">
-      {(/Wrong Answer/.test(stdout.status) && (
-        <WrongAnswer testcase={stdout.testcase} params={params} />
-      )) ||
-        (result.status.id === 3 && (
-          <Accepted
-            result={result}
-            sourceCode={sourceCode}
-            feedbackAI={feedbackAI}
-          />
-        )) ||
-        (result.status.id === 6 && (
-          <Error title={result.status.description} message={compile_output} />
-        )) ||
-        (result.status.id === 5 && result.message && (
-          <TLE title={result.status.description} message={message} />
-        )) ||
-        (result.status.id >= 7 && result.message && (
-          <Error title={result.status.description} message={message} />
-        ))}
-    </div>
-  );
+  let resultContent = null;
+
+  if (/Wrong Answer/.test(stdout.status)) {
+    resultContent = (
+      <WrongAnswer testcase={stdout.testcase} paramsNames={paramsNames} />
+    );
+  } else if (result.status.id === 3) {
+    resultContent = (
+      <Accepted
+        result={result}
+        sourceCode={sourceCode}
+        feedbackAI={feedbackAI}
+      />
+    );
+  } else if (result.status.id === 5) {
+    resultContent = <TLE title={result.status.description} message={message} />;
+  } else {
+    resultContent = (
+      <Error
+        title={result.status.description}
+        message={message}
+        compile_output={compile_output}
+        stderr={stderr}
+      />
+    );
+  }
+
+  return <div className="p-2">{resultContent}</div>;
 }

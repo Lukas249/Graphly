@@ -1,3 +1,4 @@
+import Link from "next/link";
 import CollapsibleVerticalMenu from "../components/collapsible-vertical-menu";
 
 export default function LearnCollapsibleVerticalMenu() {
@@ -9,10 +10,14 @@ export default function LearnCollapsibleVerticalMenu() {
             <summary>Graph Traversal</summary>
             <ul>
               <li>
-                <a>DFS</a>
+                <Link href="/learn/dfs" prefetch={false}>
+                  DFS
+                </Link>
               </li>
               <li>
-                <a>BFS</a>
+                <Link href="/learn/bfs" prefetch={false}>
+                  BFS
+                </Link>
               </li>
             </ul>
           </details>
@@ -22,16 +27,22 @@ export default function LearnCollapsibleVerticalMenu() {
             <summary>Graph Shortest Path</summary>
             <ul>
               <li>
-                <a>Dijkstra</a>
+                <Link href="/learn/dijkstra" prefetch={false}>
+                  Dijkstra
+                </Link>
               </li>
             </ul>
           </details>
         </li>
         <li>
-          <a>Eulerian Path/Cycle</a>
+          <Link href="/learn/eulerian-path" prefetch={false}>
+            Eulerian Path/Cycle
+          </Link>
         </li>
         <li>
-          <a>Kosaraju - Strongly Connected Components</a>
+          <Link href="/learn/kosaraju-scc" prefetch={false}>
+            Kosaraju - Strongly Connected Components
+          </Link>
         </li>
       </CollapsibleVerticalMenu>
     </div>

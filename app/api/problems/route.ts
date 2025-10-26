@@ -7,7 +7,7 @@ export async function GET() {
 
   try {
     const [result] = await conn.query<RowDataPacket[]>(
-      `SELECT * FROM problems`,
+      `SELECT id, title, slug, params, description, code, testcases, difficulty FROM problems`,
     );
 
     conn.release();

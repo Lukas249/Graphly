@@ -9,6 +9,10 @@
   @apply border-1 border-[rgba(255,255,255,0.2)];
 }
 
+.problems-table thead tr {
+  @apply bg-[rgba(255,255,255,0.1)];
+}
+
 .problems-table th {
   @apply p-2 px-6;
 }
