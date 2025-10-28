@@ -1,5 +1,6 @@
 "use client";
 
+import _ from "lodash";
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -29,13 +30,21 @@ export default function AISelectionProvider({
   }, [selectedText]);
 
   useEffect(() => {
+    const updateButtonPosition = (ev: MouseEvent) => {
+      setButtonPosition({
+        left: _.clamp(ev.clientX, 150, window.innerWidth - 150),
+        top: _.clamp(ev.clientY, 50, window.innerHeight - 50),
+        display: true,
+      });
+    };
+
     const mouseMoveHandler = (ev: MouseEvent) => {
-      setButtonPosition({ left: ev.clientX, top: ev.clientY, display: true });
+      updateButtonPosition(ev);
     };
 
     const mouseDownHandler = () => {
-      document.addEventListener("mousemove", mouseMoveHandler);
       document.addEventListener("mouseup", mouseUpHandler);
+      document.addEventListener("mousemove", mouseMoveHandler);
       const containerRect = containerRef.current?.getBoundingClientRect();
       if (!selectedTextRef.current || !containerRect) {
         setButtonPosition(() => ({ top: 0, left: 0, display: false }));
@@ -44,9 +53,9 @@ export default function AISelectionProvider({
     };
 
     const mouseUpHandler = (ev: MouseEvent) => {
-      document.removeEventListener("mousemove", mouseMoveHandler);
       document.removeEventListener("mouseup", mouseUpHandler);
-      setButtonPosition({ left: ev.clientX, top: ev.clientY, display: true });
+      document.removeEventListener("mousemove", mouseMoveHandler);
+      updateButtonPosition(ev);
     };
 
     document.addEventListener("mousedown", mouseDownHandler);
