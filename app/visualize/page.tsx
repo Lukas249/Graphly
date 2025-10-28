@@ -5,7 +5,14 @@ const visualizations = [
   { title: "DFS", path: "/visualize/dfs" },
   { title: "BFS", path: "/visualize/bfs" },
   { title: "Dijkstra", path: "/visualize/dijkstra" },
-  { title: "Eulerian Path/Cycle", path: "/visualize/eulerian-path" },
+  {
+    title: "Eulerian Path/Cycle - Directed Graph",
+    path: "/visualize/eulerian-path/directed",
+  },
+  {
+    title: "Eulerian Path/Cycle - Undirected Graph",
+    path: "/visualize/eulerian-path/undirected",
+  },
   { title: "Kosaraju", path: "/visualize/kosaraju" },
 ];
 
