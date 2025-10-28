@@ -132,20 +132,50 @@ export default function GraphVisualization({
   const edgesLabelsTextPathRef =
     useRef<d3.Selection<SVGTextPathElement, Edge, SVGGElement, unknown>>(null);
 
+  const svgSize = useRef({ width: 0, height: 0 });
+
   const simulationRef = useRef<d3.Simulation<SimulationNode, undefined>>(null);
 
   const handleResizeRef = useRef<() => void>(null);
+
+  const selectedNode = useRef<string>(
+    graphNodes.length > 0 ? graphNodes[0].id : null,
+  );
+
+  const selectNode = (nodeId: string) => {
+    if (selectedNode.current && selectedNode.current !== nodeId) {
+      markNode({
+        nodeId: selectedNode.current,
+        nodeColor: colors.nodeFill,
+        nodeLabelColor: colors.nodeLabel,
+        strokeColor: colors.nodeStroke,
+      });
+    }
+
+    markNode({
+      nodeId: nodeId,
+      nodeColor: colors.markedNodeFill,
+      nodeLabelColor: colors.markedNodeLabel,
+      strokeColor: colors.markedNodeStroke,
+    });
+
+    selectedNode.current = nodeId;
+  };
+
+  const getSelectedNode = () => selectedNode.current;
 
   useEffect(() => {
     const svg = d3.select(svgRef.current);
 
     const { width, height } = svgRef.current!.getBoundingClientRect();
 
+    svgSize.current = { width, height };
+
     function boundingBoxForce(width: number, height: number, radius: number) {
       return () => {
         for (const node of nodes) {
-          node.x = Math.max(radius, Math.min(width - radius, node.x ?? 0));
-          node.y = Math.max(radius, Math.min(height - radius, node.y ?? 0));
+          node.x = _.clamp(node.x ?? 0, radius, width - radius);
+          node.y = _.clamp(node.y ?? 0, radius, height - radius);
         }
       };
     }
@@ -162,15 +192,21 @@ export default function GraphVisualization({
           .distance(150),
       )
       .force("charge", d3.forceManyBody().strength(-300))
-      .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("collide", d3.forceCollide().radius(60))
-      .force("bounding-box", boundingBoxForce(width, height, nodeRadius));
+      .force("collide", d3.forceCollide().radius(60));
+
+    simulation.on("end", () => {
+      handleResize();
+    });
 
     simulationRef.current = simulation;
 
     const handleResize = () => {
       if (!svgRef.current) return;
-      const { width, height } = svgRef.current.getBoundingClientRect();
+
+      const { width, height } = svgRef.current!.getBoundingClientRect();
+
+      svgSize.current = { width, height };
+
       simulation
         .force("center", d3.forceCenter(width / 2, height / 2))
         .force("bounding-box", boundingBoxForce(width, height, nodeRadius));
@@ -208,9 +244,10 @@ export default function GraphVisualization({
       .attr("stroke-width", 2.5)
       .attr("stroke", colors.edge)
       .attr("id", (d) => `link-${d.source.id}-${d.target.id}`)
-      .attr(
-        "marker-end",
-        (d) => `url(#arrowhead-${d.source.id}-${d.target.id})`,
+      .attr("marker-end", (d) =>
+        d.source.id !== d.target.id
+          ? `url(#arrowhead-${d.source.id}-${d.target.id})`
+          : "",
       );
 
     const edgeLabels = svg
@@ -221,7 +258,7 @@ export default function GraphVisualization({
       .attr("class", "labels")
       .attr("text-anchor", "middle")
       .attr("x", 0)
-      .attr("dy", -10)
+      .attr("dy", (d) => (d.source.id === d.target.id ? -10 : 20))
       .attr("transform", "rotate(45)")
       .style("transform-box", "border-box")
       .style("transform-origin", "center");
@@ -251,7 +288,10 @@ export default function GraphVisualization({
             unknown
           >,
         ) => void,
-      );
+      )
+      .on("click", (event, d) => {
+        selectNode(d.id);
+      });
 
     const nodeLabel = svg
       .append("g")
@@ -272,7 +312,10 @@ export default function GraphVisualization({
             unknown
           >,
         ) => void,
-      );
+      )
+      .on("click", (event, d) => {
+        selectNode(d.id);
+      });
 
     nodesRef.current = node;
     nodesLabelRef.current = nodeLabel;
@@ -322,7 +365,30 @@ export default function GraphVisualization({
           );
         }
 
-        return `M${source.x},${source.y} L${target.x},${target.y}`;
+        const sx = source.x ?? 0,
+          sy = source.y ?? 0;
+        const tx = target.x ?? 0,
+          ty = target.y ?? 0;
+
+        const rev = edges.some(
+          (e) => e.source.id === target.id && e.target.id === source.id,
+        );
+
+        if (!rev) return `M${sx},${sy} L${tx},${ty}`;
+
+        const dx = tx - sx;
+        const dy = ty - sy;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+
+        const nx = -dy / dist;
+        const ny = dx / dist;
+
+        const off = 7;
+
+        const ox = nx * off;
+        const oy = ny * off;
+
+        return `M${sx + ox},${sy + oy} L${tx + ox},${ty + oy}`;
       });
 
       edgeLabels.attr("transform", (d) => {
@@ -359,8 +425,16 @@ export default function GraphVisualization({
         })
         .on("drag", (event, d) => {
           const node = d as SimulationNode;
-          node.fx = event.x;
-          node.fy = event.y;
+          node.fx = _.clamp(
+            event.x,
+            nodeRadius,
+            svgSize.current.width - nodeRadius,
+          );
+          node.fy = _.clamp(
+            event.y,
+            nodeRadius,
+            svgSize.current.height - nodeRadius,
+          );
         })
         .on("end", (event, d) => {
           const node = d as SimulationNode;
@@ -378,6 +452,8 @@ export default function GraphVisualization({
       adjacency[edge.source.id].push(edge.target.id);
       adjacency[edge.target.id].push(edge.source.id);
     });
+
+    selectNode(selectedNode.current ?? "");
 
     return () => {
       svg.selectAll("*").remove();
@@ -514,6 +590,7 @@ export default function GraphVisualization({
     setMarkings,
     getDefaultMarkings,
     handleResize: () => handleResizeRef.current && handleResizeRef.current(),
+    getSelectedNode,
   }));
 
   return <svg className={className} ref={svgRef}></svg>;
