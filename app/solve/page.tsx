@@ -1,23 +1,19 @@
-"use client";
+"use server";
 
 import Link from "next/link";
 
-import { useAsync } from "../hooks/useAsync";
 import { fetchAllProblems } from "../lib/problems/problems";
-import Error from "next/error";
 import Menu from "../menu";
-import type { Problem } from "../lib/problems/types";
 import { difficultyColors } from "../lib/problems/difficulty-colors";
 
-export default function SolvePage() {
-  const { data, loading, error } = useAsync<Problem[]>(fetchAllProblems);
+export default async function SolvePage() {
+  const data = await fetchAllProblems();
 
   return (
     <div className="min-h-screen">
       <Menu />
       <div className="mx-auto my-10 max-w-2xl">
         <h2 className="text-xl">Problemset</h2>
-        {loading && "Loading..."}
         {data && (
           <div className="w-full text-center">
             {data.map((problem) => (
@@ -45,7 +41,6 @@ export default function SolvePage() {
             ))}
           </div>
         )}
-        {error && <Error statusCode={error.status} title={error.message} />}
       </div>
     </div>
   );
