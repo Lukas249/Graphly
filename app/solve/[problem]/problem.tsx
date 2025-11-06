@@ -11,7 +11,7 @@ import Menu from "../../menu";
 import { Tab, Tabs } from "../../components/tabs";
 import Chat, { ChatRef } from "../../components/chat/chat";
 import { MessageDetails } from "../../components/chat/types";
-import { askAI } from "../../lib/ai";
+import { askAI, getFeedbackAI } from "../../lib/ai";
 import Result, { resultType } from "../status/result";
 
 import { ToastContainer, toast } from "react-toastify";
@@ -237,19 +237,11 @@ export default function Problem({
   const handleSubmit = async () => {
     const result = handleCodeSubmit(problem.id, sourceCode, language.id);
 
-    const feedbackAI = askAI(
-      [
-        {
-          type: "question",
-          msg: `You are given the result of a user code submission. Write short feedback that will be displayed directly in a feedback field. Do not include introductions, titles, or bullet points. Write in plain markdown as smooth flowing text. Always state the time complexity and space complexity in a natural sentence. Only add a brief improvement suggestion if there is something meaningful to improve. If nothing needs improvement, stop after giving complexities without adding filler.`,
-        },
-      ],
-      {
-        submission: `
+    const feedbackAI = getFeedbackAI({
+      submission: `
           Code: ${sourceCode}
         `,
-      },
-    );
+    });
 
     Promise.all([result, feedbackAI.then((answer) => answer).catch(() => "")])
       .then(([result, feedbackAI]) => {
