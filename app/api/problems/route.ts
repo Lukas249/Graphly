@@ -1,22 +1,20 @@
 import { NextResponse } from "next/server";
-import pool from "@/app/lib/db";
-import { RowDataPacket } from "mysql2";
+import { getProblems } from "@/app/services/problemsService";
+import { handleError } from "../handleError";
 
 export async function GET() {
-  const conn = await pool.getConnection();
-
   try {
-    const [result] = await conn.query<RowDataPacket[]>(
-      `SELECT id, title, slug, params, description, code, testcases, difficulty FROM problems`,
-    );
-
-    conn.release();
-
-    for (const problem of result) {
-      problem["params"] = JSON.parse(problem["params"]);
-    }
-
-    return NextResponse.json(result);
+    const problems = await getProblems({
+      id: true,
+      title: true,
+      slug: true,
+      params: true,
+      description: true,
+      code: true,
+      testcases: true,
+      difficulty: true,
+    });
+    return NextResponse.json(problems);
   } catch (err: unknown) {
     return handleError(err);
   }

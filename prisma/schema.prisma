@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model problems {
+  id            Int                 @id @default(autoincrement())
+  title         String              @unique(map: "title") @db.VarChar(255)
+  slug          String              @unique(map: "slug") @db.VarChar(255)
+  params        Json
+  description   String              @db.Text
+  code          String              @db.Text
+  header        String              @db.Text
+  driver        String              @db.Text
+  testcases     String              @db.TinyText
+  all_testcases String              @db.MediumText
+  time_limit    Int                 @default(5000)
+  difficulty    problems_difficulty @default(Easy)
+}
+
+enum problems_difficulty {
+  Easy
+  Medium
+  Hard
+}
