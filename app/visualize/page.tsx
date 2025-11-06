@@ -1,10 +1,12 @@
+"use server";
+
 import Link from "next/link";
 import Menu from "../menu";
 
 const visualizations = [
   { title: "DFS", path: "/visualize/dfs" },
   { title: "BFS", path: "/visualize/bfs" },
-  { title: "Dijkstra", path: "/visualize/dijkstra" },
+  { title: "Dijkstra Algorithm - Shortest Path", path: "/visualize/dijkstra" },
   {
     title: "Eulerian Path/Cycle - Directed Graph",
     path: "/visualize/eulerian-path/directed",
@@ -13,10 +15,13 @@ const visualizations = [
     title: "Eulerian Path/Cycle - Undirected Graph",
     path: "/visualize/eulerian-path/undirected",
   },
-  { title: "Kosaraju", path: "/visualize/kosaraju" },
+  {
+    title: "Kosaraju Algorithm - Strongly Connected Components",
+    path: "/visualize/kosaraju",
+  },
 ];
 
-export default function VisualizePage() {
+export default async function VisualizePage() {
   return (
     <div className="min-h-screen">
       <Menu />
