@@ -18,13 +18,6 @@ export async function GET() {
 
     return NextResponse.json(result);
   } catch (err: unknown) {
-    if (typeof err === "object" && err && "sqlMessage" in err) {
-      return NextResponse.json({ error: err.sqlMessage }, { status: 400 });
-    }
-
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
+    return handleError(err);
   }
 }

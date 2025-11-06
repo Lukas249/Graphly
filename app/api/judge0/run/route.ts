@@ -40,13 +40,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(submissionResult, { status: 200 });
   } catch (err: unknown) {
-    if (typeof err === "object" && err && "error" in err) {
-      return NextResponse.json({ error: err.error }, { status: 400 });
-    }
-
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
+    return handleError(err);
   }
 }
