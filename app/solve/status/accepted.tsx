@@ -1,4 +1,4 @@
-import { SubmissionResult } from "../submitCode";
+import { SubmissionResult } from "@/app/lib/judge0/types";
 
 interface CardProps {
   title?: string;
@@ -37,15 +37,15 @@ export default function Accepted({
         </div>
 
         <div className="space-y-3">
-          <Card title="Submitted code">
-            <pre className="whitespace-pre-wrap">{sourceCode}</pre>
-          </Card>
-
           {feedbackAI && (
             <Card title="Feedback AI">
               <p>{feedbackAI}</p>
             </Card>
           )}
+
+          <Card title="Submitted code">
+            <pre className="whitespace-pre-wrap">{sourceCode}</pre>
+          </Card>
         </div>
       </div>
     </>
