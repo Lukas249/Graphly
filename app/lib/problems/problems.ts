@@ -1,15 +1,5 @@
 import { Problem } from "./types";
 
-class HttpError extends Error {
-  status;
-
-  constructor(message: string, status: number) {
-    super(message);
-    this.name = "HttpError";
-    this.status = status;
-  }
-}
-
 export async function fetchAllProblems() {
   return handleJSONResponse<Problem[]>(
     await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/problems`),
@@ -25,7 +15,7 @@ export async function fetchProblem(problem: string) {
 async function handleJSONResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const error = await response.json();
-    throw new HttpError(error.error, response.status);
+    throw new Error(`${response.status}: ${error.error}`);
   }
   return await response.json();
 }
