@@ -16,7 +16,7 @@ export default async function getSubmissionResult(
         language_id: languageId,
         stdin: testcases,
         base64_encoded: true,
-        time: timeLimit
+        time: timeLimit,
       }),
     },
   );
@@ -33,16 +33,16 @@ export default async function getSubmissionResult(
         .then((res) => res.json())
         .then((result) => {
           if (result && result.status && result.status.id <= 2) {
-            return
-          } 
-          
-          clearInterval(intervalId)
+            return;
+          }
+
+          clearInterval(intervalId);
           resolve(result);
         })
         .catch((err) => {
-          clearInterval(intervalId)
+          clearInterval(intervalId);
           reject({ error: err });
-        })
+        });
     }, 2_000);
   });
 }

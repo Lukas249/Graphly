@@ -216,7 +216,7 @@ export default function Problem({
       sourceCode,
       language.id,
       testcases,
-    )
+    );
 
     if (result) {
       addTab(
@@ -242,17 +242,21 @@ export default function Problem({
   const handleSubmit = async () => {
     setCodeJudging(true);
 
-    const result: SubmissionResult = await handleCodeSubmit(problem.id, sourceCode, language.id);
+    const result: SubmissionResult = await handleCodeSubmit(
+      problem.id,
+      sourceCode,
+      language.id,
+    );
 
-    if(!result) {
-      toast.error("Failed to submit code")
-      setCodeJudging(false)
-      return
+    if (!result) {
+      toast.error("Failed to submit code");
+      setCodeJudging(false);
+      return;
     }
 
     let content;
 
-    if(result.status && result.status.id === 3) {
+    if (result.status && result.status.id === 3) {
       let feedbackAI = "";
 
       try {
@@ -262,26 +266,29 @@ export default function Problem({
       } catch {
         feedbackAI = "";
       }
-      
-      content = feedbackAI ?
+
+      content = feedbackAI ? (
         <Result
           result={result}
           sourceCode={sourceCode}
           feedbackAI={feedbackAI}
           paramsNames={problem.params}
-        /> :
+        />
+      ) : (
         <Result
           result={result}
           sourceCode={sourceCode}
           paramsNames={problem.params}
         />
-    
+      );
     } else {
-      content = <Result
+      content = (
+        <Result
           result={result}
           sourceCode={sourceCode}
           paramsNames={problem.params}
         />
+      );
     }
 
     addTab(
@@ -294,7 +301,7 @@ export default function Problem({
       "main",
     );
 
-    setCodeJudging(false)
+    setCodeJudging(false);
   };
 
   const handleCodeJudge = async (url: string, body: string) => {
@@ -304,12 +311,12 @@ export default function Problem({
       body,
     })
       .then((res) => {
-        if(!res.ok) {
+        if (!res.ok) {
           toast.error("Failed to submit code");
           return null;
         }
 
-        return res.json()
+        return res.json();
       })
       .catch(() => {
         toast.error("Failed to submit code");
@@ -328,7 +335,7 @@ export default function Problem({
         sourceCode,
         languageId: langId,
       }),
-    )
+    );
   };
 
   const handleCodeRun = async (
@@ -345,7 +352,7 @@ export default function Problem({
         languageId: langId,
         testcases,
       }),
-    )
+    );
   };
 
   return (
