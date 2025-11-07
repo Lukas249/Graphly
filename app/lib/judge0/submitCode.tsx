@@ -16,6 +16,7 @@ export default async function getSubmissionResult(
         language_id: languageId,
         stdin: testcases,
         base64_encoded: true,
+        time: timeLimit
       }),
     },
   );
@@ -25,21 +26,23 @@ export default async function getSubmissionResult(
   const token = data.token;
 
   return new Promise((resolve, reject) => {
-    setTimeout(() => {
+    const intervalId = setInterval(() => {
       fetch(
         `${process.env.NEXT_PUBLIC_JUDGE0_URL}/submissions/${token}?base64_encoded=true`,
       )
         .then((res) => res.json())
         .then((result) => {
           if (result && result.status && result.status.id <= 2) {
-            reject({ error: "TLE" });
-          } else {
-            resolve(result);
-          }
+            return
+          } 
+          
+          clearInterval(intervalId)
+          resolve(result);
         })
         .catch((err) => {
+          clearInterval(intervalId)
           reject({ error: err });
-        });
-    }, timeLimit);
+        })
+    }, 2_000);
   });
 }
