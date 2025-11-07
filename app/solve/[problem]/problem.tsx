@@ -23,6 +23,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { languages } from "./languages";
 import type { Problem } from "@/app/lib/problems/types";
+import { SubmissionResult } from "@/app/lib/judge0/types";
 
 type TabSection = "main" | "code" | "testcases";
 
@@ -208,12 +209,14 @@ export default function Problem({
   };
 
   const handleRun = async () => {
+    setCodeJudging(true);
+
     const result = await handleCodeRun(
       problem.id,
       sourceCode,
       language.id,
       testcases,
-    );
+    )
 
     if (result) {
       addTab(
@@ -232,51 +235,66 @@ export default function Problem({
         "testcases",
       );
     }
+
+    setCodeJudging(false);
   };
 
   const handleSubmit = async () => {
-    const result = handleCodeSubmit(problem.id, sourceCode, language.id);
+    setCodeJudging(true);
 
-    const feedbackAI = getFeedbackAI({
-      submission: `
-          Code: ${sourceCode}
-        `,
-    });
+    const result: SubmissionResult = await handleCodeSubmit(problem.id, sourceCode, language.id);
 
-    Promise.all([result, feedbackAI.then((answer) => answer).catch(() => "")])
-      .then(([result, feedbackAI]) => {
-        if (!result) {
-          throw new Error("Failed to submit code");
-        }
+    if(!result) {
+      toast.error("Failed to submit code")
+      setCodeJudging(false)
+      return
+    }
 
-        const content = feedbackAI ? (
-          <Result
-            result={result}
-            sourceCode={sourceCode}
-            feedbackAI={feedbackAI}
-            paramsNames={problem.params}
-          />
-        ) : (
-          <Result
-            result={result}
-            sourceCode={sourceCode}
-            paramsNames={problem.params}
-          />
-        );
+    let content;
 
-        addTab(
-          {
-            id: crypto.randomUUID(),
-            title: resultType(result),
-            content,
-            closeable: true,
-          },
-          "main",
-        );
-      })
-      .catch(() => {
-        toast.error("Failed to submit code");
-      });
+    if(result.status && result.status.id === 3) {
+      let feedbackAI = "";
+
+      try {
+        feedbackAI = await getFeedbackAI({
+          submission: `Code: ${sourceCode}`,
+        });
+      } catch {
+        feedbackAI = "";
+      }
+      
+      content = feedbackAI ?
+        <Result
+          result={result}
+          sourceCode={sourceCode}
+          feedbackAI={feedbackAI}
+          paramsNames={problem.params}
+        /> :
+        <Result
+          result={result}
+          sourceCode={sourceCode}
+          paramsNames={problem.params}
+        />
+    
+    } else {
+      content = <Result
+          result={result}
+          sourceCode={sourceCode}
+          paramsNames={problem.params}
+        />
+    }
+
+    addTab(
+      {
+        id: crypto.randomUUID(),
+        title: resultType(result),
+        content,
+        closeable: true,
+      },
+      "main",
+    );
+
+    setCodeJudging(false)
   };
 
   const handleCodeJudge = async (url: string, body: string) => {
@@ -285,7 +303,14 @@ export default function Problem({
       headers: { "Content-Type": "application/json" },
       body,
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if(!res.ok) {
+          toast.error("Failed to submit code");
+          return null;
+        }
+
+        return res.json()
+      })
       .catch(() => {
         toast.error("Failed to submit code");
       });
@@ -296,8 +321,6 @@ export default function Problem({
     sourceCode: string,
     langId: number,
   ) => {
-    setCodeJudging(true);
-
     return handleCodeJudge(
       "/api/judge0/submit",
       JSON.stringify({
@@ -305,9 +328,7 @@ export default function Problem({
         sourceCode,
         languageId: langId,
       }),
-    ).finally(() => {
-      setCodeJudging(false);
-    });
+    )
   };
 
   const handleCodeRun = async (
@@ -316,8 +337,6 @@ export default function Problem({
     langId: number,
     testcases: string,
   ) => {
-    setCodeJudging(true);
-
     return handleCodeJudge(
       "/api/judge0/run",
       JSON.stringify({
@@ -326,9 +345,7 @@ export default function Problem({
         languageId: langId,
         testcases,
       }),
-    ).finally(() => {
-      setCodeJudging(false);
-    });
+    )
   };
 
   return (
