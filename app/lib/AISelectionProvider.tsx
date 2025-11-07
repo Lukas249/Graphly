@@ -32,7 +32,7 @@ export default function AISelectionProvider({
   useEffect(() => {
     const updateButtonPosition = (ev: MouseEvent) => {
       setButtonPosition({
-        left: _.clamp(ev.clientX, 150, window.innerWidth - 150),
+        left: _.clamp(ev.clientX, 0, window.innerWidth - 125),
         top: _.clamp(ev.clientY, 50, window.innerHeight - 50),
         display: true,
       });
