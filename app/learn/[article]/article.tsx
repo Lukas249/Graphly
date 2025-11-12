@@ -3,42 +3,24 @@
 import { useRef, useState } from "react";
 import { Tab, Tabs } from "../../components/tabs";
 import Menu from "../../menu";
-import LearnCollapsibleVerticalMenu from "../collapsible-vertical-menu";
-import ArticleDFS from "../dfs/article";
 import Chat, { ChatRef } from "../../components/chat/chat";
 import { MessageDetails } from "../../components/chat/types";
 import { askAI } from "../../lib/ai";
 import AISelectionProvider from "../../lib/AISelectionProvider";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
+import { Prisma } from "@/prisma/generated/client";
+import { Question } from "@/app/components/quiz/quiz-card";
+import ArticleContent from "./article-content";
+import CollapsibleVerticalMenu from "@/app/components/collapsible-vertical-menu";
+import Link from "next/link";
 
-function Step({ step }: { step: number }) {
-  return (
-    <span className="bg-primary absolute top-2 left-2 flex h-8 w-8 items-center justify-center rounded-sm text-lg font-bold text-white">
-      {step}
-    </span>
-  );
-}
-
-export function VisualizationImageWithStep({
-  image,
-  step,
+export default function Article({
+  articleData,
+  articles,
 }: {
-  image: React.ReactNode;
-  step: number;
+  articleData: Prisma.articlesModel;
+  articles: { title: string; slug: string }[];
 }) {
-  return (
-    <div className="relative">
-      {image}
-      <Step step={step} />
-    </div>
-  );
-}
-
-export function ArticleParagraph({ children }: { children: React.ReactNode }) {
-  return <div className="my-4">{children}</div>;
-}
-
-export default function Learn() {
   const chatRef = useRef<ChatRef>(null);
 
   const [chat] = useState(
@@ -78,7 +60,11 @@ export default function Learn() {
             });
           }}
         >
-          <ArticleDFS />
+          <ArticleContent
+            title={articleData.title}
+            article={articleData.article}
+            quizData={articleData.quiz as Question[]}
+          />
         </AISelectionProvider>
       ),
       closeable: false,
@@ -97,7 +83,20 @@ export default function Learn() {
       <Menu />
 
       <div className="max-w-article my-8 flex max-h-full w-full flex-grow flex-row gap-5">
-        <LearnCollapsibleVerticalMenu />
+        <div className="sticky top-3 self-start">
+          <CollapsibleVerticalMenu>
+            {articles.map((article) => {
+              return (
+                <li key={article.slug}>
+                  <Link href={"/learn/" + article.slug} prefetch={false}>
+                    {article.title}
+                  </Link>
+                </li>
+              );
+            })}
+          </CollapsibleVerticalMenu>
+        </div>
+
         <div className="bg-base-200 h-min w-full rounded-lg">
           <Tabs
             className="flex h-full flex-col"

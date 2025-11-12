@@ -2,22 +2,14 @@
 
 import Link from "next/link";
 import Menu from "../menu";
-
-const articles = [
-  { title: "DFS", path: "/learn/dfs" },
-  { title: "BFS", path: "/learn/bfs" },
-  { title: "Dijkstra Algorithm - Shortest Path", path: "/learn/dijkstra" },
-  {
-    title: "Eulerian Path/Cycle",
-    path: "/learn/eulerian-path",
-  },
-  {
-    title: "Kosaraju Algorithm - Strongly Connected Components",
-    path: "/learn/kosaraju",
-  },
-];
+import { notFound } from "next/navigation";
+import { fetchAllArticles } from "../lib/articles/articles";
 
 export default async function LearnPage() {
+  const articles = await fetchAllArticles();
+
+  if (!articles) return notFound();
+
   return (
     <div className="min-h-screen">
       <Menu />
@@ -27,7 +19,7 @@ export default async function LearnPage() {
           return (
             <Link
               key={vis.title}
-              href={vis.path}
+              href={"learn/" + vis.slug}
               prefetch={false}
               className="cursor-pointer"
             >

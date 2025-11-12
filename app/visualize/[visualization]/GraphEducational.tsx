@@ -2,14 +2,12 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import GraphVisualization from "../../GraphVisualization";
-import { Edge, GraphHandle, Node } from "../../GraphTypes";
-import { TutorialRef, Tutorial } from "../../Tutorial";
-import { graphColors } from "../../defaultGraphColors";
+import GraphVisualization from "../GraphVisualization";
+import { Edge, GraphHandle, Node } from "../GraphTypes";
+import { TutorialRef, Tutorial } from "../Tutorial";
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 import { Tab, Tabs } from "@/app/components/tabs";
-import GraphEditor from "../../custom/graphEditor";
 import Chat, { ChatRef } from "@/app/components/chat/chat";
 import { askAI } from "@/app/lib/ai";
 import { MessageDetails } from "@/app/components/chat/types";
@@ -22,31 +20,23 @@ import {
 } from "@/app/lib/graph/graphFormatConfig";
 import { sendHandler } from "@/app/components/chat/sendHandler";
 import _ from "lodash";
-import { ArticleParagraph } from "@/app/learn/dfs/page";
+import GraphEditor from "../graphEditor";
+import { graphColors } from "../defaultGraphColors";
+import {
+  Adjacency,
+  AlgorithmFunction,
+  InitialStep,
+  VisualizationRefs,
+} from "./types";
+import { ArticleParagraph } from "@/app/lib/ArticleParagraph";
 
-const dfsPseudocode = `procedure EulerPath(V)
-    for each edge (V, U) in Graph:
-        remove edge (V, U) from Graph
-        remove edge (U, V) from Graph
-        EulerPath(U)
-    add V to path`;
-
-type Variables = {
-  node: string;
-  neighbours: string[];
-  path: string[];
-};
-
-type NodeDetails = {
-  nodeId: string;
-  weight: string;
-};
-
-type Adjacency = {
-  [key: string]: NodeDetails[];
-};
-
-function InfoContent() {
+function GuideContent({
+  guideText,
+  isNodeSelectionEnabled = true,
+}: {
+  guideText?: string;
+  isNodeSelectionEnabled?: boolean;
+}) {
   return (
     <div className="mx-7">
       <ArticleParagraph>
@@ -67,44 +57,46 @@ function InfoContent() {
         </ul>
       </ArticleParagraph>
 
-      <ArticleParagraph>
-        Przed uruchomieniem algorytmu możesz wybrać wierzchołek początkowy.
-        Kliknij dowolny wierzchołek, aby ustawić go jako punkt startowy.
-      </ArticleParagraph>
+      {isNodeSelectionEnabled && (
+        <ArticleParagraph>
+          Przed uruchomieniem algorytmu możesz wybrać wierzchołek początkowy.
+          Kliknij dowolny wierzchołek, aby ustawić go jako punkt startowy.
+        </ArticleParagraph>
+      )}
 
-      <ArticleParagraph>
-        W algorytmie znajdowania ścieżki Eulera kluczowe jest rozpoczęcie z
-        odpowiedniego wierzchołka. W przypadku grafu nieskierowanego:
-        <ul className="list-disc pl-4">
-          <li>
-            jeśli wszystkie wierzchołki mają parzystą liczbę krawędzi, algorytm
-            może rozpocząć się z dowolnego wierzchołka
-          </li>
-          <li>
-            jeśli istnieją dokładnie dwa wierzchołki o nieparzystej liczbie
-            krawędzi, algorytm powinien rozpocząć się z jednego z tych
-            wierzchołków.
-          </li>
-        </ul>
-      </ArticleParagraph>
+      {guideText && (
+        <ArticleParagraph>
+          <div dangerouslySetInnerHTML={{ __html: guideText }} />
+        </ArticleParagraph>
+      )}
     </div>
   );
 }
 
-const graphTypeContext = `"Graph represented as text where '--' means undirected edge and '->' means directed edge. Weight is separated by ':'"`;
-
-const GraphDijkstraEducational = ({
+function GraphEducational({
   graphNodes,
   graphEdges,
+  pseudocode,
+  algorithm,
+  reset,
+  initialStep,
+  isNodeSelectionEnabled,
+  guideText,
 }: {
   graphNodes: Node[];
   graphEdges: Edge[];
-}) => {
+  pseudocode: string;
+  algorithm: AlgorithmFunction;
+  reset: (params: VisualizationRefs) => void;
+  initialStep: InitialStep;
+  isNodeSelectionEnabled: boolean;
+  guideText: string;
+}) {
   const [nodes, setNodes] = useState(graphNodes);
   const [edges, setEdges] = useState(graphEdges);
 
   const graphRef = useRef<GraphHandle>(null);
-  const tutorialRef = useRef<TutorialRef<Variables>>(null);
+  const tutorialRef = useRef<TutorialRef<Record<string, unknown>>>(null);
 
   const [tutorialTabsCurrentTab, setTutorialTabsCurrentTab] = useState(0);
 
@@ -112,8 +104,8 @@ const GraphDijkstraEducational = ({
     <Tutorial
       ref={tutorialRef}
       graphRef={graphRef}
-      variables={{ queue: [], node: "", neighbours: [], path: [] }}
-      pseudocode={dfsPseudocode}
+      variables={initialStep.variables}
+      pseudocode={pseudocode}
       graphColors={graphColors}
     />
   );
@@ -144,7 +136,12 @@ const GraphDijkstraEducational = ({
     {
       id: crypto.randomUUID(),
       title: "Guide",
-      content: <InfoContent />,
+      content: (
+        <GuideContent
+          guideText={guideText}
+          isNodeSelectionEnabled={isNodeSelectionEnabled}
+        />
+      ),
       closeable: false,
     },
     {
@@ -157,7 +154,7 @@ const GraphDijkstraEducational = ({
           onChange={(nodes, edges) => {
             setNodes(nodes);
             setEdges(edges);
-            chatRef.current?.addContext(graphTypeContext, {
+            chatRef.current?.addContext("Graph", {
               icon: (
                 <MapIcon className="stroke-primary size-3.5 fill-transparent" />
               ),
@@ -184,7 +181,7 @@ const GraphDijkstraEducational = ({
             sendHandler(chatRef, messages, askAI)
           }
           defaultContexts={{
-            [graphTypeContext]: {
+            ["Graph"]: {
               icon: (
                 <MapIcon className="stroke-primary size-3.5 fill-transparent" />
               ),
@@ -194,6 +191,13 @@ const GraphDijkstraEducational = ({
                 defaultWeightSeparator,
                 defaultEdgeSeparator,
               ),
+              closeable: false,
+            },
+            ["Graph Specification"]: {
+              icon: (
+                <DocumentTextIcon className="stroke-primary size-3.5 fill-transparent" />
+              ),
+              text: `Graph represented as text where '--' means undirected edge and '->' means directed edge. Weight is separated by ':'`,
               closeable: false,
             },
           }}
@@ -227,64 +231,8 @@ const GraphDijkstraEducational = ({
       }
     }
 
-    async function eulerianPath(
-      node: string,
-      adjacency: Adjacency,
-      visitedEdges: Record<string, Record<string, boolean>>,
-      path: string[] = [],
-    ) {
-      const neighbours = adjacency[node];
-
-      for (const neighbor of neighbours) {
-        if (visitedEdges[node][neighbor.nodeId]) continue;
-
-        visitedEdges[node][neighbor.nodeId] = true;
-        visitedEdges[neighbor.nodeId][node] = true;
-
-        graphRef.current?.markEdge({
-          sourceId: node,
-          destinationId: neighbor?.nodeId ?? "",
-        });
-        tutorialRef.current?.addTutorialStep({
-          description: `Usuwamy krawędź ${node}--${neighbor?.nodeId}`,
-          edge: { sourceId: node, destinationId: neighbor?.nodeId ?? "" },
-          variables: {
-            path: [...path],
-            neighbours: neighbours.map((neighbour) => neighbour.nodeId),
-            node: node,
-          },
-        });
-        await waitOnClick();
-
-        await eulerianPath(
-          neighbor?.nodeId ?? "",
-          adjacency,
-          visitedEdges,
-          path,
-        );
-      }
-
-      path.push(node);
-      graphRef.current?.markNode({ nodeId: node });
-      tutorialRef.current?.addTutorialStep({
-        description: `Dodajemy wierzchołek ${node} do path`,
-        node: { nodeId: node },
-        variables: {
-          path: [...path],
-          neighbours: neighbours.map((neighbour) => neighbour.nodeId),
-          node: node,
-        },
-      });
-      await waitOnClick();
-    }
-
     async function startTutorial() {
-      tutorialRef.current?.addTutorialStep({
-        description:
-          "Ścieżka i cykl Eulera polegają na przejściu przez wszystkie krawędzie grafu dokładnie raz. Ścieżka zaczyna się w jednym wierzchołku i kończy w innym, cykl zaczyna się i kończy w tym samym wierzchołku.",
-        variables: { path: [], neighbours: [], node: "" },
-        buttonText: "Start",
-      });
+      tutorialRef.current?.addTutorialStep(initialStep);
 
       const nextButtonClickHandler = async () => {
         await runAlgorithm();
@@ -295,52 +243,61 @@ const GraphDijkstraEducational = ({
       );
     }
 
-    async function resetTutorial() {
+    async function resetTutorial(selectedNode: string) {
       tutorialRef.current?.resetTutorialSteps();
       graphRef.current?.resetMarks();
+      reset({ graphRef, tutorialRef });
+      graphRef.current?.selectNode(selectedNode);
       await startTutorial();
     }
 
     async function runAlgorithm() {
       const selectedNode = graphRef.current?.getSelectedNode() ?? "";
 
-      graphRef.current?.resetMarks();
+      if (isNodeSelectionEnabled) {
+        graphRef.current?.resetMarks();
 
-      tutorialRef.current?.addTutorialStep({
-        description: `Algorytm zaczynamy z wybranego wierzchołka ${selectedNode}`,
-        variables: { path: [], neighbours: [], node: "" },
-      });
-      await waitOnClick();
-
-      const visitedEdges: Record<string, Record<string, boolean>> = {};
-
-      for (const node of nodes) {
-        visitedEdges[node.id] = {};
+        tutorialRef.current?.addTutorialStep({
+          description: `Algorytm zaczynamy z wybranego wierzchołka ${selectedNode}`,
+          variables: initialStep.variables,
+        });
+        await waitOnClick();
       }
 
-      await eulerianPath(selectedNode, _.cloneDeep(adjacency), visitedEdges);
+      await algorithm({
+        graphRef,
+        tutorialRef,
+        waitOnClick,
+        nodes: _.cloneDeep(nodes),
+        edges: _.cloneDeep(edges),
+        adjacency: _.cloneDeep(adjacency),
+        selectedNode,
+      });
 
       tutorialRef.current?.addTutorialStep({
         description: `Algorytm zakończył działanie`,
         buttonText: "Restart",
       });
 
-      tutorialRef.current?.setNextButtonOnceClickHanlder(resetTutorial);
+      tutorialRef.current?.setNextButtonOnceClickHanlder(
+        resetTutorial.bind(null, selectedNode),
+      );
     }
 
     startTutorial();
-  }, [nodes, edges]);
+  }, [nodes, edges, algorithm, initialStep, isNodeSelectionEnabled, reset]);
 
   const graphVisualization = useMemo(
     () => (
       <GraphVisualization
         graphNodes={nodes}
         graphEdges={edges}
+        isNodeSelectionEnabled={isNodeSelectionEnabled}
         ref={graphRef}
         className="h-full w-full grow"
       />
     ),
-    [nodes, edges],
+    [nodes, edges, isNodeSelectionEnabled],
   );
 
   return (
@@ -368,6 +325,6 @@ const GraphDijkstraEducational = ({
       </Allotment>
     </div>
   );
-};
+}
 
-export default GraphDijkstraEducational;
+export default GraphEducational;

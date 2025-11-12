@@ -29,12 +29,14 @@ export default function GraphVisualization({
   ref,
   className,
   customColors = graphColors,
+  isNodeSelectionEnabled = true,
 }: {
   graphNodes: Node[];
   graphEdges: Edge[];
   ref: RefObject<GraphHandle | null>;
   className?: string;
   customColors?: Partial<GraphColors>;
+  isNodeSelectionEnabled: boolean;
 }) {
   const nodes: SimulationNode[] = _.cloneDeep(graphNodes);
   const edges: SimulationEdge[] = _.cloneDeep(graphEdges);
@@ -194,10 +196,6 @@ export default function GraphVisualization({
       .force("charge", d3.forceManyBody().strength(-300))
       .force("collide", d3.forceCollide().radius(60));
 
-    simulation.on("end", () => {
-      handleResize();
-    });
-
     simulationRef.current = simulation;
 
     const handleResize = () => {
@@ -212,6 +210,14 @@ export default function GraphVisualization({
         .force("bounding-box", boundingBoxForce(width, height, nodeRadius));
       simulation.restart();
     };
+
+    simulation.on("end", () => {
+      handleResize();
+    });
+
+    setTimeout(() => {
+      handleResize();
+    }, 200);
 
     handleResizeRef.current = _.throttle(handleResize, 50);
 
@@ -288,10 +294,7 @@ export default function GraphVisualization({
             unknown
           >,
         ) => void,
-      )
-      .on("click", (event, d) => {
-        selectNode(d.id);
-      });
+      );
 
     const nodeLabel = svg
       .append("g")
@@ -312,10 +315,7 @@ export default function GraphVisualization({
             unknown
           >,
         ) => void,
-      )
-      .on("click", (event, d) => {
-        selectNode(d.id);
-      });
+      );
 
     nodesRef.current = node;
     nodesLabelRef.current = nodeLabel;
@@ -453,12 +453,22 @@ export default function GraphVisualization({
       adjacency[edge.target.id].push(edge.source.id);
     });
 
-    selectNode(selectedNode.current ?? "");
+    if (isNodeSelectionEnabled) {
+      node.on("click", (event, d) => {
+        selectNode(d.id);
+      });
+
+      nodeLabel.on("click", (event, d) => {
+        selectNode(d.id);
+      });
+
+      selectNode(selectedNode.current ?? "");
+    }
 
     return () => {
       svg.selectAll("*").remove();
     };
-  }, [nodes, edges, colors]);
+  }, [nodes, edges, colors, isNodeSelectionEnabled]);
 
   function markNode({
     nodeId,
@@ -591,6 +601,7 @@ export default function GraphVisualization({
     getDefaultMarkings,
     handleResize: () => handleResizeRef.current && handleResizeRef.current(),
     getSelectedNode,
+    selectNode,
   }));
 
   return <svg className={className} ref={svgRef}></svg>;

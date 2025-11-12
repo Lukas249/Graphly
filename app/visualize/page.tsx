@@ -2,36 +2,24 @@
 
 import Link from "next/link";
 import Menu from "../menu";
-
-const visualizations = [
-  { title: "DFS", path: "/visualize/dfs" },
-  { title: "BFS", path: "/visualize/bfs" },
-  { title: "Dijkstra Algorithm - Shortest Path", path: "/visualize/dijkstra" },
-  {
-    title: "Eulerian Path/Cycle - Directed Graph",
-    path: "/visualize/eulerian-path/directed",
-  },
-  {
-    title: "Eulerian Path/Cycle - Undirected Graph",
-    path: "/visualize/eulerian-path/undirected",
-  },
-  {
-    title: "Kosaraju Algorithm - Strongly Connected Components",
-    path: "/visualize/kosaraju",
-  },
-];
+import { notFound } from "next/navigation";
+import { fetchAllVisualizations } from "../lib/visualizations/visualizations";
 
 export default async function VisualizePage() {
+  const visualizationData = await fetchAllVisualizations();
+
+  if (!visualizationData) return notFound();
+
   return (
     <div className="min-h-screen">
       <Menu />
       <div className="mx-auto my-10 max-w-2xl">
         <h2 className="text-xl">Visualizations</h2>
-        {visualizations.map((vis) => {
+        {visualizationData.map((vis) => {
           return (
             <Link
-              key={vis.title}
-              href={vis.path}
+              key={vis.id}
+              href={"visualize/" + vis.slug}
               prefetch={false}
               className="cursor-pointer"
             >

@@ -1,0 +1,33 @@
+.article-paragraph {
+  margin: 1rem 0;
+}
+
+pre {
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+.image-grid {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+  gap: 0.5rem;
+  user-select: none;
+}
+
+.step-badge {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  width: 2rem;
+  border-radius: 0.25rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #ffffff;
+  background-color: #60a5fa;
+}

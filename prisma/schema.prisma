@@ -9,8 +9,8 @@ datasource db {
 }
 
 model problems {
-  id            Int                 @id @default(autoincrement())
-  title         String              @unique(map: "title") @db.VarChar(255)
+  id            Int                 @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  title         String              @db.VarChar(255)
   slug          String              @unique(map: "slug") @db.VarChar(255)
   params        Json
   description   String              @db.Text
@@ -19,8 +19,30 @@ model problems {
   driver        String              @db.Text
   testcases     String              @db.TinyText
   all_testcases String              @db.MediumText
-  time_limit    Int                 @default(5000)
+  time_limit    Int                 @default(2000)
   difficulty    problems_difficulty @default(Easy)
+}
+
+model visualizations {
+  id                        Int     @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  title                     String  @db.VarChar(200)
+  slug                      String  @unique(map: "slug_UNIQUE") @db.VarChar(200)
+  code                      String  @db.Text
+  initial_step              Json
+  pseudocode                String  @db.VarChar(2000)
+  nodes                     Json
+  edges                     Json
+  reset_code                String  @db.Text
+  is_node_selection_enabled Boolean @default(dbgenerated("b'1'")) @db.Bit(1)
+  guide_text                String  @db.VarChar(3000)
+}
+
+model articles {
+  id      Int    @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  title   String @db.VarChar(200)
+  slug    String @unique(map: "slug_UNIQUE") @db.VarChar(200)
+  article String @db.Text
+  quiz    Json
 }
 
 enum problems_difficulty {

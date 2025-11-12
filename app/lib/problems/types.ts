@@ -10,3 +10,8 @@ export type Problem = {
   testcases: string;
   difficulty: ProblemDifficulty;
 };
+
+export type ProblemNavItem = Pick<
+  Problem,
+  "id" | "title" | "slug" | "difficulty"
+>;

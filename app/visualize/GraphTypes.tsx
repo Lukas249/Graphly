@@ -51,6 +51,7 @@ export interface GraphHandle {
   getDefaultMarkings: () => Markings;
   handleResize: () => void;
   getSelectedNode: () => string | null;
+  selectNode: (nodeId: string) => void;
 }
 
 export interface Node {

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Editor } from "@monaco-editor/react";
 import _ from "lodash";
-import { Edge, Node } from "../GraphTypes";
+import { Edge, Node } from "./GraphTypes";
 import { parseGraph, stringifyGraph } from "@/app/lib/graph/graphSerializer";
 import {
   defaultEdgeSeparator,
