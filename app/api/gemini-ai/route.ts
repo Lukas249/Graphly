@@ -1,4 +1,4 @@
-"server-only";
+"use server";
 
 import { MessageDetails } from "@/app/components/chat/types";
 import { GoogleGenAI } from "@google/genai";

@@ -8,10 +8,6 @@ export async function GET() {
       id: true,
       title: true,
       slug: true,
-      params: true,
-      description: true,
-      code: true,
-      testcases: true,
       difficulty: true,
     });
     return NextResponse.json(problems);

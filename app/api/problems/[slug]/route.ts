@@ -1,10 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getProblemBySlug } from "@/app/services/problemsService";
 import { handleError } from "../../handleError";
+import { NextApiRequest } from "next";
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { slug: string } },
+  request: NextApiRequest,
+  { params }: { params: Promise<{ slug: string }> },
 ) {
   const { slug } = await params;
 
