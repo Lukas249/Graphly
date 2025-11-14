@@ -8,13 +8,13 @@ import React, { useRef, useState } from "react";
 import ProblemDescription from "../../components/problemDescription/problemDescription";
 import Menu from "../../menu";
 
-import { Tab, Tabs } from "../../components/tabs";
-import Chat, { ChatRef } from "../../components/chat/chat";
-import { MessageDetails } from "../../components/chat/types";
-import { askAI, getFeedbackAI } from "../../lib/ai";
+import { Tabs } from "../../components/tabs/tabs";
+import Chat from "../../components/chat/chat";
+import { ChatRef, MessageDetails } from "../../components/chat/types";
+import { askAI, getFeedbackAI } from "../../lib/gemini-ai/ai";
 import Result, { resultType } from "../status/result";
 
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import AISelectionProvider from "../../lib/AISelectionProvider";
 import {
   BeakerIcon,
@@ -24,6 +24,8 @@ import {
 import { languages } from "./languages";
 import type { Problem } from "@/app/lib/problems/types";
 import { SubmissionResult } from "@/app/lib/judge0/types";
+import { sendHandler } from "@/app/components/chat/sendHandler";
+import { Tab } from "@/app/components/tabs/types";
 
 type TabSection = "main" | "code" | "testcases";
 
@@ -56,20 +58,9 @@ export default function Problem({
   const [chat] = useState(
     <Chat
       ref={chatRef}
-      onSend={async (messages: MessageDetails[]) => {
-        const chatContexts = chatRef.current?.getContexts();
-
-        const contexts: Record<string, string> = {};
-
-        if (chatContexts) {
-          for (const [key, value] of Object.entries(chatContexts)) {
-            contexts[key] = value.text;
-          }
-        }
-
-        const answer = await askAI(messages, contexts);
-        chatRef.current?.addMessage({ type: "response", msg: answer });
-      }}
+      onSend={async (message: MessageDetails) =>
+        await sendHandler(chatRef, message, askAI)
+      }
     />,
   );
 
@@ -358,8 +349,6 @@ export default function Problem({
   return (
     <div className="mx-2 flex h-screen flex-col pb-2">
       <Menu />
-
-      <ToastContainer theme="dark" />
 
       {codeJudging ? (
         <button

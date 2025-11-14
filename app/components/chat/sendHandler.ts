@@ -1,16 +1,15 @@
 import { RefObject } from "react";
-import { ChatRef } from "./chat";
-import { MessageDetails } from "./types";
-import { AskAI } from "@/app/lib/ai";
+import { CHAT_ROLES, ChatRef, Contexts, MessageDetails } from "./types";
+import { AskAI } from "@/app/lib/gemini-ai/ai";
 
 export async function sendHandler(
   chatRef: RefObject<ChatRef | null>,
-  messages: MessageDetails[],
+  message: MessageDetails,
   askAI: AskAI,
 ) {
   const chatContexts = chatRef.current?.getContexts();
 
-  const contexts: Record<string, string> = {};
+  const contexts: Contexts = {};
 
   if (chatContexts) {
     for (const [key, value] of Object.entries(chatContexts)) {
@@ -18,6 +17,7 @@ export async function sendHandler(
     }
   }
 
-  const answer = await askAI(messages, contexts);
-  chatRef.current?.addMessage({ type: "response", msg: answer });
+  const answer = await askAI(message, contexts);
+
+  chatRef.current?.addMessage({ role: CHAT_ROLES.MODEL, text: answer });
 }

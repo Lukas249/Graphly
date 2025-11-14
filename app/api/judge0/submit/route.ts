@@ -4,9 +4,9 @@ import { handleError } from "../../handleError";
 import { submitCode } from "@/app/services/judge0Service";
 
 export async function POST(request: NextRequest) {
-  const bodyData: UserSubmitCode = await request.json();
-
   try {
+    const bodyData: UserSubmitCode = await request.json();
+
     const submissionResult = await submitCode(
       bodyData.problemID,
       bodyData.sourceCode,

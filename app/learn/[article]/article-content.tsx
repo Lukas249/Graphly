@@ -1,4 +1,4 @@
-import Quiz, { Question } from "@/app/components/quiz/quiz-card";
+import Quiz, { Question } from "@/app/components/quiz/quizCard";
 
 import "./styles.css";
 

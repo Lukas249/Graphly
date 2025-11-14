@@ -1,32 +1,39 @@
-import { MessageDetails } from "../components/chat/types";
+import {
+  CHAT_ROLES,
+  Contexts,
+  MessageDetails,
+} from "../../components/chat/types";
+import { handleJSONResponse } from "../handleResponse";
 
 export type AskAI = (
-  messages: MessageDetails[],
-  contexts?: Record<string, string>,
+  messages: MessageDetails,
+  contexts?: Contexts,
 ) => Promise<string>;
 
 export async function askAI(
-  messages: MessageDetails[],
-  contexts?: Record<string, string>,
+  message: MessageDetails,
+  contexts?: Contexts,
 ): Promise<string> {
   const response = await fetch("/api/gemini-ai", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ messages, contexts }),
+    body: JSON.stringify({
+      message,
+      contexts,
+      chatSessionID: sessionStorage.getItem("chatSessionID"),
+    }),
   });
 
-  return await response.json();
+  return handleJSONResponse(response);
 }
 
-export async function getFeedbackAI(
-  contexts: Record<string, string>,
-): Promise<string> {
+export async function getFeedbackAI(contexts: Contexts): Promise<string> {
   const messages: MessageDetails[] = [
     {
-      type: "question",
-      msg: `
+      role: CHAT_ROLES.USER,
+      text: `
 You are an automated code review assistant. Your task is to generate concise feedback for a user's code submission.
 
 Rules:

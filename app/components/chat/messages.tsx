@@ -1,4 +1,5 @@
 import React from "react";
+import { CHAT_ROLES, MessageDetails } from "./types";
 
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -35,5 +36,27 @@ export default function Response({ id, children }: MessageProps) {
         {children}
       </ReactMarkdown>
     </span>
+  );
+}
+
+export function Message({ id, children }: MessageProps) {
+  return (
+    <span id={id} className="max-w-1/2 rounded-lg bg-[#353b45] p-2">
+      {children}
+    </span>
+  );
+}
+
+export function MessagesHistory({ messages }: { messages: MessageDetails[] }) {
+  return messages.map((message, i) =>
+    message.role == CHAT_ROLES.USER ? (
+      <Message id={`message${i}`} key={i}>
+        {message.text}
+      </Message>
+    ) : (
+      <Response id={`message${i}`} key={i}>
+        {message.text}
+      </Response>
+    ),
   );
 }

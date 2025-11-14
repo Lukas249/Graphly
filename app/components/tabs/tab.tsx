@@ -3,8 +3,8 @@
 import { Dispatch, SetStateAction } from "react";
 import lodash from "lodash";
 
-import { Tab } from ".";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { Tab } from "./types";
 
 export default function TabCard({
   tab,

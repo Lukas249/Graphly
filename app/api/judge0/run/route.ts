@@ -4,9 +4,8 @@ import { handleError } from "../../handleError";
 import { runCode } from "@/app/services/judge0Service";
 
 export async function POST(request: NextRequest) {
-  const bodyData: UserRunCode = await request.json();
-
   try {
+    const bodyData: UserRunCode = await request.json();
     const submissionResult = await runCode(
       bodyData.problemID,
       bodyData.sourceCode,

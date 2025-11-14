@@ -1,4 +1,4 @@
-import { Question } from "@/app/components/quiz/quiz-card";
+import { Question } from "@/app/components/quiz/quizCard";
 
 export type Article = {
   id: number;

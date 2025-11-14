@@ -7,9 +7,9 @@ export async function GET(
   request: NextApiRequest,
   { params }: { params: Promise<{ slug: string }> },
 ) {
-  const { slug } = await params;
-
   try {
+    const { slug } = await params;
+
     const problem = await getProblemBySlug(slug, {
       id: true,
       title: true,

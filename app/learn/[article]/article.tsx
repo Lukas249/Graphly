@@ -1,18 +1,20 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Tab, Tabs } from "../../components/tabs";
+import { Tabs } from "../../components/tabs/tabs";
 import Menu from "../../menu";
-import Chat, { ChatRef } from "../../components/chat/chat";
-import { MessageDetails } from "../../components/chat/types";
-import { askAI } from "../../lib/ai";
+import Chat from "../../components/chat/chat";
+import { ChatRef, MessageDetails } from "../../components/chat/types";
+import { askAI } from "../../lib/gemini-ai/ai";
 import AISelectionProvider from "../../lib/AISelectionProvider";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import { Prisma } from "@/prisma/generated/client";
-import { Question } from "@/app/components/quiz/quiz-card";
+import { Question } from "@/app/components/quiz/quizCard";
 import ArticleContent from "./article-content";
 import CollapsibleVerticalMenu from "@/app/components/collapsible-vertical-menu";
 import Link from "next/link";
+import { sendHandler } from "@/app/components/chat/sendHandler";
+import { Tab } from "@/app/components/tabs/types";
 
 export default function Article({
   articleData,
@@ -22,27 +24,6 @@ export default function Article({
   articles: { title: string; slug: string }[];
 }) {
   const chatRef = useRef<ChatRef>(null);
-
-  const [chat] = useState(
-    <Chat
-      ref={chatRef}
-      onSend={async (messages: MessageDetails[]) => {
-        const chatContexts = chatRef.current?.getContexts();
-
-        const contexts: Record<string, string> = {};
-
-        if (chatContexts) {
-          for (const [key, value] of Object.entries(chatContexts)) {
-            contexts[key] = value.text;
-          }
-        }
-
-        const answer = await askAI(messages, contexts);
-        chatRef.current?.addMessage({ type: "response", msg: answer });
-      }}
-      background="bg-base-200"
-    />,
-  );
 
   const [articleTabs, setArticleTabs] = useState<Tab[]>([
     {
@@ -72,7 +53,17 @@ export default function Article({
     {
       id: crypto.randomUUID(),
       title: "Graphly AI",
-      content: <div className="h-[calc(100vh-180px)]">{chat}</div>,
+      content: (
+        <div className="h-[calc(100vh-180px)]">
+          <Chat
+            ref={chatRef}
+            onSend={async (message: MessageDetails) =>
+              await sendHandler(chatRef, message, askAI)
+            }
+            background="bg-base-200"
+          />
+        </div>
+      ),
       closeable: false,
     },
   ]);

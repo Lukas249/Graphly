@@ -7,9 +7,9 @@ export async function GET(
   request: NextApiRequest,
   { params }: { params: Promise<{ slug: string }> },
 ) {
-  const { slug } = await params;
-
   try {
+    const { slug } = await params;
+
     const articles = await getArticleBySlug(slug);
     return NextResponse.json(articles);
   } catch (err: unknown) {

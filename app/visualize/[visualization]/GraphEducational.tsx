@@ -7,10 +7,10 @@ import { Edge, GraphHandle, Node } from "../GraphTypes";
 import { TutorialRef, Tutorial } from "../Tutorial";
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
-import { Tab, Tabs } from "@/app/components/tabs";
-import Chat, { ChatRef } from "@/app/components/chat/chat";
-import { askAI } from "@/app/lib/ai";
-import { MessageDetails } from "@/app/components/chat/types";
+import { Tabs } from "@/app/components/tabs/tabs";
+import Chat from "@/app/components/chat/chat";
+import { askAI } from "@/app/lib/gemini-ai/ai";
+import { ChatRef, MessageDetails } from "@/app/components/chat/types";
 import AISelectionProvider from "@/app/lib/AISelectionProvider";
 import { DocumentTextIcon, MapIcon } from "@heroicons/react/24/outline";
 import { stringifyGraph } from "@/app/lib/graph/graphSerializer";
@@ -29,6 +29,7 @@ import {
   VisualizationRefs,
 } from "./types";
 import { ArticleParagraph } from "@/app/lib/ArticleParagraph";
+import { Tab } from "@/app/components/tabs/types";
 
 function GuideContent({
   guideText,
@@ -177,8 +178,8 @@ function GraphEducational({
       content: (
         <Chat
           ref={chatRef}
-          onSend={(messages: MessageDetails[]) =>
-            sendHandler(chatRef, messages, askAI)
+          onSend={async (message: MessageDetails) =>
+            await sendHandler(chatRef, message, askAI)
           }
           defaultContexts={{
             ["Graph"]: {
