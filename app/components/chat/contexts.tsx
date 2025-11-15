@@ -2,13 +2,14 @@ import ChipCloseable from "../chip-closeable";
 import { ContextItem, ContextItems } from "./types";
 import _ from "lodash";
 import Chip from "../chip";
+import { ContextTypes } from "@/app/components/chat/context/types";
 
 export function Context({
   contextType,
   context,
   setContexts,
 }: {
-  contextType: string;
+  contextType: ContextTypes;
   context: ContextItem;
   setContexts: (value: React.SetStateAction<ContextItems>) => void;
 }) {
@@ -47,7 +48,7 @@ export function Contexts({
     return (
       <Context
         key={crypto.randomUUID()}
-        contextType={type}
+        contextType={type as ContextTypes}
         context={context}
         setContexts={setContexts}
       />

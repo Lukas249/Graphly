@@ -7,7 +7,6 @@ import Chat from "../../components/chat/chat";
 import { ChatRef, MessageDetails } from "../../components/chat/types";
 import { askAI } from "../../lib/gemini-ai/ai";
 import AISelectionProvider from "../../lib/AISelectionProvider";
-import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import { Prisma } from "@/prisma/generated/client";
 import { Question } from "@/app/components/quiz/quizCard";
 import ArticleContent from "./article-content";
@@ -15,6 +14,7 @@ import CollapsibleVerticalMenu from "@/app/components/collapsible-vertical-menu"
 import Link from "next/link";
 import { sendHandler } from "@/app/components/chat/sendHandler";
 import { Tab } from "@/app/components/tabs/types";
+import { addChatContext } from "@/app/components/chat/context/addChatContext";
 
 export default function Article({
   articleData,
@@ -32,13 +32,7 @@ export default function Article({
       content: (
         <AISelectionProvider
           buttonClickHandler={(__, selectedText) => {
-            chatRef.current?.addContext("description", {
-              icon: (
-                <DocumentTextIcon className="stroke-primary size-3.5 fill-transparent" />
-              ),
-              text: selectedText,
-              closeable: true,
-            });
+            addChatContext(chatRef, "description", selectedText, true);
           }}
         >
           <ArticleContent

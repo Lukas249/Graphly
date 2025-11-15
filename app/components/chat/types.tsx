@@ -1,3 +1,5 @@
+import { ContextTypes } from "@/app/components/chat/context/types";
+
 export enum CHAT_ROLES {
   USER = "user",
   MODEL = "model",
@@ -11,12 +13,12 @@ export type MessageDetails = {
 
 export type ChatRef = {
   addMessage: (message: MessageDetails) => void;
-  addContext: (type: string, context: ContextItem) => void;
-  getContexts: () => Record<string, ContextItem>;
+  addContext: (type: ContextTypes, context: ContextItem) => void;
+  getContexts: () => ContextItems;
   scrollToLastMessage: (role: CHAT_ROLES) => void;
 };
 
-export type Contexts = Record<string, string>;
+export type Contexts = Partial<Record<ContextTypes, string>>;
 
 export type ContextItem = {
   icon?: React.ReactNode;
@@ -24,4 +26,4 @@ export type ContextItem = {
   closeable: boolean;
 };
 
-export type ContextItems = Record<string, ContextItem>;
+export type ContextItems = Partial<Record<ContextTypes, ContextItem>>;

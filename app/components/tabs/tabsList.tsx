@@ -12,9 +12,7 @@ export function TabsList({
   tabs: Tab[];
   setTabs: Dispatch<SetStateAction<Tab[]>>;
   setCurrentTab: Dispatch<SetStateAction<number>>;
-  className?: string;
   currentTab?: number;
-  tabBackground?: string;
   tabListBackground?: string;
 }) {
   return (

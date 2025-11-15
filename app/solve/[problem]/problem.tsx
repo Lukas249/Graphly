@@ -16,16 +16,12 @@ import Result, { resultType } from "../status/result";
 
 import { toast } from "react-toastify";
 import AISelectionProvider from "../../lib/AISelectionProvider";
-import {
-  BeakerIcon,
-  CodeBracketIcon,
-  DocumentTextIcon,
-} from "@heroicons/react/24/outline";
 import { languages } from "./languages";
 import type { Problem } from "@/app/lib/problems/types";
 import { SubmissionResult } from "@/app/lib/judge0/types";
 import { sendHandler } from "@/app/components/chat/sendHandler";
 import { Tab } from "@/app/components/tabs/types";
+import { addChatContext } from "@/app/components/chat/context/addChatContext";
 
 type TabSection = "main" | "code" | "testcases";
 
@@ -71,13 +67,7 @@ export default function Problem({
       content: (
         <AISelectionProvider
           buttonClickHandler={(__, selectedText) => {
-            chatRef.current?.addContext("description", {
-              icon: (
-                <DocumentTextIcon className="stroke-primary size-3.5 fill-transparent" />
-              ),
-              text: selectedText,
-              closeable: true,
-            });
+            addChatContext(chatRef, "description", selectedText, true);
           }}
         >
           <ProblemDescription
@@ -104,11 +94,7 @@ export default function Problem({
       renderContent: () => (
         <AISelectionProvider
           buttonClickHandler={(__, selectedText) => {
-            chatRef.current?.addContext("testcases", {
-              icon: <BeakerIcon className="stroke-primary size-3.5" />,
-              text: selectedText,
-              closeable: true,
-            });
+            addChatContext(chatRef, "testcases", selectedText, true);
           }}
         >
           <Editor
@@ -142,11 +128,7 @@ export default function Problem({
       renderContent: () => (
         <AISelectionProvider
           buttonClickHandler={(__, selectedText) => {
-            chatRef.current?.addContext("code", {
-              icon: <CodeBracketIcon className="stroke-primary size-3.5" />,
-              text: selectedText,
-              closeable: true,
-            });
+            addChatContext(chatRef, "code", selectedText, true);
           }}
         >
           <Editor
@@ -252,7 +234,7 @@ export default function Problem({
 
       try {
         feedbackAI = await getFeedbackAI({
-          submission: `Code: ${sourceCode}`,
+          code: `Submission: ${sourceCode}`,
         });
       } catch {
         feedbackAI = "";

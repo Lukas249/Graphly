@@ -12,7 +12,6 @@ import Chat from "@/app/components/chat/chat";
 import { askAI } from "@/app/lib/gemini-ai/ai";
 import { ChatRef, MessageDetails } from "@/app/components/chat/types";
 import AISelectionProvider from "@/app/lib/AISelectionProvider";
-import { DocumentTextIcon, MapIcon } from "@heroicons/react/24/outline";
 import { stringifyGraph } from "@/app/lib/graph/graphSerializer";
 import {
   defaultEdgeSeparator,
@@ -30,6 +29,8 @@ import {
 } from "./types";
 import { ArticleParagraph } from "@/app/lib/ArticleParagraph";
 import { Tab } from "@/app/components/tabs/types";
+import { addChatContext } from "@/app/components/chat/context/addChatContext";
+import { contextIcons } from "@/app/components/chat/context/contextIcons";
 
 function GuideContent({
   guideText,
@@ -120,13 +121,7 @@ function GraphEducational({
       content: (
         <AISelectionProvider
           buttonClickHandler={(__, selectedText) => {
-            chatRef.current?.addContext("description", {
-              icon: (
-                <DocumentTextIcon className="stroke-primary size-3.5 fill-transparent" />
-              ),
-              text: selectedText,
-              closeable: true,
-            });
+            addChatContext(chatRef, "description", selectedText, true);
           }}
         >
           {tutorial}
@@ -155,18 +150,18 @@ function GraphEducational({
           onChange={(nodes, edges) => {
             setNodes(nodes);
             setEdges(edges);
-            chatRef.current?.addContext("Graph", {
-              icon: (
-                <MapIcon className="stroke-primary size-3.5 fill-transparent" />
-              ),
-              text: stringifyGraph(
+
+            addChatContext(
+              chatRef,
+              "graph",
+              stringifyGraph(
                 nodes,
                 edges,
                 defaultWeightSeparator,
                 defaultEdgeSeparator,
               ),
-              closeable: false,
-            });
+              false,
+            );
           }}
         />
       ),
@@ -182,10 +177,8 @@ function GraphEducational({
             await sendHandler(chatRef, message, askAI)
           }
           defaultContexts={{
-            ["Graph"]: {
-              icon: (
-                <MapIcon className="stroke-primary size-3.5 fill-transparent" />
-              ),
+            ["graph"]: {
+              icon: contextIcons["graph"],
               text: stringifyGraph(
                 nodes,
                 edges,
@@ -194,10 +187,8 @@ function GraphEducational({
               ),
               closeable: false,
             },
-            ["Graph Specification"]: {
-              icon: (
-                <DocumentTextIcon className="stroke-primary size-3.5 fill-transparent" />
-              ),
+            ["graph specification"]: {
+              icon: contextIcons["graph specification"],
               text: `Graph represented as text where '--' means undirected edge and '->' means directed edge. Weight is separated by ':'`,
               closeable: false,
             },

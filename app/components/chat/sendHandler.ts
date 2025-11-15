@@ -1,5 +1,5 @@
 import { RefObject } from "react";
-import { CHAT_ROLES, ChatRef, Contexts, MessageDetails } from "./types";
+import { CHAT_ROLES, ChatRef, MessageDetails } from "./types";
 import { AskAI } from "@/app/lib/gemini-ai/ai";
 
 export async function sendHandler(
@@ -9,7 +9,7 @@ export async function sendHandler(
 ) {
   const chatContexts = chatRef.current?.getContexts();
 
-  const contexts: Contexts = {};
+  const contexts: Record<string, string> = {};
 
   if (chatContexts) {
     for (const [key, value] of Object.entries(chatContexts)) {

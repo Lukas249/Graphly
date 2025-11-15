@@ -20,6 +20,8 @@ import { findLastMessage, scrollToMessage } from "./helpers";
 import { MessagesHistory } from "./messages";
 import { Contexts } from "./contexts";
 import { SendButton } from "./sendButton";
+import { ContextTypes } from "@/app/components/chat/context/types";
+import ChatInput, { ChatInputRef } from "./chatInput";
 
 type Props = {
   ref: RefObject<ChatRef | null>;
@@ -38,18 +40,19 @@ export default function Chat({
 }: Props) {
   const [messages, setMessages] = useState<MessageDetails[]>(defaultMessages);
   const [contexts, setContexts] = useState(defaultContexts);
-  const [input, setInput] = useState("");
 
   const [isLoadingContent, setIsLoadingContent] = useState(true);
 
   const chatMessagesRef = useRef<HTMLDivElement>(null);
   const sendButtonRef = useRef<HTMLButtonElement>(null);
 
+  const chatInputRef = useRef<ChatInputRef>(null);
+
   const handleSend = async (messageDetails: MessageDetails) => {
     setIsLoadingContent(true);
 
     addMessage(messageDetails);
-    setInput("");
+    chatInputRef.current?.setInput("");
 
     if (onSend) await onSend(messageDetails);
 
@@ -61,7 +64,7 @@ export default function Chat({
     setMessages((prev) => [...prev, messageDetails]);
   };
 
-  const addContext = (type: string, context: ContextItem) => {
+  const addContext = (type: ContextTypes, context: ContextItem) => {
     if (!context.text.trim()) return;
     setContexts((contexts) => {
       const clone = { ...contexts };
@@ -138,26 +141,16 @@ export default function Chat({
             </div>
           )}
 
-          <textarea
-            className="my-2 w-full resize-none py-3 outline-none"
-            placeholder={"Shift+Enter for new line"}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                sendButtonRef.current?.click();
-                return;
-              }
-            }}
-          />
+          <ChatInput ref={chatInputRef} sendButtonRef={sendButtonRef} />
           <div className="flex size-9 items-center justify-center justify-self-end">
             {isLoadingContent ? (
               <Spinner size="1.5rem" color="white" />
             ) : (
               <SendButton
                 sendButtonRef={sendButtonRef}
-                clickHandler={() => buttonClickHandler(input)}
+                clickHandler={() =>
+                  buttonClickHandler(chatInputRef.current?.input ?? "")
+                }
               />
             )}
           </div>
