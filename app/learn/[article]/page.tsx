@@ -2,7 +2,7 @@
 
 import Article from "./article";
 import { notFound } from "next/navigation";
-import { fetchAllArticles, fetchArticle } from "@/app/lib/articles/articles";
+import { getArticleBySlug, getArticles } from "@/app/services/articlesService";
 
 interface PageProps {
   params: Promise<{ article: string }>;
@@ -11,9 +11,9 @@ interface PageProps {
 export default async function LearnPage({ params }: PageProps) {
   const { article } = await params;
 
-  const articles = await fetchAllArticles();
+  const articles = await getArticles({ id: true, title: true, slug: true });
 
-  const articleData = await fetchArticle(article);
+  const articleData = await getArticleBySlug(article);
 
   if (!articleData || !articles) return notFound();
 

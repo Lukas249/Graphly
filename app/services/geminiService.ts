@@ -46,21 +46,20 @@ const createPrompt = (message: string, contexts?: Contexts): string => {
   `;
 };
 
-const askAI = (
+const askAI = async (
   chat: Chat,
   message: MessageDetails,
   contexts?: Contexts,
 ): Promise<string> => {
-  return new Promise(async (resolve, reject) => {
-    chat
-      .sendMessage({ message: createPrompt(message.text, contexts) })
-      .then((res) => {
-        resolve(res.text ?? "Internal server error");
-      })
-      .catch((e) => {
-        reject(e);
-      });
+  const response = await chat.sendMessage({
+    message: createPrompt(message.text, contexts),
   });
+
+  if (!response.text) {
+    throw new Error("Empty response");
+  }
+
+  return response.text;
 };
 
 function createHistory(history: MessageDetails[] = []): Content[] {

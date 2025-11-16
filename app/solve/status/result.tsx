@@ -17,18 +17,6 @@ export type StdOutResult = {
   testcase?: TestcaseResult;
 };
 
-export function resultType(result: SubmissionResult) {
-  const stdout: StdOutResult = result.stdout
-    ? JSON.parse(decodeUtf8Base64(result.stdout))
-    : {};
-
-  if (/Wrong Answer/.test(stdout.status) && stdout.testcase) {
-    return "Wrong Answer";
-  }
-
-  return result?.status?.description;
-}
-
 export default function Result({
   result,
   sourceCode,

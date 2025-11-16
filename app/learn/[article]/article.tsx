@@ -13,8 +13,9 @@ import ArticleContent from "./article-content";
 import CollapsibleVerticalMenu from "@/app/components/collapsible-vertical-menu";
 import Link from "next/link";
 import { sendHandler } from "@/app/components/chat/sendHandler";
-import { Tab } from "@/app/components/tabs/types";
+import { Tab, TabsRef, TabTitle } from "@/app/components/tabs/types";
 import { addChatContext } from "@/app/components/chat/context/addChatContext";
+import { onChangeTab } from "@/app/lib/tabs/onChangeTab";
 
 export default function Article({
   articleData,
@@ -25,10 +26,12 @@ export default function Article({
 }) {
   const chatRef = useRef<ChatRef>(null);
 
-  const [articleTabs, setArticleTabs] = useState<Tab[]>([
+  const articleTabsRef = useRef<TabsRef>(null);
+
+  const [articleTabs] = useState<Tab[]>([
     {
       id: crypto.randomUUID(),
-      title: "Article",
+      title: TabTitle.Article,
       content: (
         <AISelectionProvider
           buttonClickHandler={(__, selectedText) => {
@@ -46,7 +49,7 @@ export default function Article({
     },
     {
       id: crypto.randomUUID(),
-      title: "Graphly AI",
+      title: TabTitle.GraphlyAI,
       content: (
         <div className="h-[calc(100vh-180px)]">
           <Chat
@@ -61,7 +64,6 @@ export default function Article({
       closeable: false,
     },
   ]);
-  const [articleTabsCurrentTab, setArticleTabsCurrentTab] = useState(0);
 
   return (
     <div className="flex min-h-screen flex-col items-center">
@@ -84,13 +86,14 @@ export default function Article({
 
         <div className="bg-base-200 h-min w-full rounded-lg">
           <Tabs
+            ref={articleTabsRef}
             className="flex h-full flex-col"
-            tabs={articleTabs}
-            setTabs={setArticleTabs}
-            setCurrentTab={setArticleTabsCurrentTab}
-            currentTab={articleTabsCurrentTab}
+            initialTabs={articleTabs}
             tabBackground="bg-base-200"
             tabListBackground="bg-base-100"
+            onChangeTab={(currentTab) => {
+              onChangeTab(chatRef, articleTabs[currentTab]);
+            }}
           />
         </div>
       </div>

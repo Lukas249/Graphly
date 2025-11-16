@@ -12,7 +12,7 @@ import { Tabs } from "../../components/tabs/tabs";
 import Chat from "../../components/chat/chat";
 import { ChatRef, MessageDetails } from "../../components/chat/types";
 import { askAI, getFeedbackAI } from "../../lib/gemini-ai/ai";
-import Result, { resultType } from "../status/result";
+import Result from "../status/result";
 
 import { toast } from "react-toastify";
 import AISelectionProvider from "../../lib/AISelectionProvider";
@@ -20,8 +20,11 @@ import { languages } from "./languages";
 import type { Problem } from "@/app/lib/problems/types";
 import { SubmissionResult } from "@/app/lib/judge0/types";
 import { sendHandler } from "@/app/components/chat/sendHandler";
-import { Tab } from "@/app/components/tabs/types";
+import { Tab, TabsRef, TabTitle } from "@/app/components/tabs/types";
 import { addChatContext } from "@/app/components/chat/context/addChatContext";
+import { handleCodeRun, handleCodeSubmit } from "@/app/lib/judge0/codeJudge";
+import { ButtonsPanel } from "./buttonsPanel";
+import { onChangeTab } from "@/app/lib/tabs/onChangeTab";
 
 type TabSection = "main" | "code" | "testcases";
 
@@ -37,10 +40,6 @@ export default function Problem({
   problem: Problem;
   defaultLanguage?: string;
 }) {
-  const [mainTabsCurrentTab, setMainTabsCurrentTab] = useState(0);
-  const [codeTabsCurrentTab, setCodeTabsCurrentTab] = useState(0);
-  const [testcasesTabsCurrentTab, setTestcasesTabsCurrentTab] = useState(0);
-
   const [testcases, setTestcases] = useState(problem.testcases);
 
   const [sourceCode, setSourceCode] = useState(problem.code);
@@ -48,6 +47,10 @@ export default function Problem({
   const [codeJudging, setCodeJudging] = useState(false);
 
   const [language] = useState(languages[defaultLanguage]);
+
+  const mainTabsRef = useRef<TabsRef>(null);
+  const codeTabsRef = useRef<TabsRef>(null);
+  const testcasesTabsRef = useRef<TabsRef>(null);
 
   const chatRef = useRef<ChatRef>(null);
 
@@ -60,10 +63,10 @@ export default function Problem({
     />,
   );
 
-  const [mainTabs, setMainTabs] = useState<Tab[]>([
+  const [mainTabs] = useState<Tab[]>([
     {
       id: crypto.randomUUID(),
-      title: "Description",
+      title: TabTitle.Description,
       content: (
         <AISelectionProvider
           buttonClickHandler={(__, selectedText) => {
@@ -81,16 +84,16 @@ export default function Problem({
     },
     {
       id: crypto.randomUUID(),
-      title: "GraphlyAI",
-      content: chat,
+      title: TabTitle.GraphlyAI,
+      renderContent: () => chat,
       closeable: false,
     },
   ]);
 
-  const [testcasesTabs, setTestcasesTabs] = useState<Tab[]>([
+  const [testcasesTabs] = useState<Tab[]>([
     {
       id: crypto.randomUUID(),
-      title: "Testcases",
+      title: TabTitle.Testcases,
       renderContent: () => (
         <AISelectionProvider
           buttonClickHandler={(__, selectedText) => {
@@ -121,10 +124,10 @@ export default function Problem({
     },
   ]);
 
-  const [codeTabs, setCodeTabs] = useState<Tab[]>([
+  const [codeTabs] = useState<Tab[]>([
     {
       id: crypto.randomUUID(),
-      title: "Code",
+      title: TabTitle.Code,
       renderContent: () => (
         <AISelectionProvider
           buttonClickHandler={(__, selectedText) => {
@@ -159,13 +162,19 @@ export default function Problem({
   const getTabSetters = (section: TabSection): TabSetters => {
     switch (section) {
       case "main":
-        return { setTabs: setMainTabs, setCurrentTab: setMainTabsCurrentTab };
+        return {
+          setTabs: mainTabsRef.current!.setTabs,
+          setCurrentTab: mainTabsRef.current!.setCurrentTab,
+        };
       case "code":
-        return { setTabs: setCodeTabs, setCurrentTab: setCodeTabsCurrentTab };
+        return {
+          setTabs: codeTabsRef.current!.setTabs,
+          setCurrentTab: codeTabsRef.current!.setCurrentTab,
+        };
       case "testcases":
         return {
-          setTabs: setTestcasesTabs,
-          setCurrentTab: setTestcasesTabsCurrentTab,
+          setTabs: testcasesTabsRef.current!.setTabs,
+          setCurrentTab: testcasesTabsRef.current!.setCurrentTab,
         };
     }
   };
@@ -195,7 +204,7 @@ export default function Problem({
       addTab(
         {
           id: crypto.randomUUID(),
-          title: resultType(result),
+          title: TabTitle.Test,
           content: (
             <Result
               result={result}
@@ -215,7 +224,7 @@ export default function Problem({
   const handleSubmit = async () => {
     setCodeJudging(true);
 
-    const result: SubmissionResult = await handleCodeSubmit(
+    const result: SubmissionResult | null = await handleCodeSubmit(
       problem.id,
       sourceCode,
       language.id,
@@ -233,9 +242,10 @@ export default function Problem({
       let feedbackAI = "";
 
       try {
-        feedbackAI = await getFeedbackAI({
-          code: `Submission: ${sourceCode}`,
-        });
+        feedbackAI = await getFeedbackAI(
+          { code: `Submission: ${sourceCode}` },
+          "feedback-chat",
+        );
       } catch {
         feedbackAI = "";
       }
@@ -267,7 +277,7 @@ export default function Problem({
     addTab(
       {
         id: crypto.randomUUID(),
-        title: resultType(result),
+        title: TabTitle.Submission,
         content,
         closeable: true,
       },
@@ -277,108 +287,42 @@ export default function Problem({
     setCodeJudging(false);
   };
 
-  const handleCodeJudge = async (url: string, body: string) => {
-    return fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body,
-    })
-      .then((res) => {
-        if (!res.ok) {
-          toast.error("Failed to submit code");
-          return null;
-        }
-
-        return res.json();
-      })
-      .catch(() => {
-        toast.error("Failed to submit code");
-      });
-  };
-
-  const handleCodeSubmit = async (
-    problemID: number,
-    sourceCode: string,
-    langId: number,
-  ) => {
-    return handleCodeJudge(
-      "/api/judge0/submit",
-      JSON.stringify({
-        problemID,
-        sourceCode,
-        languageId: langId,
-      }),
-    );
-  };
-
-  const handleCodeRun = async (
-    problemID: number,
-    sourceCode: string,
-    langId: number,
-    testcases: string,
-  ) => {
-    return handleCodeJudge(
-      "/api/judge0/run",
-      JSON.stringify({
-        problemID,
-        sourceCode,
-        languageId: langId,
-        testcases,
-      }),
-    );
-  };
-
   return (
     <div className="mx-2 flex h-screen flex-col pb-2">
       <Menu />
 
-      {codeJudging ? (
-        <button
-          className="btn m-2 mx-auto flex w-fit flex-row justify-center gap-2"
-          disabled
-        >
-          <span className="loading loading-spinner loading-xs"></span>
-          Processing...
-        </button>
-      ) : (
-        <div className="flex flex-row justify-center gap-5 p-2">
-          <button onClick={handleRun} className="btn-gray">
-            Run
-          </button>
-          <button onClick={handleSubmit} className="btn">
-            Submit
-          </button>
-        </div>
-      )}
+      <ButtonsPanel
+        isCodeJudging={codeJudging}
+        handleRun={handleRun}
+        handleSubmit={handleSubmit}
+      />
 
       <div className="h-full">
         <Allotment className="rounded-t-lg" separator={false}>
           <Tabs
+            ref={mainTabsRef}
             className="mr-0.5 flex h-full flex-col"
-            tabs={mainTabs}
-            setTabs={setMainTabs}
-            setCurrentTab={setMainTabsCurrentTab}
-            currentTab={mainTabsCurrentTab}
+            initialTabs={mainTabs}
+            onChangeTab={(currentTab) => {
+              const tabs = mainTabsRef.current?.getTabs();
+              if (tabs) onChangeTab(chatRef, tabs[currentTab]);
+            }}
           />
 
           <Allotment className="ml-0.5" vertical={true} separator={false}>
             <Allotment.Pane preferredSize="75%">
               <Tabs
+                ref={codeTabsRef}
                 className="flex h-full flex-col"
-                tabs={codeTabs}
-                setTabs={setCodeTabs}
-                setCurrentTab={setCodeTabsCurrentTab}
-                currentTab={codeTabsCurrentTab}
+                initialTabs={codeTabs}
               />
             </Allotment.Pane>
 
             <Allotment.Pane preferredSize="25%">
               <Tabs
+                ref={testcasesTabsRef}
                 className="mt-1 flex h-full flex-col"
-                tabs={testcasesTabs}
-                setTabs={setTestcasesTabs}
-                setCurrentTab={setTestcasesTabsCurrentTab}
-                currentTab={testcasesTabsCurrentTab}
+                initialTabs={testcasesTabs}
               />
             </Allotment.Pane>
           </Allotment>

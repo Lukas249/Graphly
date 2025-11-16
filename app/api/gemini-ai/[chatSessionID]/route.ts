@@ -1,10 +1,9 @@
 import { getChatHistory } from "@/app/services/chatStorage";
-import { NextApiRequest } from "next";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { handleError } from "../../handleError";
 
 export async function GET(
-  req: NextApiRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ chatSessionID: string }> },
 ) {
   try {

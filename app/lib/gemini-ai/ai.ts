@@ -29,11 +29,13 @@ export async function askAI(
   return handleJSONResponse(response);
 }
 
-export async function getFeedbackAI(contexts: Contexts): Promise<string> {
-  const messages: MessageDetails[] = [
-    {
-      role: CHAT_ROLES.USER,
-      text: `
+export async function getFeedbackAI(
+  contexts: Contexts,
+  chatSessionID: string,
+): Promise<string> {
+  const message: MessageDetails = {
+    role: CHAT_ROLES.USER,
+    text: `
 You are an automated code review assistant. Your task is to generate concise feedback for a user's code submission.
 
 Rules:
@@ -45,16 +47,15 @@ Complexity: Must state the Time Complexity and Space Complexity in a natural, gr
 Suggestion: Only include a brief, meaningful improvement suggestion if the code clearly needs one.
 
 Conciseness: If no improvement is needed, your output must stop immediately after stating the complexities, with absolutely no additional filler or sign-off text.`,
-    },
-  ];
+  };
 
   const response = await fetch("/api/gemini-ai", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ messages, contexts }),
+    body: JSON.stringify({ message, contexts, chatSessionID }),
   });
 
-  return await response.json();
+  return handleJSONResponse(response);
 }

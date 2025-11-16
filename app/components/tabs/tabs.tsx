@@ -1,33 +1,56 @@
 "use client";
 
-import { Dispatch, SetStateAction } from "react";
-import { Tab } from "./types";
+import {
+  RefObject,
+  SetStateAction,
+  useImperativeHandle,
+  useState,
+} from "react";
+import { Tab, TabsRef } from "./types";
 import { TabsList } from "./tabsList";
 import { TabsContent } from "./tabsContent";
 
 export function Tabs({
-  tabs,
-  setTabs,
-  setCurrentTab,
+  ref,
+  initialTabs,
   className = "",
-  currentTab = 0,
+  initialTab = 0,
   tabBackground = "bg-gray-dark",
   tabListBackground = "bg-gray-dark-850",
+  onChangeTab,
 }: {
-  tabs: Tab[];
-  setTabs: Dispatch<SetStateAction<Tab[]>>;
-  setCurrentTab: Dispatch<SetStateAction<number>>;
+  ref: RefObject<TabsRef | null>;
+  initialTabs: Tab[];
+  initialTab?: number;
   className?: string;
-  currentTab?: number;
   tabBackground?: string;
   tabListBackground?: string;
+  onChangeTab?: (currentTab: number) => void;
 }) {
+  const [currentTab, setCurrentTab] = useState(initialTab);
+  const [tabs, setTabs] = useState(initialTabs);
+
+  useImperativeHandle(ref, () => {
+    return {
+      setCurrentTab,
+      setTabs,
+      currentTab,
+      getTabs: () => tabs,
+    };
+  });
+
   return (
     <div className={className}>
       <TabsList
         tabs={tabs}
         setTabs={setTabs}
-        setCurrentTab={setCurrentTab}
+        setCurrentTab={(val: SetStateAction<number>) => {
+          setCurrentTab((prev) => {
+            const newIndex = typeof val === "function" ? val(prev) : val;
+            if (onChangeTab) onChangeTab(newIndex);
+            return newIndex;
+          });
+        }}
         currentTab={currentTab}
         tabListBackground={tabListBackground}
       />

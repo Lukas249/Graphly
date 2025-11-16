@@ -1,34 +1,30 @@
 "use server";
 
-import Link from "next/link";
 import Menu from "../menu";
 import { notFound } from "next/navigation";
-import { fetchAllVisualizations } from "../lib/visualizations/visualizations";
+import { LinkList } from "../components/linkList/linkList";
+import { getVisualizations } from "../services/visualizationsService";
 
 export default async function VisualizePage() {
-  const visualizationData = await fetchAllVisualizations();
+  const visualizations = await getVisualizations({
+    id: true,
+    title: true,
+    slug: true,
+  });
 
-  if (!visualizationData) return notFound();
+  if (!visualizations) return notFound();
 
   return (
     <div className="min-h-screen">
       <Menu />
       <div className="mx-auto my-10 max-w-2xl">
         <h2 className="text-xl">Visualizations</h2>
-        {visualizationData.map((vis) => {
-          return (
-            <Link
-              key={vis.id}
-              href={"visualize/" + vis.slug}
-              prefetch={false}
-              className="cursor-pointer"
-            >
-              <div className="bg-gray-dark hover:border-primary my-2 flex h-10 items-center justify-between rounded-lg px-4 hover:border-2">
-                <span>{vis.title}</span>
-              </div>
-            </Link>
-          );
-        })}
+        <LinkList
+          links={visualizations}
+          prefetch={false}
+          slugPrefix="visualize/"
+          linkType="visualize"
+        />
       </div>
     </div>
   );

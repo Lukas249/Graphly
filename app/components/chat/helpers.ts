@@ -5,10 +5,12 @@ export const scrollToMessage = (
   messageElement: HTMLElement,
   chatMessagesRef: RefObject<HTMLElement | null>,
 ) => {
-  messageElement.scrollIntoView({ behavior: "smooth", block: "start" });
-  chatMessagesRef.current?.scrollTo({
-    top: messageElement.offsetTop - chatMessagesRef.current.offsetTop - 10,
-    behavior: "smooth",
+  requestAnimationFrame(() => {
+    messageElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    chatMessagesRef.current?.scrollTo({
+      top: messageElement.offsetTop - chatMessagesRef.current.offsetTop - 10,
+      behavior: "smooth",
+    });
   });
 };
 

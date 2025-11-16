@@ -138,8 +138,6 @@ export default function GraphVisualization({
 
   const simulationRef = useRef<d3.Simulation<SimulationNode, undefined>>(null);
 
-  const handleResizeRef = useRef<() => void>(null);
-
   const selectedNode = useRef<string>(
     graphNodes.length > 0 ? graphNodes[0].id : null,
   );
@@ -211,17 +209,13 @@ export default function GraphVisualization({
       simulation.restart();
     };
 
-    simulation.on("end", () => {
-      handleResize();
+    const handleResizeThrottled = _.throttle(handleResize, 50);
+
+    const observer = new ResizeObserver(() => {
+      handleResizeThrottled();
     });
 
-    setTimeout(() => {
-      handleResize();
-    }, 200);
-
-    handleResizeRef.current = _.throttle(handleResize, 50);
-
-    window.addEventListener("resize", handleResizeRef.current);
+    observer.observe(svgRef.current!);
 
     const edgesHead = svg
       .append("defs")
@@ -467,6 +461,7 @@ export default function GraphVisualization({
 
     return () => {
       svg.selectAll("*").remove();
+      observer.disconnect();
     };
   }, [nodes, edges, colors, isNodeSelectionEnabled]);
 
@@ -599,7 +594,6 @@ export default function GraphVisualization({
     getMarkings,
     setMarkings,
     getDefaultMarkings,
-    handleResize: () => handleResizeRef.current && handleResizeRef.current(),
     getSelectedNode,
     selectNode,
   }));

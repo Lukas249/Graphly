@@ -28,9 +28,10 @@ import {
   VisualizationRefs,
 } from "./types";
 import { ArticleParagraph } from "@/app/lib/ArticleParagraph";
-import { Tab } from "@/app/components/tabs/types";
+import { Tab, TabsRef, TabTitle } from "@/app/components/tabs/types";
 import { addChatContext } from "@/app/components/chat/context/addChatContext";
 import { contextIcons } from "@/app/components/chat/context/contextIcons";
+import { onChangeTab } from "@/app/lib/tabs/onChangeTab";
 
 function GuideContent({
   guideText,
@@ -100,38 +101,34 @@ function GraphEducational({
   const graphRef = useRef<GraphHandle>(null);
   const tutorialRef = useRef<TutorialRef<Record<string, unknown>>>(null);
 
-  const [tutorialTabsCurrentTab, setTutorialTabsCurrentTab] = useState(0);
-
-  const tutorial = (
-    <Tutorial
-      ref={tutorialRef}
-      graphRef={graphRef}
-      variables={initialStep.variables}
-      pseudocode={pseudocode}
-      graphColors={graphColors}
-    />
-  );
+  const tutorialTabsRef = useRef<TabsRef>(null);
 
   const chatRef = useRef<ChatRef>(null);
 
-  const [tutorialTabs, setTutorialTabs] = useState<Tab[]>([
+  const [tutorialTabs] = useState<Tab[]>([
     {
       id: crypto.randomUUID(),
-      title: "Tutorial",
+      title: TabTitle.Tutorial,
       content: (
         <AISelectionProvider
           buttonClickHandler={(__, selectedText) => {
             addChatContext(chatRef, "description", selectedText, true);
           }}
         >
-          {tutorial}
+          <Tutorial
+            ref={tutorialRef}
+            graphRef={graphRef}
+            variables={initialStep.variables}
+            pseudocode={pseudocode}
+            graphColors={graphColors}
+          />
         </AISelectionProvider>
       ),
       closeable: false,
     },
     {
       id: crypto.randomUUID(),
-      title: "Guide",
+      title: TabTitle.Guide,
       content: (
         <GuideContent
           guideText={guideText}
@@ -142,7 +139,7 @@ function GraphEducational({
     },
     {
       id: crypto.randomUUID(),
-      title: "Graph",
+      title: TabTitle.Graph,
       renderContent: () => (
         <GraphEditor
           userNodes={nodes}
@@ -169,7 +166,7 @@ function GraphEducational({
     },
     {
       id: crypto.randomUUID(),
-      title: "Graphly AI",
+      title: TabTitle.GraphlyAI,
       content: (
         <Chat
           ref={chatRef}
@@ -294,24 +291,19 @@ function GraphEducational({
 
   return (
     <div className="flex h-full flex-row items-center p-8">
-      <Allotment
-        className="h-full w-full"
-        vertical={false}
-        onChange={() => {
-          graphRef.current?.handleResize();
-        }}
-      >
+      <Allotment className="h-full w-full" vertical={false}>
         <Allotment.Pane preferredSize="60%">
           {graphVisualization}
         </Allotment.Pane>
 
         <Allotment.Pane preferredSize="40%" className="bg-gray-dark">
           <Tabs
+            ref={tutorialTabsRef}
             className="flex h-full flex-col"
-            tabs={tutorialTabs}
-            setTabs={setTutorialTabs}
-            setCurrentTab={setTutorialTabsCurrentTab}
-            currentTab={tutorialTabsCurrentTab}
+            initialTabs={tutorialTabs}
+            onChangeTab={(currentTab) => {
+              onChangeTab(chatRef, tutorialTabs[currentTab]);
+            }}
           />
         </Allotment.Pane>
       </Allotment>

@@ -2,6 +2,7 @@
 
 import React, {
   RefObject,
+  useCallback,
   useEffect,
   useImperativeHandle,
   useRef,
@@ -91,17 +92,20 @@ export default function Chat({
     }
   }, []);
 
+  const scrollToLastMessage = useCallback(
+    (role: CHAT_ROLES) => {
+      const lastUserMessage = findLastMessage(messages, role, "message");
+
+      if (lastUserMessage) {
+        scrollToMessage(lastUserMessage, chatMessagesRef);
+      }
+    },
+    [messages, chatMessagesRef],
+  );
+
   useEffect(() => {
     scrollToLastMessage(CHAT_ROLES.USER);
-  }, [messages]);
-
-  const scrollToLastMessage = (role: CHAT_ROLES) => {
-    const lastUserMessage = findLastMessage(messages, role, "message");
-
-    if (lastUserMessage) {
-      scrollToMessage(lastUserMessage, chatMessagesRef);
-    }
-  };
+  }, [scrollToLastMessage]);
 
   useImperativeHandle(ref, () => {
     return {

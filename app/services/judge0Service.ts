@@ -1,6 +1,6 @@
 import { JsonArray } from "@/prisma/generated/internal/prismaNamespace";
 import { getProblemById } from "./problemsService";
-import getSubmissionResult from "../lib/judge0/submitCode";
+import getSubmissionResult from "../lib/judge0/submissionResult";
 
 export async function runCode(
   problemID: number,

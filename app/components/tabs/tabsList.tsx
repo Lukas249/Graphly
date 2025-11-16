@@ -19,7 +19,7 @@ export function TabsList({
     <div
       className={`${tabListBackground} flex flex-row items-center gap-3 rounded-t-lg p-1.5`}
     >
-      <div className="flex gap-3 overflow-hidden">
+      <div className={`flex gap-3 overflow-auto`}>
         {tabs.map((tab, index) => (
           <TabCard
             key={tab.id}

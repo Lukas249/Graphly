@@ -2,7 +2,8 @@
 
 import AlgorithmWrapper from "./AlgorithmWrapper";
 import { notFound } from "next/navigation";
-import { fetchVisualization } from "@/app/lib/visualizations/visualizations";
+import { getVisualizationBySlug } from "@/app/services/visualizationsService";
+import { Visualization } from "@/app/lib/visualizations/types";
 
 interface PageProps {
   params: Promise<{ visualization: string }>;
@@ -11,7 +12,9 @@ interface PageProps {
 export default async function Visualize({ params }: PageProps) {
   const { visualization } = await params;
 
-  const visualizationData = await fetchVisualization(visualization);
+  const visualizationData = (await getVisualizationBySlug(
+    visualization,
+  )) as unknown as Visualization;
 
   if (!visualizationData) return notFound();
 
