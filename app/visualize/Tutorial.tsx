@@ -118,24 +118,35 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
     return description;
   };
 
-  const handleNextState = (state: TutorialStep<TutorialVariables> | null) => {
+  const handleState = (
+    state: TutorialStep<TutorialVariables> | null,
+    isNextState: boolean = true,
+  ) => {
     if (state?.edge) {
       graphRef.current?.markEdge({
         sourceId: state.edge.sourceId,
         destinationId: state.edge.destinationId,
         directed: state.edge.directed,
-        edgeColor: state.edge.edgeColor,
-        edgeHeadColor: state.edge.edgeHeadColor,
-        edgeLabelColor: state.edge.edgeLabelColor,
+        edgeColor: isNextState ? state.edge.edgeColor : graphColors.edge,
+        edgeLabelColor: isNextState
+          ? state.edge.edgeLabelColor
+          : graphColors.edgeLabel,
+        edgeHeadColor: isNextState
+          ? state.edge.edgeHeadColor
+          : graphColors.edgeHead,
       });
     }
 
     if (state?.node) {
       graphRef.current?.markNode({
         nodeId: state.node.nodeId,
-        nodeColor: state.node.nodeColor,
-        nodeLabelColor: state.node.nodeLabelColor,
-        strokeColor: state.node.strokeColor,
+        nodeColor: isNextState ? state.node.nodeColor : graphColors.nodeFill,
+        strokeColor: isNextState
+          ? state.node.strokeColor
+          : graphColors.nodeStroke,
+        nodeLabelColor: isNextState
+          ? state.node.nodeLabelColor
+          : graphColors.nodeLabel,
       });
     }
 
@@ -143,37 +154,9 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
       graphRef.current?.transpose();
     }
 
-    if (state?.nextMarkings) {
+    if (state?.nextMarkings && isNextState) {
       graphRef.current?.setMarkings(state.nextMarkings);
-    }
-  };
-
-  const handlePrevState = (state: TutorialStep<TutorialVariables> | null) => {
-    if (state?.edge) {
-      graphRef.current?.markEdge({
-        sourceId: state.edge.sourceId,
-        destinationId: state.edge.destinationId,
-        directed: state.edge.directed,
-        edgeColor: graphColors.edge,
-        edgeLabelColor: graphColors.edgeLabel,
-        edgeHeadColor: graphColors.edgeHead,
-      });
-    }
-
-    if (state?.node) {
-      graphRef.current?.markNode({
-        nodeId: state.node.nodeId,
-        nodeColor: graphColors.nodeFill,
-        strokeColor: graphColors.nodeStroke,
-        nodeLabelColor: graphColors.nodeLabel,
-      });
-    }
-
-    if (state?.transpose) {
-      graphRef.current?.transpose();
-    }
-
-    if (state?.prevMarkings) {
+    } else if (state?.prevMarkings && !isNextState) {
       graphRef.current?.setMarkings(state.prevMarkings);
     }
   };
@@ -186,11 +169,11 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
         let nextState = historyStates.goForward();
 
         while (nextState && !nextState.isStep) {
-          handleNextState(nextState);
+          handleState(nextState);
           nextState = historyStates.goForward();
         }
 
-        handleNextState(nextState);
+        handleState(nextState);
 
         if (nextState?.description) setDescription(nextState.description);
         setNextButtonText(nextState?.buttonText ?? "Next");
@@ -205,10 +188,10 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
     const currentState = historyStates.current();
     let prevState = historyStates.goBack();
 
-    handlePrevState(currentState);
+    handleState(currentState, false);
 
     while (prevState && !prevState.isStep) {
-      handlePrevState(prevState);
+      handleState(prevState, false);
       prevState = historyStates.goBack();
     }
 
