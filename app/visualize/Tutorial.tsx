@@ -118,6 +118,66 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
     return description;
   };
 
+  const handleNextState = (state: TutorialStep<TutorialVariables> | null) => {
+    if (state?.edge) {
+      graphRef.current?.markEdge({
+        sourceId: state.edge.sourceId,
+        destinationId: state.edge.destinationId,
+        directed: state.edge.directed,
+        edgeColor: state.edge.edgeColor,
+        edgeHeadColor: state.edge.edgeHeadColor,
+        edgeLabelColor: state.edge.edgeLabelColor,
+      });
+    }
+
+    if (state?.node) {
+      graphRef.current?.markNode({
+        nodeId: state.node.nodeId,
+        nodeColor: state.node.nodeColor,
+        nodeLabelColor: state.node.nodeLabelColor,
+        strokeColor: state.node.strokeColor,
+      });
+    }
+
+    if (state?.transpose) {
+      graphRef.current?.transpose();
+    }
+
+    if (state?.nextMarkings) {
+      graphRef.current?.setMarkings(state.nextMarkings);
+    }
+  };
+
+  const handlePrevState = (state: TutorialStep<TutorialVariables> | null) => {
+    if (state?.edge) {
+      graphRef.current?.markEdge({
+        sourceId: state.edge.sourceId,
+        destinationId: state.edge.destinationId,
+        directed: state.edge.directed,
+        edgeColor: graphColors.edge,
+        edgeLabelColor: graphColors.edgeLabel,
+        edgeHeadColor: graphColors.edgeHead,
+      });
+    }
+
+    if (state?.node) {
+      graphRef.current?.markNode({
+        nodeId: state.node.nodeId,
+        nodeColor: graphColors.nodeFill,
+        strokeColor: graphColors.nodeStroke,
+        nodeLabelColor: graphColors.nodeLabel,
+      });
+    }
+
+    if (state?.transpose) {
+      graphRef.current?.transpose();
+    }
+
+    if (state?.prevMarkings) {
+      graphRef.current?.setMarkings(state.prevMarkings);
+    }
+  };
+
   const setNextButtonOnceClickHanlder = (handler: () => void) => {
     if (!nextButtonRef.current) return;
 
@@ -126,64 +186,11 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
         let nextState = historyStates.goForward();
 
         while (nextState && !nextState.isStep) {
-          if (nextState?.edge) {
-            graphRef.current?.markEdge({
-              sourceId: nextState.edge.sourceId,
-              destinationId: nextState.edge.destinationId,
-              directed: nextState.edge.directed,
-              edgeColor: nextState.edge.edgeColor,
-              edgeHeadColor: nextState.edge.edgeHeadColor,
-              edgeLabelColor: nextState.edge.edgeLabelColor,
-            });
-          }
-
-          if (nextState?.node) {
-            graphRef.current?.markNode({
-              nodeId: nextState.node.nodeId,
-              nodeColor: nextState.node.nodeColor,
-              nodeLabelColor: nextState.node.nodeLabelColor,
-              strokeColor: nextState.node.strokeColor,
-            });
-          }
-
-          if (nextState?.transpose) {
-            graphRef.current?.transpose();
-          }
-
-          if (nextState?.nextMarkings) {
-            graphRef.current?.setMarkings(nextState.nextMarkings);
-          }
-
+          handleNextState(nextState);
           nextState = historyStates.goForward();
         }
 
-        if (nextState?.edge) {
-          graphRef.current?.markEdge({
-            sourceId: nextState.edge.sourceId,
-            destinationId: nextState.edge.destinationId,
-            directed: nextState.edge.directed,
-            edgeColor: nextState.edge.edgeColor,
-            edgeHeadColor: nextState.edge.edgeHeadColor,
-            edgeLabelColor: nextState.edge.edgeLabelColor,
-          });
-        }
-
-        if (nextState?.node) {
-          graphRef.current?.markNode({
-            nodeId: nextState.node.nodeId,
-            nodeColor: nextState.node.nodeColor,
-            nodeLabelColor: nextState.node.nodeLabelColor,
-            strokeColor: nextState.node.strokeColor,
-          });
-        }
-
-        if (nextState?.transpose) {
-          graphRef.current?.transpose();
-        }
-
-        if (nextState?.nextMarkings) {
-          graphRef.current?.setMarkings(nextState.nextMarkings);
-        }
+        handleNextState(nextState);
 
         if (nextState?.description) setDescription(nextState.description);
         setNextButtonText(nextState?.buttonText ?? "Next");
@@ -195,67 +202,13 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
   };
 
   const prevButtonClickHandler = () => {
-    let currentState = historyStates.current();
+    const currentState = historyStates.current();
     let prevState = historyStates.goBack();
 
-    if (currentState?.node) {
-      graphRef.current?.markNode({
-        nodeId: currentState.node.nodeId,
-        nodeColor: graphColors.nodeFill,
-        strokeColor: graphColors.nodeStroke,
-        nodeLabelColor: graphColors.nodeLabel,
-      });
-    }
-
-    if (currentState?.edge) {
-      graphRef.current?.markEdge({
-        sourceId: currentState.edge.sourceId,
-        destinationId: currentState.edge.destinationId,
-        directed: currentState.edge.directed,
-        edgeColor: graphColors.edge,
-        edgeLabelColor: graphColors.edgeLabel,
-        edgeHeadColor: graphColors.edgeHead,
-      });
-    }
-
-    if (currentState?.transpose) {
-      graphRef.current?.transpose();
-    }
-
-    if (currentState?.prevMarkings) {
-      graphRef.current?.setMarkings(currentState.prevMarkings);
-    }
+    handlePrevState(currentState);
 
     while (prevState && !prevState.isStep) {
-      if (prevState?.edge) {
-        graphRef.current?.markEdge({
-          sourceId: prevState.edge.sourceId,
-          destinationId: prevState.edge.destinationId,
-          directed: prevState.edge.directed,
-          edgeColor: graphColors.edge,
-          edgeLabelColor: graphColors.edgeLabel,
-          edgeHeadColor: graphColors.edgeHead,
-        });
-      }
-
-      if (prevState?.node) {
-        graphRef.current?.markNode({
-          nodeId: prevState.node.nodeId,
-          nodeColor: graphColors.nodeFill,
-          strokeColor: graphColors.nodeStroke,
-          nodeLabelColor: graphColors.nodeLabel,
-        });
-      }
-
-      if (prevState?.transpose) {
-        graphRef.current?.transpose();
-      }
-
-      if (prevState?.prevMarkings) {
-        graphRef.current?.setMarkings(prevState.prevMarkings);
-      }
-
-      currentState = historyStates.current();
+      handlePrevState(prevState);
       prevState = historyStates.goBack();
     }
 
