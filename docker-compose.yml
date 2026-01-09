@@ -1,0 +1,33 @@
+include:
+  - path: ./judge0/docker-compose.yml
+
+services:
+  graphly-web:
+    image: lukas249/graphly:latest
+    build: .
+    env_file:
+      - .env
+    depends_on:
+      - graphly-redis
+      - graphly-mysql
+      - judge0-server
+    ports:
+      - "3000:3000"
+  graphly-redis:
+    image: "redis:8.4.0"
+    ports:
+      - "6379:6379"
+  graphly-mysql:
+    image: "mysql:8.0"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - "3306:3306"
+    volumes:
+      - graphly_mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+volumes:
+  graphly_mysql_data:
