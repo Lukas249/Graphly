@@ -2,6 +2,7 @@
   <img width="100" alt="Graphly - Logo" src="https://github.com/user-attachments/assets/798758af-d07e-4cca-9087-9eb261cf5d28" />
 
 # Graphly
+
 ### Master Graph Algorithms: Learn, Visualize, Solve.
 
 ![NodeJS](https://img.shields.io/badge/Node.js_v22.14.0-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
@@ -39,10 +40,11 @@ The platform combines theoretical articles, interactive visualizations, a "LeetC
 Graphly is divided into four main modules designed to guide you from novice to expert.
 
 ### 1. Learn
-Grasp the theory before diving into code.
-* **Concise Articles:** Simple, easy-to-read explanations of complex graph concepts.
-* **Quizzes:** Test your knowledge immediately after reading to ensure retention.
 
+Grasp the theory before diving into code.
+
+- **Concise Articles:** Simple, easy-to-read explanations of complex graph concepts.
+- **Quizzes:** Test your knowledge immediately after reading to ensure retention.
 
 <h3>📖 Conceptual Clarity</h3>
 <p>
@@ -65,30 +67,33 @@ Grasp the theory before diving into code.
 </div>
 
 ### 2. Visualize
+
 The heart of Graphly. Don't just read code - watch it run.
-* **Interactive Visualization:** Nodes are fully **draggable**. Rearrange the graph layout to better understand complex connections.
-* **Step-by-Step Execution:** Step through algorithms (BFS, DFS, Dijkstra, etc.).
-* **Dynamic Coloring:** Watch nodes and edges **change color** in real-time to visually track the algorithm's progress.
-* **Step-by-Step Navigation:** Control the flow via UI buttons or use **keyboard arrows** (← / →) to step backward and forward through the execution.
-* **Live Data Structures:** See exactly what is inside the Queue, Stack, or Priority Queue at every step.
-* **Reference Code:** Sample code is displayed alongside the graph to help you correlate the visual steps with standard algorithmic logic.
-* **Custom Graphs:** Edit the graph using a simple text syntax.
+
+- **Interactive Visualization:** Nodes are fully **draggable**. Rearrange the graph layout to better understand complex connections.
+- **Step-by-Step Execution:** Step through algorithms (BFS, DFS, Dijkstra, etc.).
+- **Dynamic Coloring:** Watch nodes and edges **change color** in real-time to visually track the algorithm's progress.
+- **Step-by-Step Navigation:** Control the flow via UI buttons or use **keyboard arrows** (← / →) to step backward and forward through the execution.
+- **Live Data Structures:** See exactly what is inside the Queue, Stack, or Priority Queue at every step.
+- **Reference Code:** Sample code is displayed alongside the graph to help you correlate the visual steps with standard algorithmic logic.
+- **Custom Graphs:** Edit the graph using a simple text syntax.
 
 <div align="center">
   <img width="800"  alt="Graphly - Executing DFS Algorithm" src="https://github.com/user-attachments/assets/b7bc8f0f-2039-4a81-8e48-6e38a9b15db0" />
 </div>
 
-*Example: Step-by-Step Executing DFS Algorithm*
+_Example: Step-by-Step Executing DFS Algorithm_
 
 ### 3. Solve (Powered by Judge0)
-Practice makes perfect. A built-in coding environment similar to LeetCode.
-* **Language Support:** Write solutions in **Python** using the embedded Monaco Editor.
-* **Two Execution Modes:**
-    * **▶️ Run:** Test your code against local, visible test cases to debug logic.
-    * **✅ Submit:** Validate your solution against hidden database test cases.
-* **AI Performance Insights:** Upon a successful submission (Accepted), GraphlyAI automatically analyzes your code. It provides a detailed breakdown of **Time & Space Complexity** and offers actionable tips to further optimize or refactor your solution.
-* **Test Case Feedback:** Clear JSON-based feedback on pass/fail status.
 
+Practice makes perfect. A built-in coding environment similar to LeetCode.
+
+- **Language Support:** Write solutions in **Python** using the embedded Monaco Editor.
+- **Two Execution Modes:**
+  - **▶️ Run:** Test your code against local, visible test cases to debug logic.
+  - **✅ Submit:** Validate your solution against hidden database test cases.
+- **AI Performance Insights:** Upon a successful submission (Accepted), GraphlyAI automatically analyzes your code. It provides a detailed breakdown of **Time & Space Complexity** and offers actionable tips to further optimize or refactor your solution.
+- **Test Case Feedback:** Clear JSON-based feedback on pass/fail status.
 
 <h3>👨‍💻 The Coding Workspace</h3>
 <p>
@@ -99,8 +104,6 @@ Practice makes perfect. A built-in coding environment similar to LeetCode.
 <div align="center">
   <img width="800" alt="Graphly - Solve Sum Of All Nodes" src="https://github.com/user-attachments/assets/6e3a332f-732f-4829-8b58-111c39bda641" />
 </div>
-
-<br><br><br>
 
 <h3>🤖 Submission & AI Insights</h3>
 <p>
@@ -113,9 +116,11 @@ Practice makes perfect. A built-in coding environment similar to LeetCode.
 </div>
 
 ### 4. Roadmap
+
 A structured learning tree to guide your journey from basic traversals to advanced algorithms.
-* **Dependency Tree:** Shows the logical order of learning (e.g., learn DFS before Topological Sort).
-* **Curated Problems:** Links to example problems from top coding platforms for each topic.
+
+- **Dependency Tree:** Shows the logical order of learning (e.g., learn DFS before Topological Sort).
+- **Curated Problems:** Links to example problems from top coding platforms for each topic.
 
 <h3>🌳 The Big Picture</h3>
 <p>
@@ -139,18 +144,18 @@ A structured learning tree to guide your journey from basic traversals to advanc
 
 ---
 
-
 ## 🤖 GraphlyAI Assistant
 
 Stuck? GraphlyAI is available on every page.
-* **Context-Aware:** Select any text on the screen (article, code, or problem description) and click **"Ask GraphlyAI"** for specific help.
-* **Coding Helper:** Ask for hints, time complexity analysis, or debugging help in the Solve module.
+
+- **Context-Aware:** Select any text on the screen (article, code, or problem description) and click **"Ask GraphlyAI"** for specific help.
+- **Coding Helper:** Ask for hints, time complexity analysis, or debugging help in the Solve module.
 
 <div align="center">
   <img width="800" alt="GraphlyAI identify an Euler Path" src="https://github.com/user-attachments/assets/0972ee4b-4bcb-4e80-93ee-3e3fd0f8e42d" />
 </div>
 
-*Example: GraphlyAI analyzing an undirected graph to identify an Euler Path.*
+_Example: GraphlyAI analyzing an undirected graph to identify an Euler Path._
 
 ---
 
@@ -161,9 +166,10 @@ In the **Visualize** section, you can create your own graphs using a simple text
 **Format:** `Source--Target:Weight`
 
 **Examples:**
-* `1--2:5` (Connects node 1 to node 2 with weight 5)
-* `A--B:10`
- (Connects node A to node B with weight 10)
+
+- `1--2:5` (Connects node 1 to node 2 with weight 5)
+- `A--B:10`
+  (Connects node A to node B with weight 10)
 
 Just type the relationships, and the graph renders instantly!
 
@@ -175,11 +181,11 @@ Just type the relationships, and the graph renders instantly!
 
 ## 🏗️ Architecture & Tech Stack
 
-* **Frontend\Backend:** React & Next.js & TypeScript & Tailwind & D3.js & React Flow
-* **Database\Cache\ORM:** MySQL & Redis & Prisma
-* **Code Execution:** [Judge0](https://judge0.com/) (Self-hosted via Docker)
-* **AI Integration:** Google Generative AI (Gemini)
-* **Infrastructure:** Docker & Docker Compose
+- **Frontend\Backend:** React & Next.js & TypeScript & Tailwind & D3.js & React Flow
+- **Database\Cache\ORM:** MySQL & Redis & Prisma
+- **Code Execution:** [Judge0](https://judge0.com/) (Self-hosted via Docker)
+- **AI Integration:** Google Generative AI (Gemini)
+- **Infrastructure:** Docker & Docker Compose
 
 ---
 
@@ -188,6 +194,7 @@ Just type the relationships, and the graph renders instantly!
 To run Graphly locally, you need Docker installed.
 
 1.  **Clone the repository**
+
     ```bash
     git clone https://github.com/Lukas249/Graphly.git
     cd graphly
@@ -195,24 +202,26 @@ To run Graphly locally, you need Docker installed.
 
 2.  **Set up Environment Variables**
     Create a `.env` file in the root directory:
+
     ```env
     GOOGLE_AI_STUDIO_API_KEY=api key from https://aistudio.google.com/
     GOOGLE_AI_STUDIO_MODEL_NAME=gemini-3-flash-preview
-    
+
     NEXT_PUBLIC_BASE_URL=http://graphly-web:3000
     NEXT_PUBLIC_JUDGE0_URL=http://judge0-server:2358
-    
+
     REDIS_URL=redis://graphly-redis:6379
-    
+
     MYSQL_USER=user
     MYSQL_PASSWORD=password
     MYSQL_DATABASE=nextjs_db
-    
+
     DATABASE_URL=mysql://user:password@graphly-mysql:3306/nextjs_db
     ```
 
 3.  **Run with Docker Compose**
     This will start the all needed services.
+
     ```bash
     docker compose up -d --build
     ```
@@ -223,7 +232,8 @@ To run Graphly locally, you need Docker installed.
 ## 🔧 Judge0 Configuration
 
 The `judge0/judge0.conf` file handles the configuration for the code execution engine. Crucially, it defines authentication credentials:
-* `REDIS_PASSWORD`
-* `POSTGRES_PASSWORD`
+
+- `REDIS_PASSWORD`
+- `POSTGRES_PASSWORD`
 
 > **Note:** By default, these are set to `password`.
