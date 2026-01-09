@@ -189,7 +189,7 @@ To run Graphly locally, you need Docker installed.
 
 1.  **Clone the repository**
     ```bash
-    git clone [https://github.com/Lukas249/Graphly.git](https://github.com/Lukas249/Graphly.git)
+    git clone https://github.com/Lukas249/Graphly.git
     cd graphly
     ```
 
