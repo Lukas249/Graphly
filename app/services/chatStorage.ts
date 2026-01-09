@@ -1,5 +1,5 @@
-import { MessageDetails } from "../components/chat/types";
 import { redis } from "../lib/redis";
+import { ModelMessage } from "./gemini.types";
 
 const CHAT_TTL = 60 * 60 * 24; // 24h
 
@@ -8,7 +8,7 @@ const getChatHistoryKey = (chatSessionID: string): string =>
 
 export async function getChatHistory(
   chatSessionID: string,
-): Promise<MessageDetails[]> {
+): Promise<ModelMessage[]> {
   const key = getChatHistoryKey(chatSessionID);
   const history = await redis.lRange(key, 0, -1);
   return history.map((v) => JSON.parse(v));
@@ -16,7 +16,7 @@ export async function getChatHistory(
 
 export async function addMessageToHistory(
   chatSessionID: string,
-  messageDetails: MessageDetails,
+  messageDetails: ModelMessage,
 ): Promise<void> {
   if (!messageDetails) return;
 

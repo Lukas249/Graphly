@@ -7,9 +7,11 @@ import {
 } from "@/app/components/chat/types";
 import { Chat, Content, GoogleGenAI } from "@google/genai";
 import { addMessageToHistory, getChatHistory } from "./chatStorage";
+import { ModelMessage, ModelResponse } from "./gemini.types";
 
 const GOOGLE_AI_STUDIO_API_KEY = process.env.GOOGLE_AI_STUDIO_API_KEY;
 const ai = new GoogleGenAI({ apiKey: GOOGLE_AI_STUDIO_API_KEY });
+const modelName = process.env.GOOGLE_AI_STUDIO_MODEL_NAME || "gemini-2.5-flash";
 
 const assistantInstructions = `
 You are an advanced AI Assistant. Your goal is to provide accurate, helpful, and easily understandable answers.
@@ -33,9 +35,6 @@ CONTEXT FORMAT WITHIN <CONTEXT_START> AND <CONTEXT_END> IS LIKE: Type of context
 
 const createPrompt = (message: string, contexts?: Contexts): string => {
   return `
-    <PROMPT_START>
-      ${message}
-    <PROMPT_END>
     <CONTEXT_START>
       ${
         contexts && Object.keys(contexts).length > 0
@@ -43,6 +42,9 @@ const createPrompt = (message: string, contexts?: Contexts): string => {
           : ""
       }
     <CONTEXT_END>
+    <PROMPT_START>
+      ${message}
+    <PROMPT_END>
   `;
 };
 
@@ -50,35 +52,51 @@ const askAI = async (
   chat: Chat,
   message: MessageDetails,
   contexts?: Contexts,
-): Promise<string> => {
+): Promise<ModelResponse> => {
   const response = await chat.sendMessage({
     message: createPrompt(message.text, contexts),
   });
 
-  if (!response.text) {
+  const contentPart =
+    response.candidates &&
+    response.candidates[0] &&
+    response.candidates[0].content &&
+    response.candidates[0].content.parts &&
+    response.candidates[0].content.parts[0];
+
+  const text = contentPart && contentPart.text;
+
+  if (!text) {
     throw new Error("Empty response");
   }
 
-  return response.text;
+  return {
+    text,
+    thoughtSignature: contentPart.thoughtSignature,
+  };
 };
 
-function createHistory(history: MessageDetails[] = []): Content[] {
+function createHistory(history: ModelMessage[] = []): Content[] {
   return history.map((val) => {
     const message =
       val.role === CHAT_ROLES.USER
         ? createPrompt(val.text, val.contexts)
         : val.text;
 
-    return { role: val.role, parts: [{ text: message }] };
+    return {
+      role: val.role,
+      parts: [{ text: message, thoughtSignature: val.thoughtSignature }],
+    };
   });
 }
 
-function createChat(history: MessageDetails[] = []): Chat {
+function createChat(history: ModelMessage[] = []): Chat {
   return ai.chats.create({
-    model: "gemini-2.5-flash",
+    model: modelName,
     history: createHistory(history),
     config: {
       systemInstruction: assistantInstructions,
+      temperature: 1,
     },
   });
 }
@@ -99,7 +117,11 @@ export async function processChatMessage(
     text: message.text,
     contexts,
   });
-  addMessageToHistory(chatSessionID, { role: CHAT_ROLES.MODEL, text: answer });
+  addMessageToHistory(chatSessionID, {
+    role: CHAT_ROLES.MODEL,
+    text: answer.text,
+    thoughtSignature: answer.thoughtSignature,
+  });
 
-  return answer;
+  return answer.text;
 }

@@ -55,7 +55,15 @@ export default function Chat({
     addMessage(messageDetails);
     chatInputRef.current?.setInput("");
 
-    if (onSend) await onSend(messageDetails);
+    try {
+      if (onSend) await onSend(messageDetails);
+    } catch (error) {
+      addMessage({
+        role: CHAT_ROLES.MODEL,
+        text: "Sorry, something went wrong. Please try again.",
+      });
+      console.error("Error in onSend:", error);
+    }
 
     setIsLoadingContent(false);
   };
@@ -81,6 +89,7 @@ export default function Chat({
 
     if (!chatSessionID) {
       sessionStorage.setItem("chatSessionID", crypto.randomUUID());
+      setIsLoadingContent(false);
     } else {
       fetchChatHistory(chatSessionID)
         .then((res: MessageDetails[]) => {

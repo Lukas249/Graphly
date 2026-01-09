@@ -438,15 +438,6 @@ export default function GraphVisualization({
         });
     }
 
-    const adjacency: { [key: string]: string[] } = {};
-    nodes.forEach((n) => {
-      adjacency[n.id] = [];
-    });
-    edges.forEach((edge) => {
-      adjacency[edge.source.id].push(edge.target.id);
-      adjacency[edge.target.id].push(edge.source.id);
-    });
-
     if (isNodeSelectionEnabled) {
       node.on("click", (event, d) => {
         selectNode(d.id);

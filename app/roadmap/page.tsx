@@ -66,19 +66,19 @@ const nodeClickableStyle = {
 const rawNodes: Node[] = [
   {
     id: "graphs",
-    data: { label: "Algorytmy Grafowe" },
+    data: { label: "Graph Algorithms" },
     style: nodeStyle,
     position: { x: 0, y: 0 },
   },
   {
     id: "search",
-    data: { label: "Przeszukiwanie" },
+    data: { label: "Graph Traversal" },
     style: nodeStyle,
     position: { x: 0, y: 0 },
   },
   {
     id: "shortest",
-    data: { label: "Najkrótsza ścieżka" },
+    data: { label: "Shortest Path" },
     style: nodeStyle,
     position: { x: 0, y: 0 },
   },
@@ -108,26 +108,26 @@ const rawNodes: Node[] = [
   },
   {
     id: "floyd",
-    data: { label: "Floyd-warshall" },
+    data: { label: "Floyd-Warshall" },
     style: nodeClickableStyle,
     position: { x: 0, y: 0 },
   },
 
   {
     id: "toposort",
-    data: { label: "Sortowanie topologiczne" },
+    data: { label: "Topological Sort" },
     style: nodeClickableStyle,
     position: { x: 0, y: 0 },
   },
   {
     id: "euler",
-    data: { label: "Ścieżka i cykl Eulera" },
+    data: { label: "Eulerian Path and Cycle" },
     style: nodeClickableStyle,
     position: { x: 0, y: 0 },
   },
   {
     id: "scc",
-    data: { label: "Silnie spójne składowe" },
+    data: { label: "Strongly Connected Components" },
     style: nodeClickableStyle,
     position: { x: 0, y: 0 },
   },
