@@ -201,7 +201,7 @@ To run Graphly locally, you need Docker installed.
     ```
 
 2.  **Set up Environment Variables**
-   
+
     Create a `.env` file in the root directory:
 
     ```env
@@ -220,7 +220,7 @@ To run Graphly locally, you need Docker installed.
     DATABASE_URL=mysql://user:password@graphly-mysql:3306/nextjs_db
     ```
 
-4.  **Run with Docker Compose**
+3.  **Run with Docker Compose**
 
     This will start the all needed services.
 
@@ -234,8 +234,8 @@ To run Graphly locally, you need Docker installed.
     docker-compose down -v
     ```
 
-5.  **Access the App**
-   
+4.  **Access the App**
+
     Open `http://localhost:3000` (or your configured port) in your browser.
 
 ### Troubleshooting: Line Ending Errors (`$'\r': command not found`)
@@ -243,6 +243,7 @@ To run Graphly locally, you need Docker installed.
 If you see errors like `/judge0.conf: line 14: $'\r': command not found`, your configuration file has **Windows-style line endings (CRLF)**. You must convert it to **Unix-style (LF)** for Docker to read it correctly.
 
 **Easiest Fix:**
+
 1. Open the file in **VS Code**.
 2. Look at the status bar in the bottom-right corner of the window.
 3. Click on **CRLF** and select **LF** from the menu.
@@ -258,6 +259,7 @@ The `judge0/judge0.conf` file handles the configuration for the code execution e
 > **Note:** By default, these are set to `password`.
 
 It also sets the correct hostnames for Docker service discovery:
+
 - `REDIS_HOST=judge0-redis`
 - `POSTGRES_HOST=judge0-db`
 
