@@ -201,6 +201,7 @@ To run Graphly locally, you need Docker installed.
     ```
 
 2.  **Set up Environment Variables**
+   
     Create a `.env` file in the root directory:
 
     ```env
@@ -219,15 +220,33 @@ To run Graphly locally, you need Docker installed.
     DATABASE_URL=mysql://user:password@graphly-mysql:3306/nextjs_db
     ```
 
-3.  **Run with Docker Compose**
+4.  **Run with Docker Compose**
+
     This will start the all needed services.
 
     ```bash
-    docker compose up -d --build
+    docker compose up --build
     ```
 
-4.  **Access the App**
+    **Note:** If the startup fails or you encounter errors, you must clean up the old containers and volumes before retrying to ensure a clean state. Run the following command:
+
+    ```bash
+    docker-compose down -v
+    ```
+
+5.  **Access the App**
+   
     Open `http://localhost:3000` (or your configured port) in your browser.
+
+### Troubleshooting: Line Ending Errors (`$'\r': command not found`)
+
+If you see errors like `/judge0.conf: line 14: $'\r': command not found`, your configuration file has **Windows-style line endings (CRLF)**. You must convert it to **Unix-style (LF)** for Docker to read it correctly.
+
+**Easiest Fix:**
+1. Open the file in **VS Code**.
+2. Look at the status bar in the bottom-right corner of the window.
+3. Click on **CRLF** and select **LF** from the menu.
+4. Save the file.
 
 ## 🔧 Judge0 Configuration
 
@@ -237,3 +256,9 @@ The `judge0/judge0.conf` file handles the configuration for the code execution e
 - `POSTGRES_PASSWORD`
 
 > **Note:** By default, these are set to `password`.
+
+It also sets the correct hostnames for Docker service discovery:
+- `REDIS_HOST=judge0-redis`
+- `POSTGRES_HOST=judge0-db`
+
+> **Important:** These hostnames must match the service names defined in your `judge0/docker-compose.yml` file exactly.
