@@ -1,9 +1,9 @@
-"use server";
-
 import Menu from "../menu";
 import { notFound } from "next/navigation";
 import { LinkList } from "../components/linkList/linkList";
 import { getArticles } from "../services/articlesService";
+
+export const revalidate = 60;
 
 export default async function LearnPage() {
   const articles = await getArticles({ id: true, title: true, slug: true });

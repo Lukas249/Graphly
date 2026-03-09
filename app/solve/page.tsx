@@ -1,9 +1,9 @@
-"use server";
-
 import Menu from "../menu";
 import { notFound } from "next/navigation";
 import { LinkList } from "../components/linkList/linkList";
 import { getProblems } from "../services/problemsService";
+
+export const revalidate = 60;
 
 export default async function SolvePage() {
   const problems = await getProblems({
