@@ -11,7 +11,10 @@
     "lint": "eslint .",
     "test": "jest",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "docker-dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --watch",
+    "docker-prod": "docker-compose up",
+    "docker-down": "docker-compose down"
   },
   "dependencies": {
     "@datastructures-js/priority-queue": "^6.3.5",
@@ -26,16 +29,18 @@
     "dagre": "^0.8.5",
     "dotenv": "^17.2.3",
     "lodash": "^4.17.21",
-    "next": "15.5.4",
+    "next": "^15.5.12",
     "prisma": "^6.18.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-jsx-parser": "^2.4.1",
     "react-markdown": "^10.1.0",
     "react-toastify": "^11.0.5",
     "reactflow": "^11.11.4",
     "redis": "^5.9.0",
     "rehype-highlight": "^7.0.2",
-    "remark-gfm": "^4.0.1"
+    "remark-gfm": "^4.0.1",
+    "swiper": "^12.1.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

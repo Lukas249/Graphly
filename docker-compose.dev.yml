@@ -1,0 +1,14 @@
+services:
+  graphly-web:
+    command: sh -c "npx prisma generate && npm run dev"
+    environment:
+      - WATCHPACK_POLLING=true
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /usr/local/app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
