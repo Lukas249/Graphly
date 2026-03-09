@@ -43,18 +43,24 @@ function GuideContent({
   return (
     <div className="mx-7">
       <ArticleParagraph>
-        Możesz dowolnie modyfikować graf w zakładce Graph.
+        <p>
+          <strong>Graph Modification Guide</strong>
+        </p>
+        You can freely modify the graph in the Graph tab using the following
+        syntax:
         <ul className="list-disc pl-4">
           <li>
-            Aby utworzyć krawędź nieskierowaną między wierzchołkami, użyj{" "}
+            Undirected Edge: To create an undirected edge between vertices, use
+            {"  "}
             {<pre className="inline-block">--</pre>}
           </li>
           <li>
-            Aby utworzyć krawędź skierowaną między wierzchołkami, użyj{" "}
+            Directed Edge: To create a directed edge between vertices, use{"  "}
             {<pre className="inline-block">{"->"}</pre>}
           </li>
           <li>
-            Jeśli chcesz dodać wagę krawędzi, podaj ją po dwukropku{" "}
+            Edge Weights: To add a weight to an edge, specify it after a colon
+            {"  "}
             {<pre className="inline-block">:</pre>}
           </li>
         </ul>
@@ -62,8 +68,8 @@ function GuideContent({
 
       {isNodeSelectionEnabled && (
         <ArticleParagraph>
-          Przed uruchomieniem algorytmu możesz wybrać wierzchołek początkowy.
-          Kliknij dowolny wierzchołek, aby ustawić go jako punkt startowy.
+          Before running the algorithm, you can select a starting vertex. Simply
+          click any node to set it as the starting point.
         </ArticleParagraph>
       )}
 
@@ -247,7 +253,7 @@ function GraphEducational({
         graphRef.current?.resetMarks();
 
         tutorialRef.current?.addTutorialStep({
-          description: `Algorytm zaczynamy z wybranego wierzchołka ${selectedNode}`,
+          description: `Algorithm initiated at vertex ${selectedNode}.`,
           variables: initialStep.variables,
         });
         await waitOnClick();
@@ -264,7 +270,7 @@ function GraphEducational({
       });
 
       tutorialRef.current?.addTutorialStep({
-        description: `Algorytm zakończył działanie`,
+        description: `Algorithm execution completed.`,
         buttonText: "Restart",
       });
 
