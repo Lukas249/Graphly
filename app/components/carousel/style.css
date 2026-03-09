@@ -1,0 +1,21 @@
+@reference "../../globals.css";
+
+.carousel-pagination .swiper-pagination-bullet {
+  @apply m-0 h-2 w-2 rounded-full bg-white;
+}
+.carousel-pagination .swiper-pagination-bullet-active {
+  @apply bg-primary scale-125;
+}
+
+.carousel-next,
+.carousel-prev {
+  @apply hover:text-primary absolute top-1/2 z-10 -translate-y-1/2 cursor-pointer rounded-full border border-gray-200 bg-white px-2 py-1 text-sm font-semibold text-gray-600 shadow;
+}
+
+.carousel-next {
+  @apply right-3;
+}
+
+.carousel-prev {
+  @apply left-3;
+}
