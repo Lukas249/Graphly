@@ -5,6 +5,7 @@ import GraphEducational from "./GraphEducational";
 
 import { MinPriorityQueue } from "@datastructures-js/priority-queue";
 import { Visualization } from "@/app/lib/visualizations/types";
+import _ from "lodash";
 
 export default function AlgorithmWrapper({
   visualization,
@@ -13,6 +14,7 @@ export default function AlgorithmWrapper({
 }) {
   const algorithm = new Function(visualization.code)().bind({
     MinPriorityQueue,
+    _,
   });
 
   const reset = new Function(visualization.reset_code)();
