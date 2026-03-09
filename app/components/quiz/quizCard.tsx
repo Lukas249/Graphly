@@ -18,6 +18,8 @@ const Quiz = ({ questions }: { questions: Question[] }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number>(-1);
   const [answerConfirmed, setAnswerConfirmed] = useState<boolean>(false);
 
+  const [showOptions, setShowOptions] = useState<boolean>(false);
+
   const { question, answers, explanation, correctAnswer } =
     questions[activeQuestion];
 
@@ -29,6 +31,7 @@ const Quiz = ({ questions }: { questions: Question[] }) => {
 
     setAnswerConfirmed(false);
     setSelectedAnswer(-1);
+    setShowOptions(false);
 
     if (activeQuestion !== questions.length - 1) {
       setActiveQuestion((prev) => prev + 1);
@@ -59,22 +62,34 @@ const Quiz = ({ questions }: { questions: Question[] }) => {
 
       {answerConfirmed && <Explanation text={explanation} />}
 
-      <form className={answerConfirmed ? "pointer-events-none" : ""}>
-        <QuizOptions
-          answers={answers}
-          correctAnswer={correctAnswer}
-          answerConfirmed={answerConfirmed}
-          onAnswerSelected={onAnswerSelected}
-          selectedAnswer={selectedAnswer}
-        />
-      </form>
-      <div className="flex justify-end">
-        <SubmitButton
-          onClickHandler={onClickNext}
-          disabled={selectedAnswer < 0}
-          text={getButtonText()}
-        />
-      </div>
+      {showOptions ? (
+        <>
+          <form className={answerConfirmed ? "pointer-events-none" : ""}>
+            <QuizOptions
+              answers={answers}
+              correctAnswer={correctAnswer}
+              answerConfirmed={answerConfirmed}
+              onAnswerSelected={onAnswerSelected}
+              selectedAnswer={selectedAnswer}
+            />
+          </form>
+
+          <div className="flex justify-end">
+            <SubmitButton
+              onClickHandler={onClickNext}
+              disabled={selectedAnswer < 0}
+              text={getButtonText()}
+            />
+          </div>
+        </>
+      ) : (
+        <div className="my-10 flex flex-col items-center justify-center gap-5 text-center">
+          <p>Try to answer without displaying the options</p>
+          <button className="btn" onClick={() => setShowOptions(true)}>
+            Display Answers
+          </button>
+        </div>
+      )}
     </div>
   );
 };
