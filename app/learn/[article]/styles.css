@@ -1,10 +1,33 @@
+@reference "../../globals.css";
+
 .article-paragraph {
-  margin: 1rem 0;
+  @apply my-4;
 }
 
 .pseudocode {
-  border-radius: 0.5rem;
-  overflow-x: auto;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.4rem 0.8rem;
+  @apply my-4 overflow-x-auto rounded-lg bg-white/5 px-[0.8rem] py-[0.4rem] font-mono text-sm;
+}
+
+.article-blockquote {
+  @apply bg-gray-dark border-primary my-8 rounded-r-lg border-l-4 px-[1.5rem] py-[1.25rem] text-white;
+}
+
+.article-blockquote b {
+  @apply text-primary mb-2 text-[1.1rem] font-bold;
+}
+
+.article-blockquote code {
+  @apply text-primary rounded bg-[#2d2d2d] px-[0.4rem] py-[0.2rem];
+}
+
+.article-blockquote-warning {
+  @apply bg-gray-dark my-8 rounded-r-lg border-l-4 border-red-400 px-[1.5rem] py-[1.25rem] text-white;
+}
+
+.article-blockquote-warning b {
+  @apply mb-2 text-[1.1rem] font-bold text-red-400;
+}
+
+.article-blockquote-warning code {
+  @apply rounded bg-[#2d2d2d] px-[0.4rem] py-[0.2rem] text-red-400;
 }
