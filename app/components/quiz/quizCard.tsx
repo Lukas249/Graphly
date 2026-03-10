@@ -21,7 +21,7 @@ const Quiz = ({ questions }: { questions: Question[] }) => {
   const [showOptions, setShowOptions] = useState<boolean>(false);
 
   const { question, answers, explanation, correctAnswer } =
-    questions[activeQuestion];
+    questions[activeQuestion] ?? {};
 
   const onClickNext = () => {
     if (!answerConfirmed) {
@@ -33,11 +33,7 @@ const Quiz = ({ questions }: { questions: Question[] }) => {
     setSelectedAnswer(-1);
     setShowOptions(false);
 
-    if (activeQuestion !== questions.length - 1) {
-      setActiveQuestion((prev) => prev + 1);
-    } else {
-      setActiveQuestion(0);
-    }
+    setActiveQuestion((prev) => prev + 1);
   };
 
   const onAnswerSelected = (answerNumber: number) => {
@@ -56,39 +52,55 @@ const Quiz = ({ questions }: { questions: Question[] }) => {
 
   return (
     <div className="mx-auto mt-[50px] max-w-xl rounded-md border border-[#444444] px-[60px] py-[30px]">
-      <QuestionCounter activeQuestion={activeQuestion} questions={questions} />
-
-      <h3 className="my-4 text-xl font-medium text-white">{question}</h3>
-
-      {answerConfirmed && <Explanation text={explanation} />}
-
-      {showOptions ? (
-        <>
-          <form className={answerConfirmed ? "pointer-events-none" : ""}>
-            <QuizOptions
-              answers={answers}
-              correctAnswer={correctAnswer}
-              answerConfirmed={answerConfirmed}
-              onAnswerSelected={onAnswerSelected}
-              selectedAnswer={selectedAnswer}
-            />
-          </form>
-
-          <div className="flex justify-end">
-            <SubmitButton
-              onClickHandler={onClickNext}
-              disabled={selectedAnswer < 0}
-              text={getButtonText()}
-            />
-          </div>
-        </>
-      ) : (
-        <div className="my-10 flex flex-col items-center justify-center gap-5 text-center">
-          <p>Try to answer without displaying the options</p>
-          <button className="btn" onClick={() => setShowOptions(true)}>
-            Display Answers
+      {activeQuestion === questions.length ? (
+        <div className="flex flex-col items-center justify-center gap-5 text-center">
+          <h2 className="text-center text-2xl font-semibold text-white">
+            Quiz Completed!
+          </h2>
+          <button onClick={() => setActiveQuestion(0)} className="btn ml-4">
+            Once Again
           </button>
         </div>
+      ) : (
+        <>
+          <QuestionCounter
+            activeQuestion={activeQuestion}
+            questions={questions}
+          />
+
+          <h3 className="my-4 text-xl font-medium text-white">{question}</h3>
+
+          {answerConfirmed && <Explanation text={explanation} />}
+
+          {showOptions ? (
+            <>
+              <form className={answerConfirmed ? "pointer-events-none" : ""}>
+                <QuizOptions
+                  answers={answers}
+                  correctAnswer={correctAnswer}
+                  answerConfirmed={answerConfirmed}
+                  onAnswerSelected={onAnswerSelected}
+                  selectedAnswer={selectedAnswer}
+                />
+              </form>
+
+              <div className="flex justify-end">
+                <SubmitButton
+                  onClickHandler={onClickNext}
+                  disabled={selectedAnswer < 0}
+                  text={getButtonText()}
+                />
+              </div>
+            </>
+          ) : (
+            <div className="my-10 flex flex-col items-center justify-center gap-5 text-center">
+              <p>Try to answer without displaying the options</p>
+              <button className="btn" onClick={() => setShowOptions(true)}>
+                Display Answers
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
