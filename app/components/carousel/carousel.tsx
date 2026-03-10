@@ -41,14 +41,16 @@ export function CarouselSlide({ slide }: CarouselSlideProps) {
       </div>
 
       <div className="border-t border-gray-100 px-4 py-3">
-        <p className="text-sm text-gray-700">{slide?.description}</p>
+        <p className="text-sm text-white">{slide?.description}</p>
       </div>
     </article>
   );
 }
 
 export function Carousel({ children, className, loop = false }: CarouselProps) {
-  const slides = Children.toArray(children);
+  const slides = Children.toArray(children).filter((child) => {
+    return (child as any)?.type?.name === "CarouselSlide";
+  });
 
   return (
     <div className={`mx-auto w-full max-w-3xl px-4 py-6 ${className}`}>
@@ -66,7 +68,7 @@ export function Carousel({ children, className, loop = false }: CarouselProps) {
             clickable: true,
             el: ".carousel-pagination",
           }}
-          className="carousel-swiper overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
+          className="carousel-swiper bg-dark overflow-hidden rounded-xl shadow-sm"
         >
           {slides.map((child, idx) => (
             <SwiperSlide key={idx}>{child}</SwiperSlide>
