@@ -9,6 +9,9 @@ export type MarkDirectedEdgeProps = {
   edgeColor?: string;
   edgeLabelColor?: string;
   edgeHeadColor?: string;
+  prevEdgeColor?: string;
+  prevEdgeLabelColor?: string;
+  prevEdgeHeadColor?: string;
 };
 
 export type MarkEdgeProps = MarkDirectedEdgeProps & { directed?: boolean };
@@ -18,6 +21,9 @@ export type MarkNodeProps = {
   nodeColor?: string;
   strokeColor?: string;
   nodeLabelColor?: string;
+  prevNodeColor?: string;
+  prevStrokeColor?: string;
+  prevNodeLabelColor?: string;
 };
 
 export type Markings = {

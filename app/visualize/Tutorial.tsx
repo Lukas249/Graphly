@@ -127,26 +127,30 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
         sourceId: state.edge.sourceId,
         destinationId: state.edge.destinationId,
         directed: state.edge.directed,
-        edgeColor: isNextState ? state.edge.edgeColor : graphColors.edge,
+        edgeColor: isNextState
+          ? state.edge.edgeColor
+          : state.edge.prevEdgeColor || graphColors.edge,
         edgeLabelColor: isNextState
           ? state.edge.edgeLabelColor
-          : graphColors.edgeLabel,
+          : state.edge.prevEdgeLabelColor || graphColors.edgeLabel,
         edgeHeadColor: isNextState
           ? state.edge.edgeHeadColor
-          : graphColors.edgeHead,
+          : state.edge.prevEdgeHeadColor || graphColors.edgeHead,
       });
     }
 
     if (state?.node) {
       graphRef.current?.markNode({
         nodeId: state.node.nodeId,
-        nodeColor: isNextState ? state.node.nodeColor : graphColors.nodeFill,
+        nodeColor: isNextState
+          ? state.node.nodeColor
+          : state.node.prevNodeColor || graphColors.nodeFill,
         strokeColor: isNextState
           ? state.node.strokeColor
-          : graphColors.nodeStroke,
+          : state.node.prevStrokeColor || graphColors.nodeStroke,
         nodeLabelColor: isNextState
           ? state.node.nodeLabelColor
-          : graphColors.nodeLabel,
+          : state.node.prevNodeLabelColor || graphColors.nodeLabel,
       });
     }
 
