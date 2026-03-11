@@ -13,7 +13,7 @@
 }
 
 .article-blockquote b {
-  @apply text-primary mb-2 text-[1.1rem] font-bold;
+  @apply text-primary font-bold;
 }
 
 .article-blockquote code {
@@ -25,7 +25,7 @@
 }
 
 .article-blockquote-warning b {
-  @apply mb-2 text-[1.1rem] font-bold text-red-400;
+  @apply font-bold text-red-400;
 }
 
 .article-blockquote-warning code {
