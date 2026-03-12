@@ -5,6 +5,7 @@ import {
   ChartBarIcon,
   CodeBracketIcon,
 } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -23,9 +24,11 @@ export default function Home() {
         <p className="animation-delay-500 animate-fade-slide-up text-5xl font-bold text-white opacity-0">
           Solve to master
         </p>
-        <button className="animation-delay-750 animate-fade-slide-up btn opacity-0">
-          {"Let's Explore"}
-        </button>
+        <Link href="/roadmap" prefetch={false}>
+          <button className="animation-delay-750 animate-fade-slide-up btn opacity-0">
+            {"Let's Explore"}
+          </button>
+        </Link>
       </div>
       <div className="animation-delay-750 animate-fade-slide-up flex w-full max-w-5xl flex-row gap-5 opacity-0">
         <Card
