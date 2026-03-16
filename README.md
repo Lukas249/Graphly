@@ -29,7 +29,6 @@
 
 The platform combines theoretical articles, interactive visualizations, a "LeetCode-style" coding judge, and a structured roadmap - all powered by an intelligent AI assistant.
 
-
 <div align="center">
   <img width="800" alt="Graphly Website - Home" src="https://github.com/user-attachments/assets/20193a8e-e255-478d-882c-593351865f5d" />
 </div>
