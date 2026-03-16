@@ -29,6 +29,7 @@
 
 The platform combines theoretical articles, interactive visualizations, a "LeetCode-style" coding judge, and a structured roadmap - all powered by an intelligent AI assistant.
 
+
 <div align="center">
   <img width="800" alt="Graphly Website - Home" src="https://github.com/user-attachments/assets/20193a8e-e255-478d-882c-593351865f5d" />
 </div>
@@ -53,7 +54,7 @@ Grasp the theory before diving into code.
 </p>
 
 <div align="center">
-  <img width="800" alt="Graphly - Learn DFS" src="https://github.com/user-attachments/assets/57bf84b4-d7b9-4c0e-851d-a649eb94ba75" />
+  <img width="800" alt="Graphly - Learn Kosaraju Algorithm" src="https://github.com/user-attachments/assets/a18436ac-a028-4476-92a2-abd363a0839e" />
 </div>
 
 <h3>📝 Immediate Reinforcement</h3>
@@ -79,7 +80,7 @@ The heart of Graphly. Don't just read code - watch it run.
 - **Custom Graphs:** Edit the graph using a simple text syntax.
 
 <div align="center">
-  <img width="800"  alt="Graphly - Executing DFS Algorithm" src="https://github.com/user-attachments/assets/b7bc8f0f-2039-4a81-8e48-6e38a9b15db0" />
+  <img width="800"  alt="Graphly - Executing DFS Algorithm" src="https://github.com/user-attachments/assets/51c50b8a-510c-41f4-82b9-0b2642a105cb" />
 </div>
 
 _Example: Step-by-Step Executing DFS Algorithm_
@@ -102,7 +103,7 @@ Practice makes perfect. A built-in coding environment similar to LeetCode.
 </p>
 
 <div align="center">
-  <img width="800" alt="Graphly - Solve Sum Of All Nodes" src="https://github.com/user-attachments/assets/6e3a332f-732f-4829-8b58-111c39bda641" />
+  <img width="800" alt="Graphly - Solve Sum Of All Nodes" src="https://github.com/user-attachments/assets/772c2555-1ac4-4f5b-99a9-e825bb63d8ec" />
 </div>
 
 <h3>🤖 Submission & AI Insights</h3>
@@ -112,7 +113,7 @@ Practice makes perfect. A built-in coding environment similar to LeetCode.
 </p>
 
 <div align="center">
-  <img width="800" alt="Graphly - Accepted Submission" src="https://github.com/user-attachments/assets/803bfe1e-f1fd-42ea-8692-36669a7712b3" />
+  <img width="800" alt="Graphly - Accepted Submission" src="https://github.com/user-attachments/assets/4bc803ed-5d99-43d8-afdd-c70b33072bd6" />
 </div>
 
 ### 4. Roadmap
