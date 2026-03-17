@@ -4,7 +4,7 @@ import lodash from "lodash";
 import Editor from "@monaco-editor/react";
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import ProblemDescription from "../../components/problemDescription/problemDescription";
 import Menu from "../../menu";
 
@@ -25,6 +25,7 @@ import { addChatContext } from "@/app/components/chat/context/addChatContext";
 import { handleCodeRun, handleCodeSubmit } from "@/app/lib/judge0/codeJudge";
 import { ButtonsPanel } from "./buttonsPanel";
 import { onChangeTab } from "@/app/lib/tabs/onChangeTab";
+import { contextIcons } from "@/app/components/chat/context/contextIcons";
 
 type TabSection = "main" | "code" | "testcases";
 
@@ -40,9 +41,8 @@ export default function Problem({
   problem: Problem;
   defaultLanguage?: string;
 }) {
-  const [testcases, setTestcases] = useState(problem.testcases);
-
-  const [sourceCode, setSourceCode] = useState(problem.code);
+  const sourceCodeRef = useRef(problem.code);
+  const testcasesRef = useRef(problem.testcases);
 
   const [codeJudging, setCodeJudging] = useState(false);
 
@@ -54,58 +54,99 @@ export default function Problem({
 
   const chatRef = useRef<ChatRef>(null);
 
-  const [chat] = useState(
-    <Chat
-      ref={chatRef}
-      onSend={async (message: MessageDetails) =>
-        await sendHandler(chatRef, message, askAI)
-      }
-    />,
+  const debouncedAddCodeContext = useMemo(
+    () =>
+      lodash.debounce((value: string) => {
+        addChatContext(chatRef, "code", value, false);
+      }, 250),
+    [],
   );
 
-  const [mainTabs] = useState<Tab[]>([
-    {
-      id: crypto.randomUUID(),
-      title: TabTitle.Description,
-      content: (
-        <AISelectionProvider
-          buttonClickHandler={(__, selectedText) => {
-            addChatContext(chatRef, "description", selectedText, true);
-          }}
-        >
-          <ProblemDescription
-            id={problem.id}
-            title={problem.title}
-            description={problem.description}
-          />
-        </AISelectionProvider>
-      ),
-      closeable: false,
-    },
-    {
-      id: crypto.randomUUID(),
-      title: TabTitle.GraphlyAI,
-      renderContent: () => chat,
-      closeable: false,
-    },
-  ]);
+  const debouncedAddTestcasesContext = useMemo(
+    () =>
+      lodash.debounce((value: string) => {
+        addChatContext(chatRef, "testcases", value, false);
+      }, 250),
+    [],
+  );
 
-  const [testcasesTabs] = useState<Tab[]>([
-    {
-      id: crypto.randomUUID(),
-      title: TabTitle.Testcases,
-      renderContent: () => (
-        <AISelectionProvider
-          buttonClickHandler={(__, selectedText) => {
-            addChatContext(chatRef, "testcases", selectedText, true);
-          }}
-        >
+  useEffect(() => {
+    return () => {
+      debouncedAddCodeContext.cancel();
+      debouncedAddTestcasesContext.cancel();
+    };
+  }, [debouncedAddCodeContext, debouncedAddTestcasesContext]);
+
+  const chat = useMemo(
+    () => (
+      <Chat
+        ref={chatRef}
+        onSend={async (message: MessageDetails) =>
+          await sendHandler(chatRef, message, askAI)
+        }
+        defaultContexts={{
+          code: {
+            icon: contextIcons["code"],
+            text: sourceCodeRef.current,
+            closeable: false,
+          },
+          testcases: {
+            icon: contextIcons["testcases"],
+            text: testcasesRef.current,
+            closeable: false,
+          },
+        }}
+      />
+    ),
+    [],
+  );
+
+  const mainTabs = useMemo<Tab[]>(
+    () => [
+      {
+        id: crypto.randomUUID(),
+        title: TabTitle.Description,
+        content: (
+          <AISelectionProvider
+            buttonClickHandler={(__, selectedText) => {
+              addChatContext(chatRef, "description", selectedText, true);
+            }}
+          >
+            <ProblemDescription
+              id={problem.id}
+              title={problem.title}
+              description={problem.description}
+            />
+          </AISelectionProvider>
+        ),
+        closeable: false,
+      },
+      {
+        id: crypto.randomUUID(),
+        title: TabTitle.GraphlyAI,
+        renderContent: () => chat,
+        closeable: false,
+      },
+    ],
+    [chat, problem.description, problem.id, problem.title],
+  );
+
+  const testcasesTabs = useMemo<Tab[]>(
+    () => [
+      {
+        id: crypto.randomUUID(),
+        title: TabTitle.Testcases,
+        renderContent: () => (
           <Editor
             height="100%"
             language="plaintext"
-            value={testcases}
+            defaultValue={testcasesRef.current}
             theme="vs-dark"
-            onChange={(val) => val && setTestcases(val)}
+            onChange={(val) => {
+              if (!val) return;
+              testcasesRef.current = val;
+              debouncedAddTestcasesContext(val);
+            }}
             options={{
               stickyScroll: {
                 enabled: false,
@@ -118,28 +159,29 @@ export default function Problem({
               },
             }}
           />
-        </AISelectionProvider>
-      ),
-      closeable: false,
-    },
-  ]);
+        ),
+        closeable: false,
+      },
+    ],
+    [debouncedAddTestcasesContext],
+  );
 
-  const [codeTabs] = useState<Tab[]>([
-    {
-      id: crypto.randomUUID(),
-      title: TabTitle.Code,
-      renderContent: () => (
-        <AISelectionProvider
-          buttonClickHandler={(__, selectedText) => {
-            addChatContext(chatRef, "code", selectedText, true);
-          }}
-        >
+  const codeTabs = useMemo<Tab[]>(
+    () => [
+      {
+        id: crypto.randomUUID(),
+        title: TabTitle.Code,
+        renderContent: () => (
           <Editor
             height="100%"
             language={language.editorLanguage}
-            value={sourceCode}
+            defaultValue={sourceCodeRef.current}
             theme="vs-dark"
-            onChange={(val) => val && setSourceCode(val)}
+            onChange={(val) => {
+              if (!val) return;
+              sourceCodeRef.current = val;
+              debouncedAddCodeContext(val);
+            }}
             options={{
               stickyScroll: {
                 enabled: false,
@@ -153,11 +195,12 @@ export default function Problem({
             }}
             className="mb-2"
           />
-        </AISelectionProvider>
-      ),
-      closeable: false,
-    },
-  ]);
+        ),
+        closeable: false,
+      },
+    ],
+    [debouncedAddCodeContext, language.editorLanguage],
+  );
 
   const getTabSetters = (section: TabSection): TabSetters => {
     switch (section) {
@@ -192,12 +235,14 @@ export default function Problem({
 
   const handleRun = async () => {
     setCodeJudging(true);
+    const currentSourceCode = sourceCodeRef.current;
+    const currentTestcases = testcasesRef.current;
 
     const result = await handleCodeRun(
       problem.id,
-      sourceCode,
+      currentSourceCode,
       language.id,
-      testcases,
+      currentTestcases,
     );
 
     if (result) {
@@ -209,7 +254,7 @@ export default function Problem({
             <Result
               result={result}
               paramsNames={problem.params}
-              sourceCode={sourceCode}
+              sourceCode={currentSourceCode}
             />
           ),
           closeable: true,
@@ -223,10 +268,11 @@ export default function Problem({
 
   const handleSubmit = async () => {
     setCodeJudging(true);
+    const currentSourceCode = sourceCodeRef.current;
 
     const result: SubmissionResult | null = await handleCodeSubmit(
       problem.id,
-      sourceCode,
+      currentSourceCode,
       language.id,
     );
 
@@ -242,10 +288,9 @@ export default function Problem({
       let feedbackAI = "";
 
       try {
-        feedbackAI = await getFeedbackAI(
-          { code: `Submission: ${sourceCode}` },
-          "feedback-chat",
-        );
+        feedbackAI = await getFeedbackAI({
+          code: `<CODE_START>${currentSourceCode}</CODE_END>`,
+        });
       } catch {
         feedbackAI = "";
       }
@@ -253,14 +298,14 @@ export default function Problem({
       content = feedbackAI ? (
         <Result
           result={result}
-          sourceCode={sourceCode}
+          sourceCode={currentSourceCode}
           feedbackAI={feedbackAI}
           paramsNames={problem.params}
         />
       ) : (
         <Result
           result={result}
-          sourceCode={sourceCode}
+          sourceCode={currentSourceCode}
           paramsNames={problem.params}
         />
       );
@@ -268,7 +313,7 @@ export default function Problem({
       content = (
         <Result
           result={result}
-          sourceCode={sourceCode}
+          sourceCode={currentSourceCode}
           paramsNames={problem.params}
         />
       );
