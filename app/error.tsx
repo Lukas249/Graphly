@@ -1,7 +1,6 @@
 "use client";
 
 import NextError from "next/error";
-import { useEffect } from "react";
 
 export default function Error({
   error,
@@ -10,10 +9,6 @@ export default function Error({
 }) {
   const [status, message] = error.message.split(":").map((val) => val.trim());
   const statusCode = Number(status);
-
-  useEffect(() => {
-    console.error(error);
-  }, [error]);
 
   let errorComponent;
 
