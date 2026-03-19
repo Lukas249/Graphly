@@ -68,8 +68,12 @@ export default async function getSubmissionResult(
 
           const normalizedResult: SubmissionResult = {
             ...result,
-            time: Number.isFinite(Number(result.time)) ? Number(result.time) : 0,
-            memory: Number.isFinite(Number(result.memory)) ? Number(result.memory) : 0,
+            time: Number.isFinite(Number(result.time))
+              ? Number(result.time)
+              : 0,
+            memory: Number.isFinite(Number(result.memory))
+              ? Number(result.memory)
+              : 0,
           };
 
           clearInterval(intervalId);
