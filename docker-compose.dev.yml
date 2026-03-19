@@ -10,5 +10,11 @@ services:
           target: /usr/local/app
           ignore:
             - node_modules/
+            - .next/
+            - coverage/
+            - .git/
+            - certificates/
+            - prisma/generated/
+            - init.sql
         - action: rebuild
           path: package.json
