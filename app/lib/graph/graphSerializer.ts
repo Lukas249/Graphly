@@ -1,4 +1,4 @@
-import { Edge, Node } from "../../visualize/GraphTypes";
+import { Edge, Node } from "../../visualize/core/GraphTypes";
 import { EdgeSeparator, Graph, SeenEdges, SeenNodes } from "./types";
 
 export function parseGraph(

@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import GraphVisualization from "../GraphVisualization";
-import { Edge, GraphHandle, Node } from "../GraphTypes";
-import { TutorialRef, Tutorial } from "../Tutorial";
+import { Edge, GraphHandle, Node } from "../core/GraphTypes";
+import { TutorialRef, Tutorial } from "../core/Tutorial";
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 import { Tabs } from "@/app/components/tabs/tabs";
@@ -19,8 +19,8 @@ import {
 } from "@/app/lib/graph/graphFormatConfig";
 import { sendHandler } from "@/app/components/chat/sendHandler";
 import _ from "lodash";
-import GraphEditor from "../graphEditor";
-import { graphColors } from "../defaultGraphColors";
+import GraphEditor from "../core/GraphEditor";
+import { graphColors } from "../core/defaultGraphColors";
 import {
   Adjacency,
   AlgorithmFunction,

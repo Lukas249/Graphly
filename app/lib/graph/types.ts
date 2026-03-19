@@ -1,4 +1,4 @@
-import { Edge, Node } from "@/app/visualize/GraphTypes";
+import { Edge, Node } from "@/app/visualize/core/GraphTypes";
 
 export type SeenNodes = Set<string>;
 export type SeenEdges = Map<string, Map<string, string>>;
