@@ -11,21 +11,22 @@ import Menu from "../../menu";
 import { Tabs } from "../../components/tabs/tabs";
 import Chat from "../../components/chat/chat";
 import { ChatRef, MessageDetails } from "../../components/chat/types";
-import { askAI, getFeedbackAI } from "../../lib/gemini-ai/ai";
-import Result from "../status/result";
+import { askAI } from "../../lib/gemini-ai/ai";
 
-import { toast } from "react-toastify";
 import AISelectionProvider from "../../lib/AISelectionProvider";
 import { languages } from "./languages";
 import type { Problem } from "@/app/lib/problems/types";
-import { SubmissionResult } from "@/app/lib/judge0/types";
 import { sendHandler } from "@/app/components/chat/sendHandler";
 import { Tab, TabsRef, TabTitle } from "@/app/components/tabs/types";
+import {
+  createRenderTab,
+  createStaticTab,
+} from "@/app/components/tabs/tabFactory";
 import { addChatContext } from "@/app/components/chat/context/addChatContext";
-import { handleCodeRun, handleCodeSubmit } from "@/app/lib/judge0/codeJudge";
 import { ButtonsPanel } from "./buttonsPanel";
 import { onChangeTab } from "@/app/lib/tabs/onChangeTab";
 import { contextIcons } from "@/app/components/chat/context/contextIcons";
+import { useJudgeActions } from "./useJudgeActions";
 
 type TabSection = "main" | "code" | "testcases";
 
@@ -33,6 +34,18 @@ interface TabSetters {
   setTabs: React.Dispatch<React.SetStateAction<Tab[]>>;
   setCurrentTab: React.Dispatch<React.SetStateAction<number>>;
 }
+
+const monacoEditorOptions = {
+  stickyScroll: {
+    enabled: false,
+  },
+  tabSize: 2,
+  detectIndentation: false,
+  wordWrap: "on" as const,
+  minimap: {
+    enabled: false,
+  },
+};
 
 export default function Problem({
   problem,
@@ -103,101 +116,62 @@ export default function Problem({
 
   const mainTabs = useMemo<Tab[]>(
     () => [
-      {
-        id: crypto.randomUUID(),
-        title: TabTitle.Description,
-        content: (
-          <AISelectionProvider
-            buttonClickHandler={(__, selectedText) => {
-              addChatContext(chatRef, "description", selectedText, true);
-            }}
-          >
-            <ProblemDescription
-              id={problem.id}
-              title={problem.title}
-              description={problem.description}
-            />
-          </AISelectionProvider>
-        ),
-        closeable: false,
-      },
-      {
-        id: crypto.randomUUID(),
-        title: TabTitle.GraphlyAI,
-        renderContent: () => chat,
-        closeable: false,
-      },
+      createStaticTab(
+        TabTitle.Description,
+        <AISelectionProvider
+          buttonClickHandler={(__, selectedText) => {
+            addChatContext(chatRef, "description", selectedText, true);
+          }}
+        >
+          <ProblemDescription
+            id={problem.id}
+            title={problem.title}
+            description={problem.description}
+          />
+        </AISelectionProvider>,
+      ),
+      createRenderTab(TabTitle.GraphlyAI, () => chat),
     ],
     [chat, problem.description, problem.id, problem.title],
   );
 
   const testcasesTabs = useMemo<Tab[]>(
     () => [
-      {
-        id: crypto.randomUUID(),
-        title: TabTitle.Testcases,
-        renderContent: () => (
-          <Editor
-            height="100%"
-            language="plaintext"
-            defaultValue={testcasesRef.current}
-            theme="vs-dark"
-            onChange={(val) => {
-              if (!val) return;
-              testcasesRef.current = val;
-              debouncedAddTestcasesContext(val);
-            }}
-            options={{
-              stickyScroll: {
-                enabled: false,
-              },
-              tabSize: 2,
-              detectIndentation: false,
-              wordWrap: "on",
-              minimap: {
-                enabled: false,
-              },
-            }}
-          />
-        ),
-        closeable: false,
-      },
+      createRenderTab(TabTitle.Testcases, () => (
+        <Editor
+          height="100%"
+          language="plaintext"
+          defaultValue={testcasesRef.current}
+          theme="vs-dark"
+          onChange={(val) => {
+            if (!val) return;
+            testcasesRef.current = val;
+            debouncedAddTestcasesContext(val);
+          }}
+          options={monacoEditorOptions}
+        />
+      )),
     ],
     [debouncedAddTestcasesContext],
   );
 
   const codeTabs = useMemo<Tab[]>(
     () => [
-      {
-        id: crypto.randomUUID(),
-        title: TabTitle.Code,
-        renderContent: () => (
-          <Editor
-            height="100%"
-            language={language.editorLanguage}
-            defaultValue={sourceCodeRef.current}
-            theme="vs-dark"
-            onChange={(val) => {
-              if (!val) return;
-              sourceCodeRef.current = val;
-              debouncedAddCodeContext(val);
-            }}
-            options={{
-              stickyScroll: {
-                enabled: false,
-              },
-              tabSize: 2,
-              detectIndentation: false,
-              wordWrap: "on",
-              minimap: {
-                enabled: false,
-              },
-            }}
-            className="mb-2"
-          />
-        ),
-        closeable: false,
-      },
+      createRenderTab(TabTitle.Code, () => (
+        <Editor
+          height="100%"
+          language={language.editorLanguage}
+          defaultValue={sourceCodeRef.current}
+          theme="vs-dark"
+          onChange={(val) => {
+            if (!val) return;
+            sourceCodeRef.current = val;
+            debouncedAddCodeContext(val);
+          }}
+          options={monacoEditorOptions}
+          className="mb-2"
+        />
+      )),
     ],
     [debouncedAddCodeContext, language.editorLanguage],
   );
@@ -233,108 +207,15 @@ export default function Problem({
     });
   };
 
-  const handleRun = async () => {
-    setCodeJudging(true);
-    const currentSourceCode = sourceCodeRef.current;
-    const currentTestcases = testcasesRef.current;
-
-    const result: SubmissionResult | null = await handleCodeRun(
-      problem.id,
-      currentSourceCode,
-      language.id,
-      currentTestcases,
-    );
-
-    if (!result) {
-      toast.error("Failed to run code");
-      setCodeJudging(false);
-      return;
-    }
-
-    addTab(
-      {
-        id: crypto.randomUUID(),
-        title: TabTitle.Test,
-        content: (
-          <Result
-            result={result}
-            paramsNames={problem.params}
-            sourceCode={currentSourceCode}
-          />
-        ),
-        closeable: true,
-      },
-      "testcases",
-    );
-
-    setCodeJudging(false);
-  };
-
-  const handleSubmit = async () => {
-    setCodeJudging(true);
-    const currentSourceCode = sourceCodeRef.current;
-
-    const result: SubmissionResult | null = await handleCodeSubmit(
-      problem.id,
-      currentSourceCode,
-      language.id,
-    );
-
-    if (!result) {
-      toast.error("Failed to submit code");
-      setCodeJudging(false);
-      return;
-    }
-
-    let content;
-
-    if (result.status && result.status.id === 3) {
-      let feedbackAI = "";
-
-      try {
-        feedbackAI = await getFeedbackAI({
-          code: `<CODE_START>${currentSourceCode}</CODE_END>`,
-        });
-      } catch {
-        feedbackAI = "";
-      }
-
-      content = feedbackAI ? (
-        <Result
-          result={result}
-          sourceCode={currentSourceCode}
-          feedbackAI={feedbackAI}
-          paramsNames={problem.params}
-        />
-      ) : (
-        <Result
-          result={result}
-          sourceCode={currentSourceCode}
-          paramsNames={problem.params}
-        />
-      );
-    } else {
-      content = (
-        <Result
-          result={result}
-          sourceCode={currentSourceCode}
-          paramsNames={problem.params}
-        />
-      );
-    }
-
-    addTab(
-      {
-        id: crypto.randomUUID(),
-        title: TabTitle.Submission,
-        content,
-        closeable: true,
-      },
-      "main",
-    );
-
-    setCodeJudging(false);
-  };
+  const { handleRun, handleSubmit } = useJudgeActions({
+    problemId: problem.id,
+    paramsNames: problem.params,
+    languageId: language.id,
+    sourceCodeRef,
+    testcasesRef,
+    setCodeJudging,
+    addTab,
+  });
 
   return (
     <div className="mx-2 flex h-screen flex-col pb-2">
