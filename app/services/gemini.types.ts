@@ -1,3 +1,5 @@
+import "server-only";
+
 import { MessageDetails } from "../components/chat/types";
 
 export type ModelMessage = MessageDetails & { thoughtSignature?: string };
