@@ -14,9 +14,7 @@ import CollapsibleVerticalMenu from "@/app/components/collapsible-vertical-menu"
 import Link from "next/link";
 import { sendHandler } from "@/app/components/chat/sendHandler";
 import { Tab, TabsRef, TabTitle } from "@/app/components/tabs/types";
-import {
-  createStaticTab,
-} from "@/app/components/tabs/tabFactory";
+import { createStaticTab } from "@/app/components/tabs/tabFactory";
 import { addChatContext } from "@/app/components/chat/context/addChatContext";
 import { onChangeTab } from "@/app/lib/tabs/onChangeTab";
 
@@ -34,33 +32,29 @@ export default function Article({
   const [articleTabs] = useState<Tab[]>([
     createStaticTab(
       TabTitle.Article,
-      (
-        <AISelectionProvider
-          buttonClickHandler={(__, selectedText) => {
-            addChatContext(chatRef, "description", selectedText, true);
-          }}
-        >
-          <ArticleContent
-            title={articleData.title}
-            article={articleData.article}
-            quizData={articleData.quiz as Question[]}
-          />
-        </AISelectionProvider>
-      ),
+      <AISelectionProvider
+        buttonClickHandler={(__, selectedText) => {
+          addChatContext(chatRef, "description", selectedText, true);
+        }}
+      >
+        <ArticleContent
+          title={articleData.title}
+          article={articleData.article}
+          quizData={articleData.quiz as Question[]}
+        />
+      </AISelectionProvider>,
     ),
     createStaticTab(
       TabTitle.GraphlyAI,
-      (
-        <div className="h-[calc(100vh-180px)]">
-          <Chat
-            ref={chatRef}
-            onSend={async (message: MessageDetails) =>
-              await sendHandler(chatRef, message, askAI)
-            }
-            background="bg-base-200"
-          />
-        </div>
-      ),
+      <div className="h-[calc(100vh-180px)]">
+        <Chat
+          ref={chatRef}
+          onSend={async (message: MessageDetails) =>
+            await sendHandler(chatRef, message, askAI)
+          }
+          background="bg-base-200"
+        />
+      </div>,
     ),
   ]);
 

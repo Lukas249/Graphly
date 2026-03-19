@@ -118,80 +118,74 @@ function GraphEducational({
   const [tutorialTabs] = useState<Tab[]>([
     createStaticTab(
       TabTitle.Tutorial,
-      (
-        <AISelectionProvider
-          buttonClickHandler={(__, selectedText) => {
-            addChatContext(chatRef, "description", selectedText, true);
-          }}
-        >
-          <Tutorial
-            ref={tutorialRef}
-            graphRef={graphRef}
-            variables={initialStep.variables}
-            pseudocode={pseudocode}
-            graphColors={graphColors}
-          />
-        </AISelectionProvider>
-      ),
+      <AISelectionProvider
+        buttonClickHandler={(__, selectedText) => {
+          addChatContext(chatRef, "description", selectedText, true);
+        }}
+      >
+        <Tutorial
+          ref={tutorialRef}
+          graphRef={graphRef}
+          variables={initialStep.variables}
+          pseudocode={pseudocode}
+          graphColors={graphColors}
+        />
+      </AISelectionProvider>,
     ),
     createStaticTab(
       TabTitle.Guide,
-      (
-        <GuideContent
-          guideText={guideText}
-          isNodeSelectionEnabled={isNodeSelectionEnabled}
-        />
-      ),
+      <GuideContent
+        guideText={guideText}
+        isNodeSelectionEnabled={isNodeSelectionEnabled}
+      />,
     ),
     createRenderTab(TabTitle.Graph, () => (
-        <GraphEditor
-          userNodes={nodes}
-          userEdges={edges}
-          onChange={(nodes, edges) => {
-            setNodes(nodes);
-            setEdges(edges);
+      <GraphEditor
+        userNodes={nodes}
+        userEdges={edges}
+        onChange={(nodes, edges) => {
+          setNodes(nodes);
+          setEdges(edges);
 
-            addChatContext(
-              chatRef,
-              "graph",
-              stringifyGraph(
-                nodes,
-                edges,
-                defaultWeightSeparator,
-                defaultEdgeSeparator,
-              ),
-              false,
-            );
-          }}
-        />
-      )),
+          addChatContext(
+            chatRef,
+            "graph",
+            stringifyGraph(
+              nodes,
+              edges,
+              defaultWeightSeparator,
+              defaultEdgeSeparator,
+            ),
+            false,
+          );
+        }}
+      />
+    )),
     createStaticTab(
       TabTitle.GraphlyAI,
-      (
-        <Chat
-          ref={chatRef}
-          onSend={async (message: MessageDetails) =>
-            await sendHandler(chatRef, message, askAI)
-          }
-          defaultContexts={{
-            ["graph"]: {
-              icon: contextIcons["graph"],
-              text: stringifyGraph(
-                nodes,
-                edges,
-                defaultWeightSeparator,
-                defaultEdgeSeparator,
-              ),
-              closeable: false,
-            },
-            ["graph specification"]: {
-              icon: contextIcons["graph specification"],
-              text: `Graph represented as text where '--' means undirected edge and '->' means directed edge. Weight is separated by ':'`,
-              closeable: false,
-            },
-          }}
-        />
-      ),
+      <Chat
+        ref={chatRef}
+        onSend={async (message: MessageDetails) =>
+          await sendHandler(chatRef, message, askAI)
+        }
+        defaultContexts={{
+          ["graph"]: {
+            icon: contextIcons["graph"],
+            text: stringifyGraph(
+              nodes,
+              edges,
+              defaultWeightSeparator,
+              defaultEdgeSeparator,
+            ),
+            closeable: false,
+          },
+          ["graph specification"]: {
+            icon: contextIcons["graph specification"],
+            text: `Graph represented as text where '--' means undirected edge and '->' means directed edge. Weight is separated by ':'`,
+            closeable: false,
+          },
+        }}
+      />,
     ),
   ]);
 
