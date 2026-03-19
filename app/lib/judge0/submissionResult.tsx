@@ -1,5 +1,10 @@
 import { SubmissionResult } from "./types";
 
+const POLL_INTERVAL_MS = 2_000;
+const MAX_WAIT_MS = 45_000;
+const DEFAULT_SUBMISSION_FIELDS =
+  "stdout,time,memory,stderr,token,compile_output,message,status";
+
 export default async function getSubmissionResult(
   sourceCode: string,
   languageId: number,
@@ -21,28 +26,59 @@ export default async function getSubmissionResult(
     },
   );
 
+  if (!fetchData.ok) {
+    throw { error: "Failed to create Judge0 submission", status: 502 };
+  }
+
   const data = await fetchData.json();
 
   const token = data.token;
 
+  if (!token) {
+    throw { error: "Judge0 response missing token", status: 502 };
+  }
+
+  const startedAt = Date.now();
+
   return new Promise((resolve, reject) => {
     const intervalId = setInterval(() => {
+      if (Date.now() - startedAt > MAX_WAIT_MS) {
+        clearInterval(intervalId);
+        reject({ error: "Judge0 polling timeout", status: 504 });
+        return;
+      }
+
       fetch(
-        `${process.env.NEXT_PUBLIC_JUDGE0_URL}/submissions/${token}?base64_encoded=true`,
+        `${process.env.NEXT_PUBLIC_JUDGE0_URL}/submissions/${token}?base64_encoded=true&fields=${DEFAULT_SUBMISSION_FIELDS}`,
       )
-        .then((res) => res.json())
+        .then((res) => {
+          if (!res.ok) {
+            throw {
+              error: "Failed to fetch Judge0 submission status",
+              status: 502,
+            };
+          }
+
+          return res.json();
+        })
         .then((result) => {
           if (result && result.status && result.status.id <= 2) {
             return;
           }
 
+          const normalizedResult: SubmissionResult = {
+            ...result,
+            time: Number.isFinite(Number(result.time)) ? Number(result.time) : 0,
+            memory: Number.isFinite(Number(result.memory)) ? Number(result.memory) : 0,
+          };
+
           clearInterval(intervalId);
-          resolve(result);
+          resolve(normalizedResult);
         })
         .catch((err) => {
           clearInterval(intervalId);
-          reject({ error: err });
+          reject(err);
         });
-    }, 2_000);
+    }, POLL_INTERVAL_MS);
   });
 }
