@@ -28,9 +28,15 @@ export default function Result({
   feedbackAI?: string;
   paramsNames?: string[];
 }) {
-  const stdout: StdOutResult = result.stdout
-    ? JSON.parse(decodeUtf8Base64(result.stdout))
-    : {};
+  let stdout: StdOutResult = { status: "" };
+
+  if (result.stdout) {
+    try {
+      stdout = JSON.parse(decodeUtf8Base64(result.stdout)) as StdOutResult;
+    } catch {
+      stdout = { status: "Internal Error" };
+    }
+  }
   const message = result.message ? decodeUtf8Base64(result.message) : "";
   const compile_output = result.compile_output
     ? decodeUtf8Base64(result.compile_output)
@@ -47,7 +53,7 @@ export default function Result({
 
   let resultContent = null;
 
-  if (/Wrong Answer/.test(stdout.status)) {
+  if (typeof stdout.status === "string" && /Wrong Answer/.test(stdout.status)) {
     resultContent = (
       <WrongAnswer testcase={stdout.testcase} paramsNames={paramsNames} />
     );

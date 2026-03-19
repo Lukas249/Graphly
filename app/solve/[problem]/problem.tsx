@@ -238,30 +238,34 @@ export default function Problem({
     const currentSourceCode = sourceCodeRef.current;
     const currentTestcases = testcasesRef.current;
 
-    const result = await handleCodeRun(
+    const result: SubmissionResult | null = await handleCodeRun(
       problem.id,
       currentSourceCode,
       language.id,
       currentTestcases,
     );
 
-    if (result) {
-      addTab(
-        {
-          id: crypto.randomUUID(),
-          title: TabTitle.Test,
-          content: (
-            <Result
-              result={result}
-              paramsNames={problem.params}
-              sourceCode={currentSourceCode}
-            />
-          ),
-          closeable: true,
-        },
-        "testcases",
-      );
+    if (!result) {
+      toast.error("Failed to run code");
+      setCodeJudging(false);
+      return;
     }
+
+    addTab(
+      {
+        id: crypto.randomUUID(),
+        title: TabTitle.Test,
+        content: (
+          <Result
+            result={result}
+            paramsNames={problem.params}
+            sourceCode={currentSourceCode}
+          />
+        ),
+        closeable: true,
+      },
+      "testcases",
+    );
 
     setCodeJudging(false);
   };
