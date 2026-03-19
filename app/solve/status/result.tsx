@@ -43,19 +43,20 @@ export default function Result({
     : "";
   const stderr = decodeUtf8Base64(result.stderr ?? "");
 
-  if (stdout.testcase) {
-    stdout.testcase.args = stdout.testcase.args.map((val) =>
-      JSON.stringify(val),
-    );
-    stdout.testcase.expected = JSON.stringify(stdout.testcase.expected);
-    stdout.testcase.got = JSON.stringify(stdout.testcase.got);
-  }
+  const testcase = stdout.testcase
+    ? {
+        ...stdout.testcase,
+        args: stdout.testcase.args.map((val) => JSON.stringify(val)),
+        expected: JSON.stringify(stdout.testcase.expected),
+        got: JSON.stringify(stdout.testcase.got),
+      }
+    : undefined;
 
   let resultContent = null;
 
   if (typeof stdout.status === "string" && /Wrong Answer/.test(stdout.status)) {
     resultContent = (
-      <WrongAnswer testcase={stdout.testcase} paramsNames={paramsNames} />
+      <WrongAnswer testcase={testcase} paramsNames={paramsNames} />
     );
   } else if (result.status.id === 3) {
     resultContent = (
