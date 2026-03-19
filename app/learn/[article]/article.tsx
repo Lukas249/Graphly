@@ -14,6 +14,9 @@ import CollapsibleVerticalMenu from "@/app/components/collapsible-vertical-menu"
 import Link from "next/link";
 import { sendHandler } from "@/app/components/chat/sendHandler";
 import { Tab, TabsRef, TabTitle } from "@/app/components/tabs/types";
+import {
+  createStaticTab,
+} from "@/app/components/tabs/tabFactory";
 import { addChatContext } from "@/app/components/chat/context/addChatContext";
 import { onChangeTab } from "@/app/lib/tabs/onChangeTab";
 
@@ -29,10 +32,9 @@ export default function Article({
   const articleTabsRef = useRef<TabsRef>(null);
 
   const [articleTabs] = useState<Tab[]>([
-    {
-      id: crypto.randomUUID(),
-      title: TabTitle.Article,
-      content: (
+    createStaticTab(
+      TabTitle.Article,
+      (
         <AISelectionProvider
           buttonClickHandler={(__, selectedText) => {
             addChatContext(chatRef, "description", selectedText, true);
@@ -45,12 +47,10 @@ export default function Article({
           />
         </AISelectionProvider>
       ),
-      closeable: false,
-    },
-    {
-      id: crypto.randomUUID(),
-      title: TabTitle.GraphlyAI,
-      content: (
+    ),
+    createStaticTab(
+      TabTitle.GraphlyAI,
+      (
         <div className="h-[calc(100vh-180px)]">
           <Chat
             ref={chatRef}
@@ -61,8 +61,7 @@ export default function Article({
           />
         </div>
       ),
-      closeable: false,
-    },
+    ),
   ]);
 
   return (

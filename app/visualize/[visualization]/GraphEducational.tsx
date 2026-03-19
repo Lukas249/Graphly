@@ -29,6 +29,10 @@ import {
 } from "./types";
 import { ArticleParagraph } from "@/app/lib/ArticleParagraph";
 import { Tab, TabsRef, TabTitle } from "@/app/components/tabs/types";
+import {
+  createRenderTab,
+  createStaticTab,
+} from "@/app/components/tabs/tabFactory";
 import { addChatContext } from "@/app/components/chat/context/addChatContext";
 import { contextIcons } from "@/app/components/chat/context/contextIcons";
 import { onChangeTab } from "@/app/lib/tabs/onChangeTab";
@@ -112,10 +116,9 @@ function GraphEducational({
   const chatRef = useRef<ChatRef>(null);
 
   const [tutorialTabs] = useState<Tab[]>([
-    {
-      id: crypto.randomUUID(),
-      title: TabTitle.Tutorial,
-      content: (
+    createStaticTab(
+      TabTitle.Tutorial,
+      (
         <AISelectionProvider
           buttonClickHandler={(__, selectedText) => {
             addChatContext(chatRef, "description", selectedText, true);
@@ -130,23 +133,17 @@ function GraphEducational({
           />
         </AISelectionProvider>
       ),
-      closeable: false,
-    },
-    {
-      id: crypto.randomUUID(),
-      title: TabTitle.Guide,
-      content: (
+    ),
+    createStaticTab(
+      TabTitle.Guide,
+      (
         <GuideContent
           guideText={guideText}
           isNodeSelectionEnabled={isNodeSelectionEnabled}
         />
       ),
-      closeable: false,
-    },
-    {
-      id: crypto.randomUUID(),
-      title: TabTitle.Graph,
-      renderContent: () => (
+    ),
+    createRenderTab(TabTitle.Graph, () => (
         <GraphEditor
           userNodes={nodes}
           userEdges={edges}
@@ -167,13 +164,10 @@ function GraphEducational({
             );
           }}
         />
-      ),
-      closeable: false,
-    },
-    {
-      id: crypto.randomUUID(),
-      title: TabTitle.GraphlyAI,
-      content: (
+      )),
+    createStaticTab(
+      TabTitle.GraphlyAI,
+      (
         <Chat
           ref={chatRef}
           onSend={async (message: MessageDetails) =>
@@ -198,8 +192,7 @@ function GraphEducational({
           }}
         />
       ),
-      closeable: false,
-    },
+    ),
   ]);
 
   const waitOnClick = () => {
