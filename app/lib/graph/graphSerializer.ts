@@ -25,8 +25,14 @@ export function parseGraph(
     return { source, target, isUndirected, weight };
   };
 
-  userGraph.split(/\s+/).forEach((line) => {
-    const { source, target } = parseLine(line);
+  for (const line of userGraph.split(/\s+/)) {
+    const trimmedLine = line.trim();
+
+    if (trimmedLine.length === 0) {
+      continue;
+    }
+
+    const { source, target, isUndirected, weight } = parseLine(trimmedLine);
 
     if (source && !seenNodes.has(source)) {
       seenNodes.add(source);
@@ -37,52 +43,45 @@ export function parseGraph(
       seenNodes.add(target);
       nodes.push({ id: target });
     }
-  });
 
-  userGraph
-    .split(/\s+/)
-    .filter((line) => {
-      const { source, target } = parseLine(line);
+    if (!source || !target) {
+      continue;
+    }
 
-      return line.trim().length > 0 && source && target;
-    })
-    .forEach((line) => {
-      const { source, target, isUndirected, weight } = parseLine(line);
+    if (!seenEdges.has(source)) {
+      seenEdges.set(source, new Map());
+    }
 
-      if (!seenEdges.has(source)) {
-        seenEdges.set(source, new Map());
-      }
+    if (!seenEdges.has(target)) {
+      seenEdges.set(target, new Map());
+    }
 
-      if (!seenEdges.has(target)) {
-        seenEdges.set(target, new Map());
-      }
+    if (
+      isUndirected &&
+      !seenEdges.get(source)?.has(target) &&
+      !seenEdges.get(target)?.has(source)
+    ) {
+      edges.push({
+        source: { id: source },
+        target: { id: target },
+        directed: !isUndirected,
+        weight: weight,
+      });
+    } else if (!isUndirected && !seenEdges.get(source)?.has(target)) {
+      edges.push({
+        source: { id: source },
+        target: { id: target },
+        directed: !isUndirected,
+        weight: weight,
+      });
+    }
 
-      if (
-        isUndirected &&
-        !seenEdges.get(source)?.has(target) &&
-        !seenEdges.get(target)?.has(source)
-      ) {
-        edges.push({
-          source: { id: source },
-          target: { id: target },
-          directed: !isUndirected,
-          weight: weight,
-        });
-      } else if (!isUndirected && !seenEdges.get(source)?.has(target)) {
-        edges.push({
-          source: { id: source },
-          target: { id: target },
-          directed: !isUndirected,
-          weight: weight,
-        });
-      }
+    if (isUndirected) {
+      seenEdges.get(target)?.set(source, weight);
+    }
 
-      if (isUndirected) {
-        seenEdges.get(target)?.set(source, weight);
-      }
-
-      seenEdges.get(source)?.set(target, weight);
-    });
+    seenEdges.get(source)?.set(target, weight);
+  }
 
   return { edges, nodes };
 }
