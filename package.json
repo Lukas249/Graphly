@@ -28,6 +28,7 @@
     "d3": "^7.9.0",
     "dagre": "^0.8.5",
     "dotenv": "^17.2.3",
+    "katex": "^0.16.40",
     "lodash": "^4.17.21",
     "next": "^15.5.12",
     "prisma": "^6.18.0",
@@ -39,7 +40,9 @@
     "reactflow": "^11.11.4",
     "redis": "^5.9.0",
     "rehype-highlight": "^7.0.2",
+    "rehype-katex": "^7.0.1",
     "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
     "swiper": "^12.1.2"
   },
   "devDependencies": {
