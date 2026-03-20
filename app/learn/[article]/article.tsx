@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Tabs } from "@/app/components/tabs/tabs";
 import Menu from "@/app/menu";
 import Chat from "@/app/components/chat/chat";
@@ -28,6 +28,11 @@ export default function Article({
   const chatRef = useRef<ChatRef>(null);
 
   const articleTabsRef = useRef<TabsRef>(null);
+
+  useEffect(() => {
+    addChatContext(chatRef, "title", articleData.title, false);
+    addChatContext(chatRef, "description", articleData.article, false);
+  }, [articleData.title, articleData.article]);
 
   const [articleTabs] = useState<Tab[]>([
     createStaticTab(
