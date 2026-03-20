@@ -1,4 +1,4 @@
-import { Question } from "./quizCard";
+import { Question } from "@/app/components/quiz/quizCard";
 
 export function QuestionCounter({
   activeQuestion,

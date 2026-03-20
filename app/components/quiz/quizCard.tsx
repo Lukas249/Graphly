@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { QuizOptions } from "./quizOptions";
-import SubmitButton from "./button";
-import { Explanation } from "./explanation";
-import { QuestionCounter } from "./questionCounter";
+import { QuizOptions } from "@/app/components/quiz/quizOptions";
+import SubmitButton from "@/app/components/quiz/button";
+import { Explanation } from "@/app/components/quiz/explanation";
+import { QuestionCounter } from "@/app/components/quiz/questionCounter";
 
 export type Question = {
   question: string;

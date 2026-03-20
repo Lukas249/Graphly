@@ -1,6 +1,11 @@
 "use client";
 
-import { Children, type ReactNode } from "react";
+import {
+  Children,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+} from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 
@@ -9,7 +14,10 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 import "./style.css";
-import Image from "next/image";
+import {
+  CarouselSlide,
+  type CarouselSlideProps,
+} from "@/app/components/carousel/carouselSlide";
 
 type CarouselProps = {
   children?: ReactNode;
@@ -17,40 +25,14 @@ type CarouselProps = {
   loop?: boolean;
 };
 
-type CarouselSlideProps = {
-  slide?: Slide;
-};
-
-type Slide = {
-  id: number;
-  url: string;
-  description: string;
-};
-
-export function CarouselSlide({ slide }: CarouselSlideProps) {
-  return (
-    <article>
-      <div className="w-full overflow-hidden">
-        <Image
-          src={slide?.url ?? ""}
-          alt={slide?.description ?? "Carousel Slide Image"}
-          className="m-auto max-h-full max-w-[60%]"
-          width={330}
-          height={230}
-        />
-      </div>
-
-      <div className="border-t border-gray-100 px-4 py-3">
-        <p className="text-sm text-white">{slide?.description}</p>
-      </div>
-    </article>
-  );
-}
-
 export function Carousel({ children, className, loop = false }: CarouselProps) {
-  const slides = Children.toArray(children).filter((child) => {
-    return (child as any)?.type?.name === "CarouselSlide";
-  });
+  const slides = Children.toArray(children).filter(
+    (
+      child,
+    ): child is ReactElement<CarouselSlideProps, typeof CarouselSlide> => {
+      return isValidElement(child) && child.type === CarouselSlide;
+    },
+  );
 
   return (
     <div className={`mx-auto w-full max-w-3xl px-4 py-6 ${className}`}>

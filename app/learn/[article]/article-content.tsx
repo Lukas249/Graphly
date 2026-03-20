@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Quiz, { Question } from "@/app/components/quiz/quizCard";
 import JsxParser from "react-jsx-parser";
-import { Carousel, CarouselSlide } from "@/app/components/carousel/carousel";
+import { Carousel } from "@/app/components/carousel/carousel";
+import { CarouselSlide } from "@/app/components/carousel/carouselSlide";
 
 import "./styles.css";
 
