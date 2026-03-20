@@ -11,7 +11,7 @@ import { Tabs } from "@/app/components/tabs/tabs";
 import Chat from "@/app/components/chat/chat";
 import { askAI } from "@/app/lib/gemini-ai/ai";
 import { ChatRef, MessageDetails } from "@/app/components/chat/types";
-import AISelectionProvider from "@/app/lib/AISelectionProvider";
+import AISelectionProvider from "@/app/components/providers/ai-selection-provider";
 import { stringifyGraph } from "@/app/lib/graph/graphSerializer";
 import {
   defaultEdgeSeparator,
@@ -27,7 +27,7 @@ import {
   InitialStep,
   VisualizationRefs,
 } from "./types";
-import { ArticleParagraph } from "@/app/lib/ArticleParagraph";
+import { ArticleParagraph } from "@/app/components/article-paragraph";
 import { Tab, TabsRef, TabTitle } from "@/app/components/tabs/types";
 import {
   createRenderTab,
@@ -35,7 +35,7 @@ import {
 } from "@/app/components/tabs/tabFactory";
 import { addChatContext } from "@/app/components/chat/context/addChatContext";
 import { contextIcons } from "@/app/components/chat/context/contextIcons";
-import { onChangeTab } from "@/app/lib/tabs/onChangeTab";
+import { onChangeTab } from "@/app/components/tabs/onChangeTab";
 
 function GuideContent({
   guideText,

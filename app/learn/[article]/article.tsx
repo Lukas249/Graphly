@@ -6,7 +6,7 @@ import Menu from "../../menu";
 import Chat from "../../components/chat/chat";
 import { ChatRef, MessageDetails } from "../../components/chat/types";
 import { askAI } from "../../lib/gemini-ai/ai";
-import AISelectionProvider from "../../lib/AISelectionProvider";
+import AISelectionProvider from "@/app/components/providers/ai-selection-provider";
 import { Prisma } from "@/prisma/generated/client";
 import { Question } from "@/app/components/quiz/quizCard";
 import ArticleContent from "./article-content";
@@ -16,7 +16,7 @@ import { sendHandler } from "@/app/components/chat/sendHandler";
 import { Tab, TabsRef, TabTitle } from "@/app/components/tabs/types";
 import { createStaticTab } from "@/app/components/tabs/tabFactory";
 import { addChatContext } from "@/app/components/chat/context/addChatContext";
-import { onChangeTab } from "@/app/lib/tabs/onChangeTab";
+import { onChangeTab } from "@/app/components/tabs/onChangeTab";
 
 export default function Article({
   articleData,

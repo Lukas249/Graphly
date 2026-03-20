@@ -13,7 +13,7 @@ import Chat from "../../components/chat/chat";
 import { ChatRef, MessageDetails } from "../../components/chat/types";
 import { askAI } from "../../lib/gemini-ai/ai";
 
-import AISelectionProvider from "../../lib/AISelectionProvider";
+import AISelectionProvider from "@/app/components/providers/ai-selection-provider";
 import { languages } from "./languages";
 import type { Problem } from "@/app/lib/problems/types";
 import { sendHandler } from "@/app/components/chat/sendHandler";
@@ -24,7 +24,7 @@ import {
 } from "@/app/components/tabs/tabFactory";
 import { addChatContext } from "@/app/components/chat/context/addChatContext";
 import { ButtonsPanel } from "./buttonsPanel";
-import { onChangeTab } from "@/app/lib/tabs/onChangeTab";
+import { onChangeTab } from "@/app/components/tabs/onChangeTab";
 import { contextIcons } from "@/app/components/chat/context/contextIcons";
 import { useJudgeActions } from "./useJudgeActions";
 
