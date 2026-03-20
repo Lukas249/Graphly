@@ -13,8 +13,7 @@ export async function handleCodeJudgeResponse(
     }
 
     return await res.json();
-  } catch (err) {
-    console.error(err);
+  } catch {
     toast.error("Failed to submit code");
   }
 

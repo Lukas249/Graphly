@@ -1,6 +1,6 @@
 import "server-only";
 
-import { redis } from "../lib/redis";
+import { redis } from "@/app/lib/redis";
 import { ModelMessage } from "./gemini.types";
 
 const CHAT_CACHE_TTL_SECONDS = 60 * 60 * 24; // 24h

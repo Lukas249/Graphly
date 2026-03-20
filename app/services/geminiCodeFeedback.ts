@@ -1,6 +1,6 @@
 import "server-only";
 
-import { Contexts, MessageDetails } from "../components/chat/types";
+import { Contexts, MessageDetails } from "@/app/components/chat/types";
 import { ModelMessage } from "./gemini.types";
 import { askAI, createChat } from "./geminiService";
 import { assistantInstructions } from "./geminiSetup";

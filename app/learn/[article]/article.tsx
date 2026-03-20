@@ -1,11 +1,11 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Tabs } from "../../components/tabs/tabs";
-import Menu from "../../menu";
-import Chat from "../../components/chat/chat";
-import { ChatRef, MessageDetails } from "../../components/chat/types";
-import { askAI } from "../../lib/gemini-ai/ai";
+import { Tabs } from "@/app/components/tabs/tabs";
+import Menu from "@/app/menu";
+import Chat from "@/app/components/chat/chat";
+import { ChatRef, MessageDetails } from "@/app/components/chat/types";
+import { askAI } from "@/app/lib/gemini-ai/ai";
 import AISelectionProvider from "@/app/components/providers/ai-selection-provider";
 import { Prisma } from "@/prisma/generated/client";
 import { Question } from "@/app/components/quiz/quizCard";

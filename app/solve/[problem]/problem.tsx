@@ -5,13 +5,13 @@ import Editor from "@monaco-editor/react";
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import ProblemDescription from "../../components/problemDescription/problemDescription";
-import Menu from "../../menu";
+import ProblemDescription from "@/app/components/problemDescription/problemDescription";
+import Menu from "@/app/menu";
 
-import { Tabs } from "../../components/tabs/tabs";
-import Chat from "../../components/chat/chat";
-import { ChatRef, MessageDetails } from "../../components/chat/types";
-import { askAI } from "../../lib/gemini-ai/ai";
+import { Tabs } from "@/app/components/tabs/tabs";
+import Chat from "@/app/components/chat/chat";
+import { ChatRef, MessageDetails } from "@/app/components/chat/types";
+import { askAI } from "@/app/lib/gemini-ai/ai";
 
 import AISelectionProvider from "@/app/components/providers/ai-selection-provider";
 import { languages } from "./languages";

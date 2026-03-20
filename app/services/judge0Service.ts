@@ -2,9 +2,9 @@ import "server-only";
 
 import { JsonArray } from "@/prisma/generated/internal/prismaNamespace";
 import { getProblemById } from "./problemsService";
-import getSubmissionResult from "../lib/judge0/submissionResult";
-import { redis } from "../lib/redis";
-import { getLineCount } from "../lib/getLineCount";
+import getSubmissionResult from "@/app/lib/judge0/submissionResult";
+import { redis } from "@/app/lib/redis";
+import { getLineCount } from "@/app/lib/getLineCount";
 
 const TESTCASES_CACHE_TTL_SECONDS = 60 * 60; // 1h
 

@@ -1,6 +1,6 @@
 import { Edge, Node } from "reactflow";
 
-import { ProblemDifficulty } from "../lib/problems/types";
+import { ProblemDifficulty } from "@/app/lib/problems/types";
 
 const nodeStyle = {
   backgroundColor: "var(--color-gray-dark-850)",

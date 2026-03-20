@@ -1,7 +1,7 @@
 import "server-only";
 
 import { Prisma } from "@/prisma/generated/client";
-import { prisma } from "../lib/prisma";
+import { prisma } from "@/app/lib/prisma";
 
 export async function getProblemById(
   id: number,

@@ -1,5 +1,5 @@
 import { SubmissionResult } from "@/app/lib/judge0/types";
-import { decodeUtf8Base64 } from "../../lib/decodeBase64";
+import { decodeUtf8Base64 } from "@/app/lib/decodeBase64";
 import Accepted from "./accepted";
 import Error from "./error";
 import TLE from "./tle";

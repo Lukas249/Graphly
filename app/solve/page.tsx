@@ -1,7 +1,7 @@
-import Menu from "../menu";
+import Menu from "@/app/menu";
 import { notFound } from "next/navigation";
-import { LinkList } from "../components/linkList/linkList";
-import { getProblems } from "../services/problemsService";
+import { LinkList } from "@/app/components/linkList/linkList";
+import { getProblems } from "@/app/services/problemsService";
 
 export const revalidate = 60;
 

@@ -12,10 +12,10 @@ import {
   Markings,
   MarkNodeProps,
 } from "./GraphTypes";
-import HistoryState from "../../lib/HistoryState";
+import HistoryState from "@/app/lib/HistoryState";
 import _ from "lodash";
 import { GraphColors } from "./defaultGraphColors";
-import useForceUpdate from "../../hooks/useForceUpdate";
+import useForceUpdate from "@/app/hooks/useForceUpdate";
 
 export type TutorialStep<TutorialVariables extends Record<string, unknown>> = {
   description?: string;

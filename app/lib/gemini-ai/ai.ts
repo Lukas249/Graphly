@@ -2,7 +2,7 @@ import {
   CHAT_ROLES,
   Contexts,
   MessageDetails,
-} from "../../components/chat/types";
+} from "@/app/components/chat/types";
 import { handleJSONResponse } from "../handleResponse";
 
 export type AskAI = (
