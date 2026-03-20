@@ -27,7 +27,6 @@ import {
   InitialStep,
   VisualizationRefs,
 } from "./types";
-import { ArticleParagraph } from "@/app/components/article-paragraph";
 import { Tab, TabsRef, TabTitle } from "@/app/components/tabs/types";
 import {
   createRenderTab,
@@ -36,55 +35,10 @@ import {
 import { addChatContext } from "@/app/components/chat/context/addChatContext";
 import { contextIcons } from "@/app/components/chat/context/contextIcons";
 import { onChangeTab } from "@/app/components/tabs/onChangeTab";
+import GuideContent from "./GuideContent";
 
-function GuideContent({
-  guideText,
-  isNodeSelectionEnabled = true,
-}: {
-  guideText?: string;
-  isNodeSelectionEnabled?: boolean;
-}) {
-  return (
-    <div className="mx-7">
-      <ArticleParagraph>
-        <p>
-          <strong>Graph Modification Guide</strong>
-        </p>
-        You can freely modify the graph in the Graph tab using the following
-        syntax:
-        <ul className="list-disc pl-4">
-          <li>
-            Undirected Edge: To create an undirected edge between vertices, use
-            {"  "}
-            {<pre className="inline-block">--</pre>}
-          </li>
-          <li>
-            Directed Edge: To create a directed edge between vertices, use{"  "}
-            {<pre className="inline-block">{"->"}</pre>}
-          </li>
-          <li>
-            Edge Weights: To add a weight to an edge, specify it after a colon
-            {"  "}
-            {<pre className="inline-block">:</pre>}
-          </li>
-        </ul>
-      </ArticleParagraph>
-
-      {isNodeSelectionEnabled && (
-        <ArticleParagraph>
-          Before running the algorithm, you can select a starting vertex. Simply
-          click any node to set it as the starting point.
-        </ArticleParagraph>
-      )}
-
-      {guideText && (
-        <ArticleParagraph>
-          <div dangerouslySetInnerHTML={{ __html: guideText }} />
-        </ArticleParagraph>
-      )}
-    </div>
-  );
-}
+const GRAPH_SPECIFICATION_CONTEXT_TEXT =
+  "Graph represented as text where '--' means undirected edge and '->' means directed edge. Weight is separated by ':'";
 
 function GraphEducational({
   graphNodes,
@@ -169,8 +123,8 @@ function GraphEducational({
           await sendHandler(chatRef, message, askAI)
         }
         defaultContexts={{
-          ["graph"]: {
-            icon: contextIcons["graph"],
+          graph: {
+            icon: contextIcons.graph,
             text: stringifyGraph(
               nodes,
               edges,
@@ -179,9 +133,9 @@ function GraphEducational({
             ),
             closeable: false,
           },
-          ["graph specification"]: {
-            icon: contextIcons["graph specification"],
-            text: `Graph represented as text where '--' means undirected edge and '->' means directed edge. Weight is separated by ':'`,
+          graphSpecification: {
+            icon: contextIcons.graphSpecification,
+            text: GRAPH_SPECIFICATION_CONTEXT_TEXT,
             closeable: false,
           },
         }}
@@ -190,6 +144,13 @@ function GraphEducational({
   ]);
 
   const waitOnClick = () => {
+    addChatContext(
+      chatRef,
+      "visualizationStepHistory",
+      JSON.stringify(tutorialRef.current?.getHistoryStates()),
+      false,
+    );
+
     return new Promise((resolve) => {
       tutorialRef.current?.setNextButtonOnceClickHanlder(() => {
         resolve(0);

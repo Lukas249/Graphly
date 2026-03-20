@@ -78,7 +78,7 @@ export default function Problem({
   const debouncedAddTestcasesContext = useMemo(
     () =>
       lodash.debounce((value: string) => {
-        addChatContext(chatRef, "testcases", value, false);
+        addChatContext(chatRef, "testCases", value, false);
       }, 250),
     [],
   );
@@ -99,12 +99,12 @@ export default function Problem({
         }
         defaultContexts={{
           code: {
-            icon: contextIcons["code"],
+            icon: contextIcons.code,
             text: sourceCodeRef.current,
             closeable: false,
           },
-          testcases: {
-            icon: contextIcons["testcases"],
+          testCases: {
+            icon: contextIcons.testCases,
             text: testcasesRef.current,
             closeable: false,
           },

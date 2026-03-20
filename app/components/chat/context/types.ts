@@ -1,10 +1,12 @@
 import { JSX } from "react";
 
 export type ContextTypes =
-  | "testcases"
+  | "testCases"
+  | "title"
   | "description"
   | "code"
   | "graph"
-  | "graph specification";
+  | "graphSpecification"
+  | "visualizationStepHistory";
 
 export type ContextIcons = Record<ContextTypes, JSX.Element>;

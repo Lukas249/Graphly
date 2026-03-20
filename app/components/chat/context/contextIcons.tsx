@@ -1,5 +1,6 @@
 import {
   BeakerIcon,
+  CircleStackIcon,
   CodeBracketIcon,
   DocumentTextIcon,
   MapIcon,
@@ -8,13 +9,19 @@ import { JSX } from "react";
 import { ContextTypes } from "./types";
 
 export const contextIcons: Record<ContextTypes, JSX.Element> = {
-  testcases: <BeakerIcon className="stroke-primary size-3.5" />,
+  testCases: <BeakerIcon className="stroke-primary size-3.5" />,
+  title: (
+    <DocumentTextIcon className="stroke-primary size-3.5 fill-transparent" />
+  ),
   description: (
     <DocumentTextIcon className="stroke-primary size-3.5 fill-transparent" />
   ),
   code: <CodeBracketIcon className="stroke-primary size-3.5" />,
   graph: <MapIcon className="stroke-primary size-3.5 fill-transparent" />,
-  "graph specification": (
+  graphSpecification: (
     <DocumentTextIcon className="stroke-primary size-3.5 fill-transparent" />
+  ),
+  visualizationStepHistory: (
+    <CircleStackIcon className="stroke-primary size-3.5 fill-transparent" />
   ),
 };
