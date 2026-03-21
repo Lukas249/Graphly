@@ -1,3 +1,5 @@
+import "client-only";
+
 import { RefObject } from "react";
 import { CHAT_ROLES, MessageDetails } from "./types";
 

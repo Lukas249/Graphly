@@ -19,7 +19,7 @@ import {
   rawNodes,
 } from "./roadmapData";
 
-import "./problems-table.css";
+import "./problemsTable.css";
 
 export default function Page() {
   return (

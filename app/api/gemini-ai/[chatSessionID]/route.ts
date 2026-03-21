@@ -1,6 +1,6 @@
 import { getChatHistory } from "@/app/services/chatStorage";
 import { NextRequest, NextResponse } from "next/server";
-import { handleError } from "../../handleError";
+import { handleError } from "@/app/api/handleError";
 
 export async function GET(
   req: NextRequest,

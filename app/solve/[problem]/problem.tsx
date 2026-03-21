@@ -13,7 +13,7 @@ import Chat from "@/app/components/chat/chat";
 import { ChatRef, MessageDetails } from "@/app/components/chat/types";
 import { askAI } from "@/app/lib/gemini-ai/ai";
 
-import AISelectionProvider from "@/app/components/providers/ai-selection-provider";
+import AISelectionProvider from "@/app/components/providers/aiSelectionProvider";
 import { languages } from "./languages";
 import type { Problem } from "@/app/lib/problems/types";
 import { sendHandler } from "@/app/components/chat/sendHandler";

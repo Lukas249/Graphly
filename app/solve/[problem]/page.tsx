@@ -1,5 +1,3 @@
-"use server";
-
 import { notFound } from "next/navigation";
 import Problem from "./problem";
 import { getProblemBySlug } from "@/app/services/problemsService";

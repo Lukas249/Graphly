@@ -1,7 +1,7 @@
 "use server";
 
 import { NextRequest, NextResponse } from "next/server";
-import { handleError } from "../../handleError";
+import { handleError } from "@/app/api/handleError";
 import { processCodeAnalysis } from "@/app/services/geminiCodeFeedback";
 
 export async function POST(req: NextRequest) {

@@ -2,16 +2,16 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import GraphVisualization from "../GraphVisualization";
-import { Edge, GraphHandle, Node } from "../core/GraphTypes";
-import { TutorialRef, Tutorial } from "../core/Tutorial";
+import GraphVisualization from "../graphVisualization";
+import { Edge, GraphHandle, Node } from "../core/graphTypes";
+import { TutorialRef, Tutorial } from "../core/tutorial";
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 import { Tabs } from "@/app/components/tabs/tabs";
 import Chat from "@/app/components/chat/chat";
 import { askAI } from "@/app/lib/gemini-ai/ai";
 import { ChatRef, MessageDetails } from "@/app/components/chat/types";
-import AISelectionProvider from "@/app/components/providers/ai-selection-provider";
+import AISelectionProvider from "@/app/components/providers/aiSelectionProvider";
 import { stringifyGraph } from "@/app/lib/graph/graphSerializer";
 import {
   defaultEdgeSeparator,
@@ -19,7 +19,7 @@ import {
 } from "@/app/lib/graph/graphFormatConfig";
 import { sendHandler } from "@/app/components/chat/sendHandler";
 import _ from "lodash";
-import GraphEditor from "../core/GraphEditor";
+import GraphEditor from "../core/graphEditor";
 import { graphColors } from "../core/defaultGraphColors";
 import {
   Adjacency,
@@ -35,7 +35,7 @@ import {
 import { addChatContext } from "@/app/components/chat/context/addChatContext";
 import { contextIcons } from "@/app/components/chat/context/contextIcons";
 import { onChangeTab } from "@/app/components/tabs/onChangeTab";
-import GuideContent from "./GuideContent";
+import GuideContent from "./guideContent";
 
 const GRAPH_SPECIFICATION_CONTEXT_TEXT =
   "Graph represented as text where '--' means undirected edge and '->' means directed edge. Weight is separated by ':'";

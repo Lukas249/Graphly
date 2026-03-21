@@ -1,5 +1,5 @@
 import { InitialStep } from "@/app/visualize/[visualization]/types";
-import { Edge, Node } from "@/app/visualize/core/GraphTypes";
+import { Edge, Node } from "@/app/visualize/core/graphTypes";
 
 export type Visualization = {
   id: number;

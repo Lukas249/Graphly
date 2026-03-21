@@ -1,7 +1,7 @@
 "use client";
 
 import Menu from "@/app/menu";
-import GraphEducational from "./GraphEducational";
+import GraphEducational from "./graphEducational";
 
 import { MinPriorityQueue } from "@datastructures-js/priority-queue";
 import { Visualization } from "@/app/lib/visualizations/types";

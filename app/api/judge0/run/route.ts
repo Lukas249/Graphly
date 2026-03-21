@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { UserRunCode } from "../types";
-import { handleError } from "../../handleError";
+import { handleError } from "@/app/api/handleError";
 import { runCode } from "@/app/services/judge0Service";
 
 export async function POST(request: NextRequest) {

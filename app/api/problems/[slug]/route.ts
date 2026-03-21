@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getProblemBySlug } from "@/app/services/problemsService";
-import { handleError } from "../../handleError";
+import { handleError } from "@/app/api/handleError";
 
 export async function GET(
   request: NextRequest,

@@ -1,5 +1,3 @@
-"use server";
-
 import { processChatMessage } from "@/app/services/geminiService";
 import { NextRequest, NextResponse } from "next/server";
 import { handleError } from "../handleError";

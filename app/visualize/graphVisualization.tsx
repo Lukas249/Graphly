@@ -10,7 +10,7 @@ import {
   Markings,
   SimulationNode,
   SimulationEdge,
-} from "./core/GraphTypes";
+} from "./core/graphTypes";
 import { GraphColors, graphColors } from "./core/defaultGraphColors";
 import { useGraphHandle } from "./graph-visualization/hooks/useGraphHandle";
 import { useGraphSimulation } from "./graph-visualization/hooks/useGraphSimulation";

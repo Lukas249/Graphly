@@ -1,6 +1,6 @@
 import { RefObject } from "react";
-import { Edge, GraphHandle, Node } from "../core/GraphTypes";
-import { TutorialRef } from "../core/Tutorial";
+import { Edge, GraphHandle, Node } from "../core/graphTypes";
+import { TutorialRef } from "../core/tutorial";
 
 export type Variables = {
   node: string;

@@ -1,4 +1,4 @@
-import ChipCloseable from "../chip-closeable";
+import ChipCloseable from "../chipCloseable";
 import { ContextItem, ContextItems } from "./types";
 import _ from "lodash";
 import Chip from "../chip";

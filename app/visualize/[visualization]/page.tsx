@@ -1,6 +1,4 @@
-"use server";
-
-import AlgorithmWrapper from "./AlgorithmWrapper";
+import AlgorithmWrapper from "./algorithmWrapper";
 import { notFound } from "next/navigation";
 import { getVisualizationBySlug } from "@/app/services/visualizationsService";
 import { Visualization } from "@/app/lib/visualizations/types";

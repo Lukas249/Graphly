@@ -1,4 +1,4 @@
-import { ArticleParagraph } from "@/app/components/article-paragraph";
+import { ArticleParagraph } from "@/app/components/articleParagraph";
 
 export type GuideContentProps = {
   guideText?: string;

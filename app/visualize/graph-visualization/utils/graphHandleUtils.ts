@@ -1,6 +1,6 @@
 import * as d3 from "d3";
-import { GraphColors } from "../../core/defaultGraphColors";
-import { Edge, Markings, Node } from "../../core/GraphTypes";
+import { GraphColors } from "@/app/visualize/core/defaultGraphColors";
+import { Edge, Markings, Node } from "@/app/visualize/core/graphTypes";
 
 type RefLike<T> = { current: T };
 

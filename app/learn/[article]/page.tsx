@@ -1,5 +1,3 @@
-"use server";
-
 import Article from "./article";
 import { notFound } from "next/navigation";
 import { getArticleBySlug, getArticles } from "@/app/services/articlesService";

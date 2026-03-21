@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { UserSubmitCode } from "../types";
-import { handleError } from "../../handleError";
+import { handleError } from "@/app/api/handleError";
 import { submitCode } from "@/app/services/judge0Service";
 
 export async function POST(request: NextRequest) {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { handleError } from "../../handleError";
+import { handleError } from "@/app/api/handleError";
 import { getArticleBySlug } from "@/app/services/articlesService";
 
 export async function GET(

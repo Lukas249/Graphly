@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import _ from "lodash";
-import { GraphColors } from "../../core/defaultGraphColors";
+import { GraphColors } from "@/app/visualize/core/defaultGraphColors";
 import {
   MarkDirectedEdgeProps,
   MarkEdgeProps,
@@ -9,7 +9,7 @@ import {
   Markings,
   SimulationEdge,
   SimulationNode,
-} from "../../core/GraphTypes";
+} from "@/app/visualize/core/graphTypes";
 import {
   applyDirectedEdgeMark,
   applyNodeMark,

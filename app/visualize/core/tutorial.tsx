@@ -11,8 +11,8 @@ import {
   MarkEdgeProps,
   Markings,
   MarkNodeProps,
-} from "./GraphTypes";
-import HistoryState from "@/app/lib/HistoryState";
+} from "./graphTypes";
+import HistoryState from "@/app/lib/historyState";
 import _ from "lodash";
 import { GraphColors } from "./defaultGraphColors";
 import useForceUpdate from "@/app/hooks/useForceUpdate";

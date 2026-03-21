@@ -1,5 +1,5 @@
 import { LinkTemplates } from "./types";
-import { difficultyColors } from "@/app/lib/problems/difficulty-colors";
+import { difficultyColors } from "@/app/lib/problems/difficultyColors";
 
 export const linkTemplates: LinkTemplates = {
   learn(data) {
