@@ -36,7 +36,7 @@ export type TutorialRef<TutorialVariables extends Record<string, unknown>> = {
   setNextButtonOnceClickHanlder: (handler: () => void) => void;
   addTutorialStep: (step: TutorialStep<TutorialVariables>) => void;
   resetTutorialSteps: () => void;
-  getHistoryStates: () => HistoryState<TutorialStep<Record<string, unknown>>>;
+  getHistoryStates: () => TutorialStep<Record<string, unknown>>[];
 };
 
 export function Tutorial<TutorialVariables extends Record<string, unknown>>({
@@ -89,7 +89,7 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
   }
 
   function getHistoryStates() {
-    return _.cloneDeep(historyStates);
+    return _.cloneDeep(historyStates.states.slice(0, historyStates.index + 1));
   }
 
   function addTutorialStep({
@@ -173,7 +173,7 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
   const setNextButtonOnceClickHanlder = (handler: () => void) => {
     if (!nextButtonRef.current) return;
 
-    nextButtonRef.current.onclick = () => {
+    nextButtonRef.current.onclick = async () => {
       if (historyStates.canGoForward()) {
         let nextState = historyStates.goForward();
 

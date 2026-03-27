@@ -1,17 +1,39 @@
 import { ChatRef } from "@/app/components/chat/types";
 import { RefObject } from "react";
-import { contextIcons } from "./contextIcons";
-import { ContextTypes } from "./types";
+import { contextIcons, defaultContextIcon } from "./contextIcons";
 
 export const addChatContext = (
   chatRef: RefObject<ChatRef | null>,
-  type: ContextTypes,
+  type: string,
+  label: string,
   selectedText: string,
   closeable: boolean,
 ) => {
+  const icon =
+    contextIcons[type as keyof typeof contextIcons] ?? defaultContextIcon;
+
   chatRef.current?.addContext(type, {
-    icon: contextIcons[type],
+    icon,
+    label,
     text: selectedText,
+    closeable,
+  });
+};
+
+export const addDynamicChatContext = (
+  chatRef: RefObject<ChatRef | null>,
+  type: string,
+  label: string,
+  dynamicText: () => string,
+  closeable: boolean,
+) => {
+  const icon =
+    contextIcons[type as keyof typeof contextIcons] ?? defaultContextIcon;
+
+  chatRef.current?.addContext(type, {
+    icon,
+    label,
+    dynamicText,
     closeable,
   });
 };

@@ -17,6 +17,10 @@ import { Tab, TabsRef, TabTitle } from "@/app/components/tabs/types";
 import { createStaticTab } from "@/app/components/tabs/tabFactory";
 import { addChatContext } from "@/app/components/chat/context/addChatContext";
 import { onChangeTab } from "@/app/components/tabs/onChangeTab";
+import {
+  contextLabels,
+  getContextType,
+} from "@/app/components/chat/context/contextIcons";
 
 export default function Article({
   articleData,
@@ -30,8 +34,13 @@ export default function Article({
   const articleTabsRef = useRef<TabsRef>(null);
 
   useEffect(() => {
-    addChatContext(chatRef, "title", articleData.title, false);
-    addChatContext(chatRef, "description", articleData.article, false);
+    addChatContext(
+      chatRef,
+      getContextType(contextLabels.articleContent),
+      contextLabels.articleContent,
+      articleData.article + "\n" + articleData.title,
+      false,
+    );
   }, [articleData.title, articleData.article]);
 
   const [articleTabs] = useState<Tab[]>([
@@ -39,7 +48,14 @@ export default function Article({
       TabTitle.Article,
       <AISelectionProvider
         buttonClickHandler={(__, selectedText) => {
-          addChatContext(chatRef, "description", selectedText, true);
+          addChatContext(
+            chatRef,
+            getContextType(contextLabels.userCustomContext),
+            contextLabels.userCustomContext,
+            selectedText,
+            true,
+          );
+          articleTabsRef.current?.setCurrentTabByTitle(TabTitle.GraphlyAI);
         }}
       >
         <ArticleContent

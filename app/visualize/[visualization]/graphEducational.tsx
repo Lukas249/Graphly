@@ -33,12 +33,17 @@ import {
   createStaticTab,
 } from "@/app/components/tabs/tabFactory";
 import { addChatContext } from "@/app/components/chat/context/addChatContext";
-import { contextIcons } from "@/app/components/chat/context/contextIcons";
+import {
+  contextIcons,
+  contextLabels,
+  getContextType,
+} from "@/app/components/chat/context/contextIcons";
 import { onChangeTab } from "@/app/components/tabs/onChangeTab";
 import GuideContent from "./guideContent";
+import { formatContextHistoryStates } from "../core/formatContextHistoryStates";
 
 const GRAPH_SPECIFICATION_CONTEXT_TEXT =
-  "Graph represented as text where '--' means undirected edge and '->' means directed edge. Weight is separated by ':'";
+  "Graph is represented as text where '--' means undirected edge and '->' means directed edge. Weight is separated by ':'. For example, 'A--B:3' means there is an undirected edge between A and B with weight 3. 'C->D:' means there is a directed edge from C to D with no weight specified.";
 
 function GraphEducational({
   graphNodes,
@@ -74,7 +79,14 @@ function GraphEducational({
       TabTitle.Tutorial,
       <AISelectionProvider
         buttonClickHandler={(__, selectedText) => {
-          addChatContext(chatRef, "description", selectedText, true);
+          addChatContext(
+            chatRef,
+            crypto.randomUUID(),
+            selectedText,
+            selectedText,
+            true,
+          );
+          tutorialTabsRef.current?.setCurrentTabByTitle(TabTitle.GraphlyAI);
         }}
       >
         <Tutorial
@@ -103,7 +115,8 @@ function GraphEducational({
 
           addChatContext(
             chatRef,
-            "graph",
+            getContextType(contextLabels.graph),
+            contextLabels.graph,
             stringifyGraph(
               nodes,
               edges,
@@ -119,23 +132,38 @@ function GraphEducational({
       TabTitle.GraphlyAI,
       <Chat
         ref={chatRef}
-        onSend={async (message: MessageDetails) =>
-          await sendHandler(chatRef, message, askAI)
-        }
+        onSend={async (message: MessageDetails) => {
+          await sendHandler(chatRef, message, askAI);
+        }}
         defaultContexts={{
-          graph: {
+          [getContextType(contextLabels.graph)]: {
             icon: contextIcons.graph,
-            text: stringifyGraph(
-              nodes,
-              edges,
-              defaultWeightSeparator,
-              defaultEdgeSeparator,
-            ),
+            label: contextLabels.graph,
+            text:
+              GRAPH_SPECIFICATION_CONTEXT_TEXT +
+              "\n" +
+              stringifyGraph(
+                nodes,
+                edges,
+                defaultWeightSeparator,
+                defaultEdgeSeparator,
+              ),
             closeable: false,
           },
-          graphSpecification: {
-            icon: contextIcons.graphSpecification,
-            text: GRAPH_SPECIFICATION_CONTEXT_TEXT,
+          [getContextType(contextLabels.pseudocode)]: {
+            icon: contextIcons.code,
+            label: contextLabels.pseudocode,
+            text: pseudocode,
+            closeable: false,
+          },
+          [getContextType(contextLabels.visualizationStepsHistory)]: {
+            icon: contextIcons.data,
+            label: contextLabels.visualizationStepsHistory,
+            dynamicText: () => {
+              const historyStates =
+                tutorialRef.current?.getHistoryStates() ?? [];
+              return formatContextHistoryStates(historyStates);
+            },
             closeable: false,
           },
         }}
@@ -144,13 +172,6 @@ function GraphEducational({
   ]);
 
   const waitOnClick = () => {
-    addChatContext(
-      chatRef,
-      "visualizationStepHistory",
-      JSON.stringify(tutorialRef.current?.getHistoryStates()),
-      false,
-    );
-
     return new Promise((resolve) => {
       tutorialRef.current?.setNextButtonOnceClickHanlder(() => {
         resolve(0);
@@ -175,7 +196,9 @@ function GraphEducational({
     }
 
     async function startTutorial() {
-      tutorialRef.current?.addTutorialStep(initialStep);
+      if (tutorialRef.current?.getHistoryStates().length === 0) {
+        tutorialRef.current?.addTutorialStep(initialStep);
+      }
 
       const nextButtonClickHandler = async () => {
         await runAlgorithm();

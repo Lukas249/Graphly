@@ -7,13 +7,13 @@ export async function sendHandler(
   message: MessageDetails,
   askAI: AskAI,
 ) {
-  const chatContexts = chatRef.current?.getContexts();
+  const messageContexts = message.contexts;
 
   const contexts: Record<string, string> = {};
 
-  if (chatContexts) {
-    for (const [key, value] of Object.entries(chatContexts)) {
-      contexts[key] = value.text;
+  if (messageContexts) {
+    for (const [key, value] of Object.entries(messageContexts ?? {})) {
+      contexts[key] = value;
     }
   }
 

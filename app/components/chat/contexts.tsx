@@ -2,21 +2,20 @@ import ChipCloseable from "../chipCloseable";
 import { ContextItem, ContextItems } from "./types";
 import _ from "lodash";
 import Chip from "../chip";
-import { ContextTypes } from "@/app/components/chat/context/types";
 
 export function Context({
   contextType,
   context,
   setContexts,
 }: {
-  contextType: ContextTypes;
+  contextType: string;
   context: ContextItem;
   setContexts: (value: React.SetStateAction<ContextItems>) => void;
 }) {
   return context.closeable ? (
     <ChipCloseable
       icon={context.icon}
-      text={context.text}
+      text={context.text ?? context.dynamicText?.() ?? ""}
       className="border-gray text-white"
       textClassName="text-xs"
       onClose={() =>
@@ -30,7 +29,7 @@ export function Context({
   ) : (
     <Chip
       icon={context.icon}
-      text={context.text}
+      text={context.text ?? context.dynamicText?.() ?? ""}
       className="border-gray text-white"
       textClassName="text-xs"
     />
@@ -48,7 +47,7 @@ export function Contexts({
     return (
       <Context
         key={crypto.randomUUID()}
-        contextType={type as ContextTypes}
+        contextType={type}
         context={context}
         setContexts={setContexts}
       />

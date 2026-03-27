@@ -11,7 +11,7 @@ import Menu from "@/app/menu";
 import { Tabs } from "@/app/components/tabs/tabs";
 import Chat from "@/app/components/chat/chat";
 import { ChatRef, MessageDetails } from "@/app/components/chat/types";
-import { askAI } from "@/app/lib/gemini-ai/ai";
+import { askAI, getFeedbackAI } from "@/app/lib/gemini-ai/ai";
 
 import AISelectionProvider from "@/app/components/providers/aiSelectionProvider";
 import { languages } from "./languages";
@@ -19,14 +19,21 @@ import type { Problem } from "@/app/lib/problems/types";
 import { sendHandler } from "@/app/components/chat/sendHandler";
 import { Tab, TabsRef, TabTitle } from "@/app/components/tabs/types";
 import {
+  createClosableTab,
   createRenderTab,
   createStaticTab,
 } from "@/app/components/tabs/tabFactory";
 import { addChatContext } from "@/app/components/chat/context/addChatContext";
 import { ButtonsPanel } from "./buttonsPanel";
 import { onChangeTab } from "@/app/components/tabs/onChangeTab";
-import { contextIcons } from "@/app/components/chat/context/contextIcons";
+import {
+  contextIcons,
+  contextLabels,
+  getContextType,
+} from "@/app/components/chat/context/contextIcons";
 import { useJudgeActions } from "./useJudgeActions";
+import Result from "../status/result";
+import { SubmissionResult } from "@/app/lib/judge0/types";
 
 type TabSection = "main" | "code" | "testcases";
 
@@ -34,6 +41,20 @@ interface TabSetters {
   setTabs: React.Dispatch<React.SetStateAction<Tab[]>>;
   setCurrentTab: React.Dispatch<React.SetStateAction<number>>;
 }
+
+const renderResultTabContent = (
+  result: SubmissionResult,
+  sourceCode: string,
+  params: string[],
+  feedbackAI?: string,
+) => (
+  <Result
+    result={result}
+    sourceCode={sourceCode}
+    feedbackAI={feedbackAI}
+    paramsNames={params}
+  />
+);
 
 const monacoEditorOptions = {
   stickyScroll: {
@@ -54,8 +75,8 @@ export default function Problem({
   problem: Problem;
   defaultLanguage?: string;
 }) {
-  const sourceCodeRef = useRef(problem.code);
-  const testcasesRef = useRef(problem.testcases);
+  const [sourceCode, setSourceCode] = useState(problem.code);
+  const [testcases, setTestcases] = useState(problem.testcases);
 
   const [codeJudging, setCodeJudging] = useState(false);
 
@@ -70,16 +91,28 @@ export default function Problem({
   const debouncedAddCodeContext = useMemo(
     () =>
       lodash.debounce((value: string) => {
-        addChatContext(chatRef, "code", value, false);
-      }, 250),
+        addChatContext(
+          chatRef,
+          getContextType(contextLabels.code),
+          contextLabels.code,
+          value,
+          false,
+        );
+      }, 100),
     [],
   );
 
   const debouncedAddTestcasesContext = useMemo(
     () =>
       lodash.debounce((value: string) => {
-        addChatContext(chatRef, "testCases", value, false);
-      }, 250),
+        addChatContext(
+          chatRef,
+          getContextType(contextLabels.testCases),
+          contextLabels.testCases,
+          value,
+          false,
+        );
+      }, 100),
     [],
   );
 
@@ -98,20 +131,28 @@ export default function Problem({
           await sendHandler(chatRef, message, askAI)
         }
         defaultContexts={{
-          code: {
+          [getContextType(contextLabels.code)]: {
             icon: contextIcons.code,
-            text: sourceCodeRef.current,
+            label: contextLabels.code,
+            text: sourceCode,
             closeable: false,
           },
-          testCases: {
+          [getContextType(contextLabels.testCases)]: {
             icon: contextIcons.testCases,
-            text: testcasesRef.current,
+            label: contextLabels.testCases,
+            text: testcases,
+            closeable: false,
+          },
+          [getContextType(contextLabels.problemDescription)]: {
+            icon: contextIcons.text,
+            label: contextLabels.problemDescription,
+            text: problem.title + "\n" + problem.description,
             closeable: false,
           },
         }}
       />
     ),
-    [],
+    [problem.title, problem.description, sourceCode, testcases],
   );
 
   const mainTabs = useMemo<Tab[]>(
@@ -120,7 +161,14 @@ export default function Problem({
         TabTitle.Description,
         <AISelectionProvider
           buttonClickHandler={(__, selectedText) => {
-            addChatContext(chatRef, "description", selectedText, true);
+            addChatContext(
+              chatRef,
+              getContextType(contextLabels.userCustomContext),
+              selectedText,
+              selectedText,
+              true,
+            );
+            mainTabsRef.current?.setCurrentTabByTitle(TabTitle.GraphlyAI);
           }}
         >
           <ProblemDescription
@@ -141,18 +189,18 @@ export default function Problem({
         <Editor
           height="100%"
           language="plaintext"
-          defaultValue={testcasesRef.current}
+          defaultValue={testcases}
           theme="vs-dark"
           onChange={(val) => {
             if (!val) return;
-            testcasesRef.current = val;
+            setTestcases(val);
             debouncedAddTestcasesContext(val);
           }}
           options={monacoEditorOptions}
         />
       )),
     ],
-    [debouncedAddTestcasesContext],
+    [debouncedAddTestcasesContext, testcases],
   );
 
   const codeTabs = useMemo<Tab[]>(
@@ -161,11 +209,11 @@ export default function Problem({
         <Editor
           height="100%"
           language={language.editorLanguage}
-          defaultValue={sourceCodeRef.current}
+          defaultValue={sourceCode}
           theme="vs-dark"
           onChange={(val) => {
             if (!val) return;
-            sourceCodeRef.current = val;
+            setSourceCode(val);
             debouncedAddCodeContext(val);
           }}
           options={monacoEditorOptions}
@@ -173,7 +221,7 @@ export default function Problem({
         />
       )),
     ],
-    [debouncedAddCodeContext, language.editorLanguage],
+    [debouncedAddCodeContext, language.editorLanguage, sourceCode],
   );
 
   const getTabSetters = (section: TabSection): TabSetters => {
@@ -207,15 +255,66 @@ export default function Problem({
     });
   };
 
-  const { handleRun, handleSubmit } = useJudgeActions({
+  const { handleRunJudge, handleSubmitJudge } = useJudgeActions({
     problemId: problem.id,
-    paramsNames: problem.params,
     languageId: language.id,
-    sourceCodeRef,
-    testcasesRef,
-    setCodeJudging,
-    addTab,
+    sourceCode,
+    testcases,
   });
+
+  const handleJudge = async (isSubmit: boolean, sourceCode: string) => {
+    setCodeJudging(true);
+
+    const result = isSubmit
+      ? await handleSubmitJudge()
+      : await handleRunJudge();
+
+    if (!result) {
+      setCodeJudging(false);
+      return;
+    }
+
+    if (isSubmit) {
+      let feedbackAI = "";
+
+      if (result.status?.id === 3) {
+        try {
+          feedbackAI = await getFeedbackAI(sourceCode);
+        } catch {}
+      }
+
+      addTab(
+        createClosableTab(
+          TabTitle.Submission,
+          renderResultTabContent(
+            result,
+            sourceCode,
+            problem.params,
+            feedbackAI,
+          ),
+        ),
+        "main",
+      );
+    } else {
+      addTab(
+        createClosableTab(
+          TabTitle.Test,
+          renderResultTabContent(result, sourceCode, problem.params),
+        ),
+        "testcases",
+      );
+    }
+
+    addChatContext(
+      chatRef,
+      getContextType(contextLabels.lastJudgeResult),
+      contextLabels.lastJudgeResult,
+      `Judge Result: ${JSON.stringify(result)}`,
+      true,
+    );
+
+    setCodeJudging(false);
+  };
 
   return (
     <div className="mx-2 flex h-screen flex-col pb-2">
@@ -223,8 +322,8 @@ export default function Problem({
 
       <ButtonsPanel
         isCodeJudging={codeJudging}
-        handleRun={handleRun}
-        handleSubmit={handleSubmit}
+        handleRun={() => handleJudge(false, sourceCode)}
+        handleSubmit={() => handleJudge(true, sourceCode)}
       />
 
       <div className="h-full">

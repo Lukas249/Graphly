@@ -30,12 +30,20 @@ export function Tabs({
   const [currentTab, setCurrentTab] = useState(initialTab);
   const [tabs, setTabs] = useState(initialTabs);
 
+  const setCurrentTabByTitle = (title: string) => {
+    const index = tabs.findIndex((tab) => tab.title === title);
+    if (index !== -1) {
+      setCurrentTab(index);
+    }
+  };
+
   useImperativeHandle(ref, () => {
     return {
       setCurrentTab,
       setTabs,
       currentTab,
       getTabs: () => tabs,
+      setCurrentTabByTitle,
     };
   });
 

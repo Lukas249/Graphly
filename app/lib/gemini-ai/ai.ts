@@ -31,10 +31,14 @@ export async function askAI(
   return handleJSONResponse(response);
 }
 
-export async function getFeedbackAI(contexts: Contexts): Promise<string> {
+export async function getFeedbackAI(code: string): Promise<string> {
   const message: MessageDetails = {
     role: CHAT_ROLES.USER,
     text: "Please analyze the code I provided and give feedback on its time and space complexity, as well as any potential improvements.",
+  };
+
+  const contexts: Contexts = {
+    code: `<CODE_START>${code}</CODE_END>`,
   };
 
   const response = await fetch("/api/gemini-ai/code-analysis", {

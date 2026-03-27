@@ -13,6 +13,7 @@ export type TabsRef = {
   setTabs: Dispatch<SetStateAction<Tab[]>>;
   currentTab: number;
   getTabs: () => Tab[];
+  setCurrentTabByTitle: (title: string) => void;
 };
 
 export enum TabTitle {
