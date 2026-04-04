@@ -1,6 +1,8 @@
 import { TestcaseResult } from "./result";
 import React from "react";
 
+import "./style.css";
+
 export default function WrongAnswer({
   testcase,
   paramsNames,
@@ -19,9 +21,7 @@ export default function WrongAnswer({
             return (
               <React.Fragment key={i}>
                 <p className="px-1 py-2">{paramsNames[i]}</p>
-                <pre className="bg-gray-dark rounded-lg p-3 text-gray-100">
-                  {variable}
-                </pre>
+                <pre className="result-message">{variable}</pre>
               </React.Fragment>
             );
           })}
@@ -29,21 +29,15 @@ export default function WrongAnswer({
         {testcase?.printed && (
           <>
             <p className="px-1 py-2">Console</p>
-            <pre className="bg-gray-dark rounded-lg p-3 text-gray-100">
-              {testcase?.printed}
-            </pre>
+            <pre className="result-message">{testcase?.printed}</pre>
           </>
         )}
 
         <p className="px-1 py-2">Output</p>
-        <pre className="bg-gray-dark rounded-lg p-3 text-gray-100">
-          {testcase?.got}
-        </pre>
+        <pre className="result-message">{testcase?.got}</pre>
 
         <p className="px-1 py-2">Expected</p>
-        <pre className="bg-gray-dark rounded-lg p-3 text-gray-100">
-          {testcase?.expected}
-        </pre>
+        <pre className="result-message">{testcase?.expected}</pre>
       </div>
     </>
   );

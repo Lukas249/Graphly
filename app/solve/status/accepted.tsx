@@ -44,7 +44,7 @@ export default function Accepted({
           )}
 
           <Card title="Submitted code">
-            <pre className="whitespace-pre-wrap">{sourceCode}</pre>
+            <pre className="overflow-x-auto">{sourceCode}</pre>
           </Card>
         </div>
       </div>

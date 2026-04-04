@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+.result-message {
+  @apply overflow-x-auto rounded-lg bg-[var(--color-gray-dark-850)] p-3 text-gray-100;
+}
