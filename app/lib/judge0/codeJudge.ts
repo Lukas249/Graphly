@@ -1,4 +1,3 @@
-import { toast } from "react-toastify";
 import { SubmissionResult } from "./types";
 
 export async function handleCodeJudgeResponse(
@@ -8,13 +7,13 @@ export async function handleCodeJudgeResponse(
     const res = await response;
 
     if (!res.ok) {
-      toast.error("Failed to submit code");
+      console.error("Failed to judge code");
       return null;
     }
 
     return await res.json();
   } catch {
-    toast.error("Failed to submit code");
+    console.error("Failed to judge code");
   }
 
   return null;
