@@ -1,0 +1,58 @@
+import { QuestPlan } from "./quest.types";
+
+export const QUEST_PLAN: QuestPlan[] = [
+  {
+    id: "dfs",
+    label: "DFS",
+    articleCandidates: ["dfs"],
+    visualizationCandidates: ["dfs"],
+    visualizationChallengeCandidates: ["recursive-dfs", "iterative-dfs"],
+    problemChallengeCandidates: ["sum-of-all-nodes-part-I"],
+    problemCandidates: ["sum-of-all-nodes"],
+  },
+  {
+    id: "bfs",
+    label: "BFS",
+    articleCandidates: ["bfs"],
+    visualizationCandidates: ["bfs"],
+    visualizationChallengeCandidates: [],
+    problemChallengeCandidates: [],
+    problemCandidates: [],
+  },
+  {
+    id: "dijkstra",
+    label: "Dijkstra",
+    articleCandidates: ["dijkstra"],
+    visualizationCandidates: ["dijkstra"],
+    visualizationChallengeCandidates: [],
+    problemChallengeCandidates: [],
+    problemCandidates: ["shortest-path-to-target"],
+  },
+  {
+    id: "euler-undirected",
+    label: "Eulerian Path/Cycle - Undirected Graph",
+    articleCandidates: ["eulerian-path-cycle"],
+    visualizationCandidates: ["euler-path-undirected"],
+    visualizationChallengeCandidates: [],
+    problemChallengeCandidates: [],
+    problemCandidates: [],
+  },
+  {
+    id: "euler-directed",
+    label: "Eulerian Path/Cycle - Directed Graph",
+    articleCandidates: ["eulerian-path-cycle"],
+    visualizationCandidates: ["euler-path-directed"],
+    visualizationChallengeCandidates: [],
+    problemChallengeCandidates: [],
+    problemCandidates: [],
+  },
+  {
+    id: "scc",
+    label: "Kosaraju's Strongly Connected Components",
+    articleCandidates: ["kosaraju-scc"],
+    visualizationCandidates: ["kosaraju-scc"],
+    visualizationChallengeCandidates: [],
+    problemChallengeCandidates: [],
+    problemCandidates: [],
+  },
+];

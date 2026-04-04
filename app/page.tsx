@@ -24,7 +24,7 @@ export default function Home() {
         <p className="animation-delay-500 animate-fade-slide-up text-5xl font-bold text-white opacity-0">
           Solve to master
         </p>
-        <Link href="/roadmap" prefetch={false}>
+        <Link href="/quest" prefetch={false}>
           <button className="animation-delay-750 animate-fade-slide-up btn opacity-0">
             {"Let's Explore"}
           </button>

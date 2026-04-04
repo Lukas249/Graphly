@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+.quest-shell {
+  @apply mx-auto w-full max-w-5xl overflow-hidden px-4 py-8;
+}
+
+.quest-header {
+  @apply mb-8 rounded-xl border border-[rgba(255,255,255,0.15)] bg-[rgba(255,255,255,0.04)] p-5;
+}
+
+.quest-track {
+  @apply relative mb-8 rounded-xl border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] p-5;
+}
+
+.quest-track-title {
+  @apply text-xl font-semibold;
+}
+
+.quest-line {
+  @apply relative mt-5 ml-5;
+}
+
+.quest-step {
+  @apply relative my-2 rounded-[5px] border-2 border-[rgba(255,255,255,0.1)] bg-transparent px-4 py-2;
+}
+
+.quest-step:hover {
+  @apply border-[var(--color-primary)] bg-[rgba(255,255,255,0.1)];
+}
+
+.quest-step:hover .quest-step-title {
+  @apply text-white;
+}
+
+.quest-step:last-child {
+  @apply mb-0;
+}
+
+.quest-step-title {
+  @apply text-sm text-white/75;
+}
+
+.quest-link {
+  @apply text-base font-medium text-[var(--color-primary)] no-underline;
+}
