@@ -37,6 +37,7 @@ export type TutorialRef<TutorialVariables extends Record<string, unknown>> = {
   addTutorialStep: (step: TutorialStep<TutorialVariables>) => void;
   resetTutorialSteps: () => void;
   getHistoryStates: () => TutorialStep<Record<string, unknown>>[];
+  toggleButton: (button: "prev" | "next", enabled: boolean) => void;
 };
 
 export function Tutorial<TutorialVariables extends Record<string, unknown>>({
@@ -45,12 +46,16 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
   variables,
   pseudocode,
   graphColors,
+  enablePrevButton = true,
+  enableNextButton = true,
 }: {
   ref: RefObject<TutorialRef<TutorialVariables> | null>;
   graphRef: RefObject<GraphHandle | null>;
   variables: TutorialVariables;
   pseudocode: string;
   graphColors: GraphColors;
+  enablePrevButton?: boolean;
+  enableNextButton?: boolean;
 }) {
   const [codeVariables, setCodeVariables] = useState(variables);
 
@@ -64,13 +69,24 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
     [],
   );
 
+  const [enableButtons, setEnableButtons] = useState({
+    prev: enablePrevButton,
+    next: enableNextButton,
+  });
+
+  const toggleButton = useMemo(() => {
+    return (button: "prev" | "next", enabled: boolean) => {
+      setEnableButtons((prev) => ({ ...prev, [button]: enabled }));
+    };
+  }, []);
+
   const forceUpdate = useForceUpdate();
 
   useEffect(() => {
     function handleKeyPress(event: KeyboardEvent) {
-      if (event.key === "ArrowLeft") {
+      if (event.key === "ArrowLeft" && enableButtons.prev) {
         prevButtonRef.current?.click();
-      } else if (event.key === "ArrowRight") {
+      } else if (event.key === "ArrowRight" && enableButtons.next) {
         nextButtonRef.current?.click();
       }
     }
@@ -236,6 +252,7 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
     addTutorialStep,
     resetTutorialSteps,
     getHistoryStates,
+    toggleButton,
   }));
 
   return (
@@ -260,16 +277,25 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
       </div>
 
       <div className="flex flex-row items-center justify-center gap-2">
-        {historyStates.canGoBack() && (
-          <button
-            className="btn inline-block"
-            ref={prevButtonRef}
-            onClick={prevButtonClickHandler}
-          >
-            Previous
-          </button>
-        )}
-        <button className="btn inline-block" ref={nextButtonRef}>
+        <button
+          className="btn inline-block"
+          style={{
+            display:
+              enableButtons.prev && historyStates.canGoBack()
+                ? "inline-block"
+                : "none",
+          }}
+          ref={prevButtonRef}
+          onClick={prevButtonClickHandler}
+        >
+          Previous
+        </button>
+
+        <button
+          className="btn inline-block"
+          style={{ display: enableButtons.next ? "inline-block" : "none" }}
+          ref={nextButtonRef}
+        >
           {nextButtonText}
         </button>
       </div>

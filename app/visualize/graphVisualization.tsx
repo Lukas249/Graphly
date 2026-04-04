@@ -22,6 +22,7 @@ export default function GraphVisualization({
   className,
   customColors = graphColors,
   isNodeSelectionEnabled = true,
+  onNodeClick,
 }: {
   graphNodes: Node[];
   graphEdges: Edge[];
@@ -29,6 +30,7 @@ export default function GraphVisualization({
   className?: string;
   customColors?: Partial<GraphColors>;
   isNodeSelectionEnabled: boolean;
+  onNodeClick?: (nodeId: string) => void;
 }) {
   const nodes: SimulationNode[] = _.cloneDeep(graphNodes);
   const edges: SimulationEdge[] = _.cloneDeep(graphEdges);
@@ -105,6 +107,12 @@ export default function GraphVisualization({
 
   const simulationRef = useRef<d3.Simulation<SimulationNode, undefined>>(null);
 
+  const isNodeSelectionEnabledRef = useRef(isNodeSelectionEnabled);
+
+  const toggleNodeSelection = (enabled: boolean) => {
+    isNodeSelectionEnabledRef.current = enabled;
+  };
+
   const {
     selectedNodeRef,
     getDefaultMarkings,
@@ -137,8 +145,9 @@ export default function GraphVisualization({
     edges,
     colors,
     reverseEdgeSet,
-    isNodeSelectionEnabled,
+    isNodeSelectionEnabledRef,
     selectNode,
+    onNodeClick,
     selectedNodeRef,
     simulationRef,
     nodesRef,
@@ -158,6 +167,7 @@ export default function GraphVisualization({
     getDefaultMarkings,
     getSelectedNode,
     selectNode,
+    toggleNodeSelection,
   }));
 
   return <svg className={className} ref={svgRef}></svg>;

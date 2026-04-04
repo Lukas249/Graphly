@@ -21,6 +21,7 @@ model problems {
   all_testcases String              @db.MediumText
   time_limit    Int                 @default(2000)
   difficulty    problems_difficulty @default(Easy)
+  is_challenge  Boolean             @default(dbgenerated("b'0'")) @db.Bit(1)
 }
 
 model visualizations {
@@ -35,6 +36,7 @@ model visualizations {
   reset_code                String  @db.Text
   is_node_selection_enabled Boolean @default(dbgenerated("b'1'")) @db.Bit(1)
   guide_text                String  @db.VarChar(3000)
+  is_challenge              Boolean @default(dbgenerated("b'0'")) @db.Bit(1)
 }
 
 model articles {

@@ -57,6 +57,7 @@ export interface GraphHandle {
   getDefaultMarkings: () => Markings;
   getSelectedNode: () => string | null;
   selectNode: (nodeId: string) => void;
+  toggleNodeSelection: (enabled: boolean) => void;
 }
 
 export interface Node {

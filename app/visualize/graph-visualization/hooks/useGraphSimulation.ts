@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { RefObject, useEffect, useRef } from "react";
 import * as d3 from "d3";
 import _ from "lodash";
 import { GraphColors } from "@/app/visualize/core/defaultGraphColors";
@@ -17,8 +17,9 @@ type UseGraphSimulationParams = {
   edges: SimulationEdge[];
   colors: GraphColors;
   reverseEdgeSet: Set<string>;
-  isNodeSelectionEnabled: boolean;
+  isNodeSelectionEnabledRef: RefObject<boolean>;
   selectNode: (nodeId: string) => void;
+  onNodeClick?: (nodeId: string) => void;
   selectedNodeRef: RefLike<string | null>;
   simulationRef: RefLike<d3.Simulation<SimulationNode, undefined> | null>;
   nodesRef: RefLike<d3.Selection<
@@ -59,8 +60,9 @@ export function useGraphSimulation({
   edges,
   colors,
   reverseEdgeSet,
-  isNodeSelectionEnabled,
+  isNodeSelectionEnabledRef,
   selectNode,
+  onNodeClick,
   selectedNodeRef,
   simulationRef,
   nodesRef,
@@ -348,16 +350,24 @@ export function useGraphSimulation({
         });
     }
 
-    if (isNodeSelectionEnabled) {
+    if (isNodeSelectionEnabledRef.current || onNodeClick) {
       node.on("click", (event, d) => {
-        selectNode(d.id);
+        if (isNodeSelectionEnabledRef.current) {
+          selectNode(d.id);
+        }
+        onNodeClick?.(d.id);
       });
 
       nodeLabel.on("click", (event, d) => {
-        selectNode(d.id);
+        if (isNodeSelectionEnabledRef.current) {
+          selectNode(d.id);
+        }
+        onNodeClick?.(d.id);
       });
 
-      selectNode(selectedNodeRef.current ?? "");
+      if (isNodeSelectionEnabledRef.current) {
+        selectNode(selectedNodeRef.current ?? "");
+      }
     }
 
     return () => {
@@ -370,8 +380,9 @@ export function useGraphSimulation({
     edges,
     colors,
     reverseEdgeSet,
-    isNodeSelectionEnabled,
+    isNodeSelectionEnabledRef,
     selectNode,
+    onNodeClick,
     selectedNodeRef,
     simulationRef,
     nodesRef,

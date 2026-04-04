@@ -11,6 +11,7 @@ export async function getVisualizationBySlug(
     select,
     where: {
       slug,
+      is_challenge: false,
     },
   });
 
@@ -24,6 +25,45 @@ export async function getVisualizationBySlug(
 export async function getVisualizations(select?: Prisma.visualizationsSelect) {
   const visualizations = await prisma.visualizations.findMany({
     select,
+    where: {
+      is_challenge: false,
+    },
+  });
+
+  if (!visualizations.length) {
+    throw { error: "Not found", status: 404 };
+  }
+
+  return visualizations;
+}
+
+export async function getVisualizationChallengeBySlug(
+  slug: string,
+  select?: Prisma.visualizationsSelect,
+) {
+  const visualization = await prisma.visualizations.findUnique({
+    select,
+    where: {
+      slug,
+      is_challenge: true,
+    },
+  });
+
+  if (!visualization) {
+    throw { error: "Not found", status: 404 };
+  }
+
+  return visualization;
+}
+
+export async function getVisualizationsChallenges(
+  select?: Prisma.visualizationsSelect,
+) {
+  const visualizations = await prisma.visualizations.findMany({
+    select,
+    where: {
+      is_challenge: true,
+    },
   });
 
   if (!visualizations.length) {

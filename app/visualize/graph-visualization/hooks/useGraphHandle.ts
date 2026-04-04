@@ -41,6 +41,10 @@ export function useGraphHandle({
     markingsRef.current = _.cloneDeep(defaultMarkings);
   }, [defaultMarkings]);
 
+  useEffect(() => {
+    selectedNodeRef.current = initialSelectedNode;
+  }, [initialSelectedNode]);
+
   const graphRefs: GraphHandleRefs = {
     markingsRef,
     ...refs,
