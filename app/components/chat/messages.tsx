@@ -12,32 +12,30 @@ export type MessageProps = {
   children: string;
 };
 
-export default function Response({ id, children }: MessageProps) {
+export default function Response({ children }: MessageProps) {
   return (
-    <span id={id} className="w-full p-2">
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm, remarkMath]}
-        rehypePlugins={[rehypeHighlight, rehypeKatex]}
-        components={{
-          pre: ({ ...props }) => (
-            <pre
-              className="bg-gray-dark-850 my-3 overflow-x-auto rounded-xl p-3 text-gray-100"
-              {...props}
-            />
-          ),
-          code: ({ ...props }) => (
-            <code
-              className="bg-gray-dark-850 rounded-xl p-1 font-mono text-sm"
-              {...props}
-            />
-          ),
-          li: ({ ...props }) => <li className="mb-2" {...props} />,
-          p: ({ ...props }) => <p className="mb-2" {...props} />,
-        }}
-      >
-        {children}
-      </ReactMarkdown>
-    </span>
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm, remarkMath]}
+      rehypePlugins={[rehypeHighlight, rehypeKatex]}
+      components={{
+        pre: ({ ...props }) => (
+          <pre
+            className="bg-gray-dark-850 my-3 overflow-x-auto rounded-xl p-3 text-gray-100"
+            {...props}
+          />
+        ),
+        code: ({ ...props }) => (
+          <code
+            className="bg-gray-dark-850 rounded-xl p-1 font-mono text-sm"
+            {...props}
+          />
+        ),
+        li: ({ ...props }) => <li className="mb-2" {...props} />,
+        p: ({ ...props }) => <p className="mb-2" {...props} />,
+      }}
+    >
+      {children}
+    </ReactMarkdown>
   );
 }
 
@@ -56,9 +54,9 @@ export function MessagesHistory({ messages }: { messages: MessageDetails[] }) {
         {message.text}
       </Message>
     ) : (
-      <Response id={`message${i}`} key={i}>
-        {message.text}
-      </Response>
+      <div id={`message${i}`} key={i} className="w-full p-2">
+        <Response>{message.text}</Response>
+      </div>
     ),
   );
 }

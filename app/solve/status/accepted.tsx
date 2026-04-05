@@ -1,3 +1,4 @@
+import Response from "@/app/components/chat/messages";
 import { SubmissionResult } from "@/app/lib/judge0/types";
 
 interface CardProps {
@@ -39,7 +40,7 @@ export default function Accepted({
         <div className="space-y-3">
           {feedbackAI && (
             <Card title="Feedback AI">
-              <p>{feedbackAI}</p>
+              <Response>{feedbackAI}</Response>
             </Card>
           )}
 
