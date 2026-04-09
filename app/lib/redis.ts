@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createClient, RedisClientType } from "redis";
+import { logger } from "@/app/lib/logger";
 
 const globalForRedis = global as unknown as { redis: RedisClientType };
 
@@ -9,10 +10,10 @@ export const redis: RedisClientType =
 
 if (!redis.isOpen) {
   try {
-    redis.on("error", (err) => console.log("Redis Client Error", err));
+    redis.on("error", (err) => logger.error("Redis client error", err));
     await redis.connect();
   } catch (err) {
-    console.error(err);
+    logger.error("Failed to connect Redis client", err);
   }
 }
 

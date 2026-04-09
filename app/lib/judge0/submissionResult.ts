@@ -1,4 +1,5 @@
 import { SubmissionResult } from "./types";
+import { AppError } from "@/app/lib/errors/appError";
 
 const POLL_INTERVAL_MS = 2_000;
 const MAX_WAIT_MS = 45_000;
@@ -27,7 +28,7 @@ export default async function getSubmissionResult(
   );
 
   if (!fetchData.ok) {
-    throw { error: "Failed to create Judge0 submission", status: 502 };
+    throw new AppError("Failed to create Judge0 submission", 502);
   }
 
   const data = await fetchData.json();
@@ -35,7 +36,7 @@ export default async function getSubmissionResult(
   const token = data.token;
 
   if (!token) {
-    throw { error: "Judge0 response missing token", status: 502 };
+    throw new AppError("Judge0 response missing token", 502);
   }
 
   const startedAt = Date.now();
@@ -44,7 +45,7 @@ export default async function getSubmissionResult(
     const intervalId = setInterval(() => {
       if (Date.now() - startedAt > MAX_WAIT_MS) {
         clearInterval(intervalId);
-        reject({ error: "Judge0 polling timeout", status: 504 });
+        reject(new AppError("Judge0 polling timeout", 504));
         return;
       }
 
@@ -53,10 +54,7 @@ export default async function getSubmissionResult(
       )
         .then((res) => {
           if (!res.ok) {
-            throw {
-              error: "Failed to fetch Judge0 submission status",
-              status: 502,
-            };
+            throw new AppError("Failed to fetch Judge0 submission status", 502);
           }
 
           return res.json();

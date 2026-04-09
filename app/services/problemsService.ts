@@ -2,6 +2,7 @@ import "server-only";
 
 import { Prisma } from "@/prisma/generated/client";
 import { prisma } from "@/app/lib/prisma";
+import { AppError } from "@/app/lib/errors/appError";
 
 export async function getProblemById(
   id: number,
@@ -15,7 +16,7 @@ export async function getProblemById(
   });
 
   if (!problem) {
-    throw { error: "Not found problem with ID " + id, status: 404 };
+    throw new AppError(`Not found problem with ID ${id}`, 404);
   }
 
   return problem;
@@ -34,7 +35,7 @@ export async function getProblemBySlug(
   });
 
   if (!problem) {
-    throw { error: "Not found problem with slug " + slug, status: 404 };
+    throw new AppError(`Not found problem with slug ${slug}`, 404);
   }
 
   return problem;
@@ -49,7 +50,7 @@ export async function getProblems(select?: Prisma.problemsSelect) {
   });
 
   if (!problems.length) {
-    throw { error: "Not found problems", status: 404 };
+    throw new AppError("Not found problems", 404);
   }
 
   return problems;
@@ -68,10 +69,7 @@ export async function getProblemChallengeBySlug(
   });
 
   if (!problem) {
-    throw {
-      error: "Not found problem challenge with slug " + slug,
-      status: 404,
-    };
+    throw new AppError(`Not found problem challenge with slug ${slug}`, 404);
   }
 
   return problem;
@@ -86,7 +84,7 @@ export async function getProblemsChallenge(select?: Prisma.problemsSelect) {
   });
 
   if (!problems.length) {
-    throw { error: "Not found problems challenges", status: 404 };
+    throw new AppError("Not found problems challenges", 404);
   }
 
   return problems;

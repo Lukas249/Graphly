@@ -5,6 +5,7 @@ import { getProblemById } from "./problemsService";
 import getSubmissionResult from "@/app/lib/judge0/submissionResult";
 import { redis } from "@/app/lib/redis";
 import { getLineCount } from "@/app/lib/getLineCount";
+import { AppError } from "@/app/lib/errors/appError";
 
 const TESTCASES_CACHE_TTL_SECONDS = 60 * 60; // 1h
 
@@ -24,10 +25,10 @@ export async function runCode(
   const paramsCount = (problem.params as JsonArray).length;
 
   if (paramsCount === 0) {
-    throw {
-      error: "Invalid problem configuration: params cannot be empty",
-      status: 500,
-    };
+    throw new AppError(
+      "Invalid problem configuration: params cannot be empty",
+      500,
+    );
   }
 
   const sourceCode = problem.header + "\n" + userCode + "\n" + problem.driver;
@@ -60,10 +61,10 @@ export async function submitCode(
   const paramsCount = (problem.params as JsonArray).length;
 
   if (paramsCount === 0) {
-    throw {
-      error: "Invalid problem configuration: params cannot be empty",
-      status: 500,
-    };
+    throw new AppError(
+      "Invalid problem configuration: params cannot be empty",
+      500,
+    );
   }
 
   const sourceCode = problem.header + "\n" + userCode + "\n" + problem.driver;

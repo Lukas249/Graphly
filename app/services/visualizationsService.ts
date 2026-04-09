@@ -2,6 +2,7 @@ import "server-only";
 
 import { Prisma } from "@/prisma/generated/client";
 import { prisma } from "@/app/lib/prisma";
+import { AppError } from "@/app/lib/errors/appError";
 
 export async function getVisualizationBySlug(
   slug: string,
@@ -16,7 +17,7 @@ export async function getVisualizationBySlug(
   });
 
   if (!visualization) {
-    throw { error: "Not found", status: 404 };
+    throw new AppError("Not found", 404);
   }
 
   return visualization;
@@ -31,7 +32,7 @@ export async function getVisualizations(select?: Prisma.visualizationsSelect) {
   });
 
   if (!visualizations.length) {
-    throw { error: "Not found", status: 404 };
+    throw new AppError("Not found", 404);
   }
 
   return visualizations;
@@ -50,7 +51,7 @@ export async function getVisualizationChallengeBySlug(
   });
 
   if (!visualization) {
-    throw { error: "Not found", status: 404 };
+    throw new AppError("Not found", 404);
   }
 
   return visualization;
@@ -67,7 +68,7 @@ export async function getVisualizationsChallenges(
   });
 
   if (!visualizations.length) {
-    throw { error: "Not found", status: 404 };
+    throw new AppError("Not found", 404);
   }
 
   return visualizations;

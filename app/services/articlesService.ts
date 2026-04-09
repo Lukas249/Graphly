@@ -2,6 +2,7 @@ import "server-only";
 
 import { Prisma } from "@/prisma/generated/client";
 import { prisma } from "@/app/lib/prisma";
+import { AppError } from "@/app/lib/errors/appError";
 
 export async function getArticleBySlug(
   slug: string,
@@ -15,7 +16,7 @@ export async function getArticleBySlug(
   });
 
   if (!article) {
-    throw { error: "Not found", status: 404 };
+    throw new AppError("Not found", 404);
   }
 
   return article;
@@ -27,7 +28,7 @@ export async function getArticles(select?: Prisma.articlesSelect) {
   });
 
   if (!articles.length) {
-    throw { error: "Not found", status: 404 };
+    throw new AppError("Not found", 404);
   }
 
   return articles;
