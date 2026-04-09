@@ -1,6 +1,7 @@
 import "server-only";
 
 import { redis } from "@/app/lib/redis";
+import { logger } from "@/app/lib/logger";
 import { ModelMessage } from "./gemini.types";
 
 const CHAT_CACHE_TTL_SECONDS = 60 * 60 * 24; // 24h
@@ -12,7 +13,17 @@ export async function getChatHistory(
   chatSessionID: string,
 ): Promise<ModelMessage[]> {
   const key = getChatHistoryKey(chatSessionID);
-  const history = await redis.lRange(key, 0, -1);
+  let history: string[] = [];
+
+  try {
+    history = await redis.lRange(key, 0, -1);
+  } catch (err) {
+    logger.warn("Failed to fetch chat history from Redis", {
+      chatSessionID,
+      error: err instanceof Error ? err.message : String(err),
+    });
+    return [];
+  }
 
   const parsedHistory: ModelMessage[] = [];
 
@@ -35,7 +46,13 @@ export async function addMessageToHistory(
 
   const key = getChatHistoryKey(chatSessionID);
 
-  await redis.rPush(key, JSON.stringify(messageDetails));
-
-  await redis.expire(key, CHAT_CACHE_TTL_SECONDS, "NX");
+  try {
+    await redis.rPush(key, JSON.stringify(messageDetails));
+    await redis.expire(key, CHAT_CACHE_TTL_SECONDS, "NX");
+  } catch (err) {
+    logger.warn("Failed to save chat history to Redis", {
+      chatSessionID,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
 }
