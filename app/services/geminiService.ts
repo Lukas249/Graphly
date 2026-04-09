@@ -8,14 +8,23 @@ import {
 import { Chat, Content, GenerateContentConfig } from "@google/genai";
 import { addMessageToHistory, getChatHistory } from "./chatStorage";
 import { ModelMessage, ModelResponse } from "./gemini.types";
-import { ai, assistantInstructions, modelName } from "./geminiSetup";
+import {
+  ai,
+  assistantInstructions,
+  modelName,
+} from "../lib/gemini-ai/geminiSetup";
 
 export const createPrompt = (message: string, contexts?: Contexts): string => {
   return `
     <CONTEXT_START>
       ${
         contexts && Object.keys(contexts).length > 0
-          ? `${Object.entries(contexts).map(([type, context]) => `Type of context: ${type}\n context: ${context}\n`)}`
+          ? `${Object.entries(contexts)
+              .map(
+                ([type, context]) =>
+                  `Type of context: ${type}\n context: ${context}\n`,
+              )
+              .join("\n")}`
           : ""
       }
     <CONTEXT_END>
@@ -91,12 +100,12 @@ export async function processChatMessage(
 
   const answer = await askAI(chat, message, contexts);
 
-  addMessageToHistory(chatSessionID, {
+  await addMessageToHistory(chatSessionID, {
     role: CHAT_ROLES.USER,
     text: message.text,
     contexts,
   });
-  addMessageToHistory(chatSessionID, {
+  await addMessageToHistory(chatSessionID, {
     role: CHAT_ROLES.MODEL,
     text: answer.text,
     thoughtSignature: answer.thoughtSignature,
