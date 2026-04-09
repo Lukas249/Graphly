@@ -5,6 +5,7 @@ const POLL_INTERVAL_MS = 2_000;
 const MAX_WAIT_MS = 45_000;
 const DEFAULT_SUBMISSION_FIELDS =
   "stdout,time,memory,stderr,token,compile_output,message,status";
+const JUDGE0_BASE_URL = process.env.NEXT_PUBLIC_JUDGE0_URL ?? "";
 
 export default async function getSubmissionResult(
   sourceCode: string,
@@ -12,20 +13,21 @@ export default async function getSubmissionResult(
   testcases: string,
   timeLimit: number,
 ): Promise<SubmissionResult> {
-  const fetchData = await fetch(
-    `${process.env.NEXT_PUBLIC_JUDGE0_URL}/submissions`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        source_code: sourceCode,
-        language_id: languageId,
-        stdin: testcases,
-        base64_encoded: true,
-        time: timeLimit,
-      }),
-    },
-  );
+  if (!JUDGE0_BASE_URL) {
+    throw new AppError("Missing Judge0 URL configuration", 500);
+  }
+
+  const fetchData = await fetch(`${JUDGE0_BASE_URL}/submissions`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      source_code: sourceCode,
+      language_id: languageId,
+      stdin: testcases,
+      base64_encoded: true,
+      time: timeLimit,
+    }),
+  });
 
   if (!fetchData.ok) {
     throw new AppError("Failed to create Judge0 submission", 502);
@@ -50,7 +52,7 @@ export default async function getSubmissionResult(
       }
 
       fetch(
-        `${process.env.NEXT_PUBLIC_JUDGE0_URL}/submissions/${token}?base64_encoded=true&fields=${DEFAULT_SUBMISSION_FIELDS}`,
+        `${JUDGE0_BASE_URL}/submissions/${token}?base64_encoded=true&fields=${DEFAULT_SUBMISSION_FIELDS}`,
       )
         .then((res) => {
           if (!res.ok) {
