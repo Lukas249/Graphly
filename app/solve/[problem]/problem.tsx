@@ -225,23 +225,28 @@ export default function Problem({
   );
 
   const getTabSetters = (section: TabSection): TabSetters => {
+    let currentRef: TabsRef | null = null;
+
     switch (section) {
       case "main":
-        return {
-          setTabs: mainTabsRef.current!.setTabs,
-          setCurrentTab: mainTabsRef.current!.setCurrentTab,
-        };
+        currentRef = mainTabsRef.current;
+        break;
       case "code":
-        return {
-          setTabs: codeTabsRef.current!.setTabs,
-          setCurrentTab: codeTabsRef.current!.setCurrentTab,
-        };
+        currentRef = codeTabsRef.current;
+        break;
       case "testcases":
-        return {
-          setTabs: testcasesTabsRef.current!.setTabs,
-          setCurrentTab: testcasesTabsRef.current!.setCurrentTab,
-        };
+        currentRef = testcasesTabsRef.current;
+        break;
     }
+
+    if (!currentRef) {
+      throw new Error(`Tabs ref is not ready for section: ${section}`);
+    }
+
+    return {
+      setTabs: currentRef.setTabs,
+      setCurrentTab: currentRef.setCurrentTab,
+    };
   };
 
   const addTab = (tab: Tab, tabSection: TabSection) => {
