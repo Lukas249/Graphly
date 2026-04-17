@@ -1,6 +1,6 @@
 @reference "../../globals.css";
 
-.articleParagraph {
+.article-paragraph {
   @apply my-4;
 }
 
