@@ -1,3 +1,4 @@
+import { graphColors } from "./defaultGraphColors";
 import { TutorialStep } from "./tutorial";
 
 export function formatContextHistoryStates(
@@ -8,7 +9,7 @@ export function formatContextHistoryStates(
   let index = 0;
 
   return (
-    `By default all vertices and edges are white. If node is visited or edge then it turns color to #19b5fe.` +
+    `By default, all vertices and edges are white. When marked, they use a custom color if one is specified. Otherwise, they fall back to ${graphColors.markedNodeFill} for vertices and ${graphColors.markedEdge} for edges.\n` +
     historyStates
       .map((state) => {
         if (state.isStep) index++;
