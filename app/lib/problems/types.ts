@@ -9,6 +9,7 @@ export type Problem = {
   code: string;
   testcases: string;
   difficulty: ProblemDifficulty;
+  is_challenge: boolean;
 };
 
 export type ProblemNavItem = Pick<

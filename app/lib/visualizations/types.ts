@@ -13,6 +13,7 @@ export type Visualization = {
   reset_code: string;
   is_node_selection_enabled: boolean;
   guide_text: string;
+  is_challenge: boolean;
 };
 
 export type VisualizationNavItem = Pick<Visualization, "id" | "title" | "slug">;
