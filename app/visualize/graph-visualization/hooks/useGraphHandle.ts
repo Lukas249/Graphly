@@ -182,13 +182,14 @@ export function useGraphHandle({
       [edge.source, edge.target] = [edge.target, edge.source];
     }
 
-    simulationRef.current?.force(
-      "link",
-      d3
-        .forceLink<SimulationNode, SimulationEdge>(edges)
-        .id((d) => d.id)
-        .distance(150),
-    );
+    const linkForce = simulationRef.current?.force("link") as
+      | d3.ForceLink<SimulationNode, SimulationEdge>
+      | undefined;
+
+    if (linkForce) {
+      linkForce.links(edges);
+    }
+
     simulationRef.current?.alpha(0).restart();
   }
 
