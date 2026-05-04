@@ -10,3 +10,12 @@ export type Graph = {
   edges: Edge[];
   nodes: Node[];
 };
+
+export type NodeDetails = {
+  nodeId: string;
+  weight: string;
+};
+
+export type Adjacency = {
+  [key: string]: NodeDetails[];
+};

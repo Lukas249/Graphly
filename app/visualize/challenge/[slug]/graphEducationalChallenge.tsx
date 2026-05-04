@@ -12,6 +12,8 @@ import Chat from "@/app/components/chat/chat";
 import { askAI } from "@/app/lib/gemini-ai/ai";
 import { ChatRef, MessageDetails } from "@/app/components/chat/types";
 import AISelectionProvider from "@/app/components/providers/aiSelectionProvider";
+import { buildAdjacency } from "@/app/lib/graph/buildAdjacency";
+import { GRAPH_SPECIFICATION_CONTEXT_TEXT } from "@/app/lib/graph/graphSpecificationText";
 import { stringifyGraph } from "@/app/lib/graph/graphSerializer";
 import {
   defaultEdgeSeparator,
@@ -35,10 +37,9 @@ import {
 import { onChangeTab } from "@/app/components/tabs/onChangeTab";
 import GuideContent from "../../[visualization]/guideContent";
 import { formatContextHistoryStates } from "../../core/formatContextHistoryStates";
-import { Adjacency, InitialStep } from "../../[visualization]/types";
-
-const GRAPH_SPECIFICATION_CONTEXT_TEXT =
-  "Graph is represented as text where '--' means undirected edge and '->' means directed edge. Weight is separated by ':'. For example, 'A--B:3' means there is an undirected edge between A and B with weight 3. 'C->D:' means there is a directed edge from C to D with no weight specified.";
+import { Adjacency } from "@/app/lib/graph/types";
+import { InitialStep } from "../../[visualization]/types";
+import { toast } from "react-toastify";
 
 function GraphEducationalChallenge({
   graphNodes,
@@ -184,41 +185,29 @@ function GraphEducationalChallenge({
   }, []);
 
   useEffect(() => {
-    const adjacency: Adjacency = {};
-
-    for (const node of nodes) {
-      adjacency[node.id] = [];
-    }
-
-    for (const { source, target, directed, weight } of edges) {
-      if (directed) {
-        adjacency[source.id].push({ nodeId: target.id, weight: weight ?? "" });
-      } else {
-        adjacency[source.id].push({ nodeId: target.id, weight: weight ?? "" });
-        adjacency[target.id].push({ nodeId: source.id, weight: weight ?? "" });
-      }
-    }
+    const adjacency = buildAdjacency(nodes, edges);
 
     adjacencyRef.current = adjacency;
 
-    function restartChallenge() {
+    function resetChallenge() {
       tutorialRef.current?.resetTutorialSteps();
       graphRef.current?.resetMarks();
       reset({ graphRef, tutorialRef });
-      startChallenge();
     }
 
-    async function startChallenge() {
+    function startChallenge() {
       graphRef.current?.toggleNodeSelection(true);
 
-      tutorialRef.current?.addTutorialStep(initialStep);
+      if (tutorialRef.current?.getHistoryStates().length === 0) {
+        tutorialRef.current?.addTutorialStep(initialStep);
+      }
 
       graphRef.current?.selectNode(
         graphRef.current?.getSelectedNode() ?? nodes[0]?.id ?? "",
       );
 
-      tutorialRef.current?.setNextButtonOnceClickHanlder(() => {
-        startAlgorithm();
+      tutorialRef.current?.setNextButtonOnceClickHanlder(async () => {
+        await startAlgorithm();
       });
     }
 
@@ -228,15 +217,9 @@ function GraphEducationalChallenge({
         graphRef.current?.getSelectedNode() ?? fallbackNodeId;
 
       if (!selectedNode) {
-        tutorialRef.current?.addTutorialStep({
-          description:
-            "Graph has no vertices. Add at least one vertex to start the challenge.",
-          buttonText: "Start challenge",
-          variables: {
-            currentNode: null,
-            recursionPath: [],
-          },
-        });
+        toast.error(
+          "No nodes in the graph. Please add at least one node to start the challenge.",
+        );
         return;
       }
 
@@ -259,11 +242,16 @@ function GraphEducationalChallenge({
       });
 
       tutorialRef.current?.setNextButtonOnceClickHanlder(() => {
-        restartChallenge();
+        resetChallenge();
+        startChallenge();
       });
     }
 
     startChallenge();
+
+    return () => {
+      resetChallenge();
+    };
   }, [algorithm, nodes, edges, initialStep, reset, waitOnNodeClick]);
 
   const graphVisualization = useMemo(

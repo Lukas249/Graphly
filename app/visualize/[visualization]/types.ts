@@ -1,4 +1,5 @@
 import { RefObject } from "react";
+import { Adjacency } from "@/app/lib/graph/types";
 import { Edge, GraphHandle, Node } from "../core/graphTypes";
 import { TutorialRef } from "../core/tutorial";
 
@@ -12,15 +13,6 @@ export type InitialStep = {
   description: string;
   variables: Record<string, unknown>;
   buttonText: string;
-};
-
-export type NodeDetails = {
-  nodeId: string;
-  weight: string;
-};
-
-export type Adjacency = {
-  [key: string]: NodeDetails[];
 };
 
 export type VisualizationRefs = {

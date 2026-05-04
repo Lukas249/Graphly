@@ -1,7 +1,7 @@
 import { RefObject } from "react";
 import { GraphHandle } from "../../core/graphTypes";
 import { TutorialRef } from "../../core/tutorial";
-import { Adjacency } from "../../[visualization]/types";
+import { Adjacency } from "@/app/lib/graph/types";
 
 export type ChallengeVisualizationRefs = {
   graphRef: RefObject<GraphHandle | null>;

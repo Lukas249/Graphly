@@ -12,6 +12,8 @@ import Chat from "@/app/components/chat/chat";
 import { askAI } from "@/app/lib/gemini-ai/ai";
 import { ChatRef, MessageDetails } from "@/app/components/chat/types";
 import AISelectionProvider from "@/app/components/providers/aiSelectionProvider";
+import { buildAdjacency } from "@/app/lib/graph/buildAdjacency";
+import { GRAPH_SPECIFICATION_CONTEXT_TEXT } from "@/app/lib/graph/graphSpecificationText";
 import { stringifyGraph } from "@/app/lib/graph/graphSerializer";
 import {
   defaultEdgeSeparator,
@@ -21,12 +23,7 @@ import { sendHandler } from "@/app/components/chat/sendHandler";
 import _ from "lodash";
 import GraphEditor from "../core/graphEditor";
 import { graphColors } from "../core/defaultGraphColors";
-import {
-  Adjacency,
-  AlgorithmFunction,
-  InitialStep,
-  VisualizationRefs,
-} from "./types";
+import { AlgorithmFunction, InitialStep, VisualizationRefs } from "./types";
 import { Tab, TabsRef, TabTitle } from "@/app/components/tabs/types";
 import {
   createRenderTab,
@@ -41,9 +38,7 @@ import {
 import { onChangeTab } from "@/app/components/tabs/onChangeTab";
 import GuideContent from "./guideContent";
 import { formatContextHistoryStates } from "../core/formatContextHistoryStates";
-
-const GRAPH_SPECIFICATION_CONTEXT_TEXT =
-  "Graph is represented as text where '--' means undirected edge and '->' means directed edge. Weight is separated by ':'. For example, 'A--B:3' means there is an undirected edge between A and B with weight 3. 'C->D:' means there is a directed edge from C to D with no weight specified.";
+import { toast } from "react-toastify";
 
 function GraphEducational({
   graphNodes,
@@ -180,62 +175,55 @@ function GraphEducational({
   };
 
   useEffect(() => {
-    const adjacency: Adjacency = {};
+    const adjacency = buildAdjacency(nodes, edges);
 
-    for (const node of nodes) {
-      adjacency[node.id] = [];
-    }
+    function resetTutorial(isFullReset: boolean = true) {
+      tutorialRef.current?.resetTutorialSteps();
+      graphRef.current?.resetMarks();
 
-    for (const { source, target, directed, weight } of edges) {
-      if (directed) {
-        adjacency[source.id].push({ nodeId: target.id, weight: weight ?? "" });
-      } else {
-        adjacency[source.id].push({ nodeId: target.id, weight: weight ?? "" });
-        adjacency[target.id].push({ nodeId: source.id, weight: weight ?? "" });
+      if (isFullReset) {
+        reset({ graphRef, tutorialRef });
       }
     }
 
-    async function startTutorial() {
+    function startTutorial() {
+      graphRef.current?.toggleNodeSelection(true);
+
       if (tutorialRef.current?.getHistoryStates().length === 0) {
         tutorialRef.current?.addTutorialStep(initialStep);
       }
 
-      const nextButtonClickHandler = async () => {
-        await runAlgorithm();
-      };
-
-      tutorialRef.current?.setNextButtonOnceClickHanlder(
-        nextButtonClickHandler,
+      graphRef.current?.selectNode(
+        graphRef.current?.getSelectedNode() ?? nodes[0]?.id ?? "",
       );
-    }
 
-    async function resetTutorial(selectedNode: string) {
-      tutorialRef.current?.resetTutorialSteps();
-      graphRef.current?.resetMarks();
-      reset({ graphRef, tutorialRef });
-      graphRef.current?.toggleNodeSelection(true);
-      graphRef.current?.selectNode(selectedNode);
-      await startTutorial();
+      tutorialRef.current?.setNextButtonOnceClickHanlder(async () => {
+        await runAlgorithm();
+      });
     }
 
     async function runAlgorithm() {
-      const selectedNode = graphRef.current?.getSelectedNode() ?? "";
+      const fallbackNodeId = nodes[0]?.id ?? "";
+      const selectedNode =
+        graphRef.current?.getSelectedNode() ?? fallbackNodeId;
 
       if (!selectedNode) {
+        toast.error(
+          "No nodes in the graph. Please add at least one node to start the visualization.",
+        );
         return;
       }
 
       graphRef.current?.toggleNodeSelection(false);
 
-      if (isNodeSelectionEnabled) {
-        graphRef.current?.resetMarks();
+      graphRef.current?.resetMarks();
 
-        tutorialRef.current?.addTutorialStep({
-          description: `Algorithm initiated at vertex ${selectedNode}.`,
-          variables: initialStep.variables,
-        });
-        await waitOnClick();
-      }
+      tutorialRef.current?.addTutorialStep({
+        description: `Algorithm initiated at vertex ${selectedNode}.`,
+        variables: initialStep.variables,
+      });
+
+      await waitOnClick();
 
       await algorithm({
         graphRef,
@@ -252,13 +240,18 @@ function GraphEducational({
         buttonText: "Restart",
       });
 
-      tutorialRef.current?.setNextButtonOnceClickHanlder(
-        resetTutorial.bind(null, selectedNode),
-      );
+      tutorialRef.current?.setNextButtonOnceClickHanlder(() => {
+        resetTutorial();
+        startTutorial();
+      });
     }
 
     startTutorial();
-  }, [nodes, edges, algorithm, initialStep, isNodeSelectionEnabled, reset]);
+
+    return () => {
+      resetTutorial(false);
+    };
+  }, [nodes, edges, algorithm, initialStep, reset]);
 
   const graphVisualization = useMemo(
     () => (
