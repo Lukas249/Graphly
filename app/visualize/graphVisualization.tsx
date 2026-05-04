@@ -45,12 +45,6 @@ export default function GraphVisualization({
     edge.target = edge.target.id as Node & (string | number | SimulationNode);
   }
 
-  const reverseEdgeSet = useMemo(
-    () =>
-      new Set(graphEdges.map((edge) => `${edge.source.id}::${edge.target.id}`)),
-    [graphEdges],
-  );
-
   const defaultMarkings: Markings = useMemo(() => {
     const currentDefaultMarkings: Markings = {
       nodes: {},
@@ -144,7 +138,6 @@ export default function GraphVisualization({
     nodes,
     edges,
     colors,
-    reverseEdgeSet,
     isNodeSelectionEnabledRef,
     selectNode,
     onNodeClick,
