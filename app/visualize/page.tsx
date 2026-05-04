@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { LinkList } from "@/app/components/linkList/linkList";
 import { getVisualizations } from "@/app/services/visualizationsService";
 
-export const revalidate = 60;
+export const revalidate = 86400; // 60 * 60 * 24;
 
 export default async function VisualizePage() {
   const visualizations = await getVisualizations({

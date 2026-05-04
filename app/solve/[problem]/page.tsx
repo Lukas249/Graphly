@@ -3,8 +3,14 @@ import Problem from "./problem";
 import { getProblemBySlug } from "@/app/services/problemsService";
 import type { Problem as ProblemData } from "@/app/lib/problems/types";
 
+export const revalidate = 86400; // 60 * 60 * 24;
+
 interface PageProps {
   params: Promise<{ problem: string }>;
+}
+
+export async function generateStaticParams() {
+  return [];
 }
 
 export default async function Page({ params }: PageProps) {
