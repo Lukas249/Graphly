@@ -210,6 +210,6 @@ export function useGraphHandle({
     transpose,
     selectNode,
     getSelectedNode,
-    getNodeMarkings
+    getNodeMarkings,
   };
 }

@@ -26,4 +26,3 @@ export default async function ChallengePage({ params }: PageProps) {
 
   return <AlgorithmWrapper visualization={visualizationChallengeData} />;
 }
-

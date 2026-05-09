@@ -41,10 +41,10 @@ export type TutorialRef<TutorialVariables extends Record<string, unknown>> = {
 };
 
 function handleKeyPress(
-  event: KeyboardEvent, 
-  enableButtons: { prev: boolean; next: boolean }, 
-  prevButtonRef: RefObject<HTMLButtonElement | null>, 
-  nextButtonRef: RefObject<HTMLButtonElement | null>
+  event: KeyboardEvent,
+  enableButtons: { prev: boolean; next: boolean },
+  prevButtonRef: RefObject<HTMLButtonElement | null>,
+  nextButtonRef: RefObject<HTMLButtonElement | null>,
 ) {
   if (event.key === "ArrowLeft" && enableButtons.prev) {
     prevButtonRef.current?.click();
@@ -96,7 +96,10 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
   const forceUpdate = useForceUpdate();
 
   useEffect(() => {
-    const throttled = _.throttle((e) => handleKeyPress(e, enableButtons, prevButtonRef, nextButtonRef), 250);
+    const throttled = _.throttle(
+      (e) => handleKeyPress(e, enableButtons, prevButtonRef, nextButtonRef),
+      250,
+    );
 
     window.addEventListener("keydown", throttled);
 

@@ -118,7 +118,7 @@ export default function GraphVisualization({
     transpose,
     selectNode,
     getSelectedNode,
-    getNodeMarkings
+    getNodeMarkings,
   } = useGraphHandle({
     defaultMarkings,
     colors,
@@ -162,7 +162,7 @@ export default function GraphVisualization({
     getSelectedNode,
     selectNode,
     toggleNodeSelection,
-    getNodeMarkings
+    getNodeMarkings,
   }));
 
   return <svg className={className} ref={svgRef}></svg>;

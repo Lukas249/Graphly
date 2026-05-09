@@ -40,7 +40,8 @@ export default function GuideContent({
         <p>
           <strong>Interactive View</strong>
         </p>
-        Zoom and move using your mouse or touch. Zoom in to see nodes in detail or zoom out to see the whole graph.
+        Zoom and move using your mouse or touch. Zoom in to see nodes in detail
+        or zoom out to see the whole graph.
       </ArticleParagraph>
 
       {isNodeSelectionEnabled && (

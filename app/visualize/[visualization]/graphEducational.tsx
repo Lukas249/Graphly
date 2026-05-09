@@ -167,7 +167,7 @@ function GraphEducational({
   ]);
 
   const clickedNodePromiseRef = useRef<(node: string) => void>(null);
-  
+
   const waitOnNodeClick = useCallback(() => {
     return new Promise<string>((resolve) => {
       clickedNodePromiseRef.current = resolve;
@@ -271,13 +271,16 @@ function GraphEducational({
   );
 
   return (
-    <div className="flex h-full max-w-layout relative left-1/2 -translate-x-1/2 flex-row items-center p-8">
+    <div className="max-w-layout relative left-1/2 flex h-full -translate-x-1/2 flex-row items-center p-8">
       <Allotment className="h-full w-full" vertical={false}>
         <Allotment.Pane preferredSize="60%">
           {graphVisualization}
         </Allotment.Pane>
 
-        <Allotment.Pane preferredSize="40%" className="bg-gray-dark absolute left-[60%]">
+        <Allotment.Pane
+          preferredSize="40%"
+          className="bg-gray-dark absolute left-[60%]"
+        >
           <Tabs
             ref={tutorialTabsRef}
             className="flex h-full flex-col"

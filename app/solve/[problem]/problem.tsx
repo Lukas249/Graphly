@@ -331,7 +331,7 @@ export default function Problem({
         handleSubmit={() => handleJudge(true, sourceCode)}
       />
 
-      <div className="h-full max-w-layout relative left-1/2 -translate-x-1/2">
+      <div className="max-w-layout relative left-1/2 h-full -translate-x-1/2">
         <Allotment className="rounded-t-lg" separator={false}>
           <Tabs
             ref={mainTabsRef}
