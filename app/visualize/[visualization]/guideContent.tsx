@@ -36,8 +36,18 @@ export default function GuideContent({
         </ul>
       </ArticleParagraph>
 
+      <ArticleParagraph>
+        <p>
+          <strong>Interactive View</strong>
+        </p>
+        Zoom and move using your mouse or touch. Zoom in to see nodes in detail or zoom out to see the whole graph.
+      </ArticleParagraph>
+
       {isNodeSelectionEnabled && (
         <ArticleParagraph>
+          <p>
+            <strong>Starting Vertex Selection</strong>
+          </p>
           Before running the algorithm, you can select a starting vertex. Simply
           click any node to set it as the starting point.
         </ArticleParagraph>
