@@ -40,6 +40,19 @@ export type TutorialRef<TutorialVariables extends Record<string, unknown>> = {
   toggleButton: (button: "prev" | "next", enabled: boolean) => void;
 };
 
+function handleKeyPress(
+  event: KeyboardEvent, 
+  enableButtons: { prev: boolean; next: boolean }, 
+  prevButtonRef: RefObject<HTMLButtonElement | null>, 
+  nextButtonRef: RefObject<HTMLButtonElement | null>
+) {
+  if (event.key === "ArrowLeft" && enableButtons.prev) {
+    prevButtonRef.current?.click();
+  } else if (event.key === "ArrowRight" && enableButtons.next) {
+    nextButtonRef.current?.click();
+  }
+}
+
 export function Tutorial<TutorialVariables extends Record<string, unknown>>({
   ref,
   graphRef,
@@ -83,22 +96,14 @@ export function Tutorial<TutorialVariables extends Record<string, unknown>>({
   const forceUpdate = useForceUpdate();
 
   useEffect(() => {
-    function handleKeyPress(event: KeyboardEvent) {
-      if (event.key === "ArrowLeft" && enableButtons.prev) {
-        prevButtonRef.current?.click();
-      } else if (event.key === "ArrowRight" && enableButtons.next) {
-        nextButtonRef.current?.click();
-      }
-    }
-
-    const throttled = _.throttle(handleKeyPress, 250);
+    const throttled = _.throttle((e) => handleKeyPress(e, enableButtons, prevButtonRef, nextButtonRef), 250);
 
     window.addEventListener("keydown", throttled);
 
     return () => {
       window.removeEventListener("keydown", throttled);
     };
-  }, []);
+  }, [enableButtons]);
 
   function resetTutorialSteps() {
     historyStates.reset();
