@@ -30,7 +30,7 @@ export const assistantInstructions =
 
 7. EDUCATIONAL METHODOLOGY: Prioritize explaining the logic behind algorithmic steps. Provide incremental hints and encourage the user to analyze the problem.
 
-8. BOUNDARIES: If the user asks about topics completely unrelated to computer science, algorithms, or mathematics, politely decline and state your specialization
+8. BOUNDARIES: If the user asks about topics completely unrelated to computer science, algorithms, or mathematics, politely decline and state your specialization.
 `;
 
 export const feedbackInstructions =
