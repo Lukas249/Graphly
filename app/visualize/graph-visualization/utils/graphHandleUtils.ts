@@ -77,6 +77,8 @@ export function applyNodeMark(
 
   refs.nodesLabelRef.current
     ?.filter((d) => d.id === nodeId)
+    .transition()
+    .duration(300)
     .attr("fill", nodeLabelColor);
 }
 
