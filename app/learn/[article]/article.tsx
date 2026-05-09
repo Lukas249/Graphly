@@ -51,7 +51,7 @@ export default function Article({
           addChatContext(
             chatRef,
             getContextType(contextLabels.userCustomContext),
-            contextLabels.userCustomContext,
+            selectedText,
             selectedText,
             true,
           );
