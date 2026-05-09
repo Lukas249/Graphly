@@ -10,5 +10,7 @@ export function addZoomBehavior(
     container.attr("transform", event.transform);
     zoomRef.current.transform = event.transform;
   });
-  svg.call(zoom as any);
+  
+  svg.call(zoom as any)
+    .on("dblclick.zoom", null);
 }
