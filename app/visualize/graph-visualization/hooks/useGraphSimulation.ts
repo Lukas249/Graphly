@@ -77,7 +77,7 @@ export function useGraphSimulation({
   const zoomRef = useRef<{ transform: string }>({ transform: "" });
 
   const edgeSet = useMemo(
-    () => new Set(edges.map((edge) => `${edge.source.id}::${edge.target.id}`)),
+    () => new Set(edges.map((edge) => `${edge.source}::${edge.target}`)),
     [edges],
   );
 
