@@ -26,11 +26,23 @@ export type MarkNodeProps = {
   prevNodeLabelColor?: string;
 };
 
+export type NodeMarkings = {
+  fill: string;
+  stroke: string;
+  label: string;
+};
+
+export type EdgeMarkings = {
+  fill: string;
+  head: string;
+  label: string;
+};
+
 export type Markings = {
-  nodes: { [key: string]: { fill: string; stroke: string; label: string } };
+  nodes: { [key: string]: NodeMarkings };
   edges: {
     [key: string]: {
-      [key: string]: { fill: string; head: string; label: string };
+      [key: string]: EdgeMarkings;
     };
   };
 };
@@ -58,6 +70,7 @@ export interface GraphHandle {
   getSelectedNode: () => string | null;
   selectNode: (nodeId: string) => void;
   toggleNodeSelection: (enabled: boolean) => void;
+  getNodeMarkings: (nodeId: string) => NodeMarkings | undefined;
 }
 
 export interface Node {

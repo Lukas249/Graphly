@@ -26,7 +26,8 @@ export type AlgorithmParams = VisualizationRefs & {
   edges: Edge[];
   adjacency: Adjacency;
   selectedNode: string;
-  [key: string]: unknown;
+  waitOnNodeClick: () => Promise<string>;
+  initialStep: InitialStep;
 };
 
 export type AlgorithmFunction = (params: AlgorithmParams) => Promise<unknown>;

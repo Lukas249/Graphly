@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getVisualizationChallengeBySlug } from "@/app/services/visualizationsService";
 import { Visualization } from "@/app/lib/visualizations/types";
-import AlgorithmWrapperChallenge from "./algorithmWrapperChallenge";
+import AlgorithmWrapper from "../../[visualization]/algorithmWrapper";
 
 export const revalidate = 86400; // 60 * 60 * 24;
 
@@ -16,13 +16,14 @@ export async function generateStaticParams() {
 export default async function ChallengePage({ params }: PageProps) {
   const { slug } = await params;
 
-  const visualizationData = (await getVisualizationChallengeBySlug(
+  const visualizationChallengeData = (await getVisualizationChallengeBySlug(
     slug,
   )) as unknown as Visualization;
 
-  if (!visualizationData) {
+  if (!visualizationChallengeData) {
     return notFound();
   }
 
-  return <AlgorithmWrapperChallenge visualization={visualizationData} />;
+  return <AlgorithmWrapper visualization={visualizationChallengeData} />;
 }
+

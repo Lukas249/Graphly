@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import GraphVisualization from "../graphVisualization";
 import { Edge, GraphHandle, Node } from "../core/graphTypes";
@@ -166,6 +166,20 @@ function GraphEducational({
     ),
   ]);
 
+  const clickedNodePromiseRef = useRef<(node: string) => void>(null);
+  
+  const waitOnNodeClick = useCallback(() => {
+    return new Promise<string>((resolve) => {
+      clickedNodePromiseRef.current = resolve;
+    });
+  }, []);
+
+  const onNodeClick = useCallback((nodeId: string) => {
+    if (clickedNodePromiseRef.current) {
+      clickedNodePromiseRef.current(nodeId);
+    }
+  }, []);
+
   const waitOnClick = () => {
     return new Promise((resolve) => {
       tutorialRef.current?.setNextButtonOnceClickHanlder(() => {
@@ -215,15 +229,7 @@ function GraphEducational({
       }
 
       graphRef.current?.toggleNodeSelection(false);
-
       graphRef.current?.resetMarks();
-
-      tutorialRef.current?.addTutorialStep({
-        description: `Algorithm initiated at vertex ${selectedNode}.`,
-        variables: initialStep.variables,
-      });
-
-      await waitOnClick();
 
       await algorithm({
         graphRef,
@@ -233,11 +239,8 @@ function GraphEducational({
         edges: _.cloneDeep(edges),
         adjacency: _.cloneDeep(adjacency),
         selectedNode,
-      });
-
-      tutorialRef.current?.addTutorialStep({
-        description: `Algorithm execution completed.`,
-        buttonText: "Restart",
+        waitOnNodeClick,
+        initialStep,
       });
 
       tutorialRef.current?.setNextButtonOnceClickHanlder(() => {
@@ -251,7 +254,7 @@ function GraphEducational({
     return () => {
       resetTutorial(false);
     };
-  }, [nodes, edges, algorithm, initialStep, reset]);
+  }, [nodes, edges, algorithm, initialStep, reset, waitOnNodeClick]);
 
   const graphVisualization = useMemo(
     () => (
@@ -259,21 +262,22 @@ function GraphEducational({
         graphNodes={nodes}
         graphEdges={edges}
         isNodeSelectionEnabled={isNodeSelectionEnabled}
+        onNodeClick={onNodeClick}
         ref={graphRef}
         className="h-full w-full grow"
       />
     ),
-    [nodes, edges, isNodeSelectionEnabled],
+    [nodes, edges, isNodeSelectionEnabled, onNodeClick],
   );
 
   return (
-    <div className="flex h-full flex-row items-center p-8">
+    <div className="flex h-full max-w-layout relative left-1/2 -translate-x-1/2 flex-row items-center p-8">
       <Allotment className="h-full w-full" vertical={false}>
         <Allotment.Pane preferredSize="60%">
           {graphVisualization}
         </Allotment.Pane>
 
-        <Allotment.Pane preferredSize="40%" className="bg-gray-dark">
+        <Allotment.Pane preferredSize="40%" className="bg-gray-dark absolute left-[60%]">
           <Tabs
             ref={tutorialTabsRef}
             className="flex h-full flex-col"

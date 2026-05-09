@@ -58,6 +58,10 @@ export function useGraphHandle({
     return _.cloneDeep(markingsRef.current);
   }
 
+  function getNodeMarkings(node: string) {
+    return _.cloneDeep(markingsRef.current.nodes[node]);
+  }
+
   function markNode({
     nodeId,
     nodeColor = colors.markedNodeFill,
@@ -206,5 +210,6 @@ export function useGraphHandle({
     transpose,
     selectNode,
     getSelectedNode,
+    getNodeMarkings
   };
 }
