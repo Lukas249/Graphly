@@ -30,9 +30,9 @@
 The platform combines theoretical articles, interactive visualizations, a "LeetCode-style" coding judge, and a structured roadmap - all powered by an intelligent AI assistant.
 
 <div align="center">
-  <img width="800" alt="Graphly Website - Home" src="https://github.com/user-attachments/assets/20193a8e-e255-478d-882c-593351865f5d" />
+  <img width="800" alt="Graphly Website - Home" src="https://github.com/user-attachments/assets/9ba6ce07-8b70-41c7-8b93-d63284da8dcd" />
 </div>
-  
+
 ---
 
 ## 🚀 Key Features
@@ -53,7 +53,7 @@ Grasp the theory before diving into code.
 </p>
 
 <div align="center">
-  <img width="800" alt="Graphly - Learn Kosaraju Algorithm" src="https://github.com/user-attachments/assets/a18436ac-a028-4476-92a2-abd363a0839e" />
+  <img width="800" alt="Graphly - Learn Kosaraju Algorithm" src="https://github.com/user-attachments/assets/f4af35d9-e701-4e09-8264-c2c7890a6512" />
 </div>
 
 <h3>📝 Immediate Reinforcement</h3>
@@ -70,7 +70,7 @@ Grasp the theory before diving into code.
 
 The heart of Graphly. Don't just read code - watch it run.
 
-- **Interactive Visualization:** Nodes are fully **draggable**. Rearrange the graph layout to better understand complex connections.
+- **Interactive Visualization:** Nodes are fully **draggable**. Rearrange the graph layout to better understand complex connections. You can freely **move**, **zoom in**, and **zoom out** of the graph area to better explore connections and handle larger networks.
 - **Step-by-Step Execution:** Step through algorithms (BFS, DFS, Dijkstra, etc.).
 - **Dynamic Coloring:** Watch nodes and edges **change color** in real-time to visually track the algorithm's progress.
 - **Step-by-Step Navigation:** Control the flow via UI buttons or use **keyboard arrows** (← / →) to step backward and forward through the execution.
@@ -79,8 +79,9 @@ The heart of Graphly. Don't just read code - watch it run.
 - **Custom Graphs:** Edit the graph using a simple text syntax.
 
 <div align="center">
-  <img width="800"  alt="Graphly - Executing DFS Algorithm" src="https://github.com/user-attachments/assets/51c50b8a-510c-41f4-82b9-0b2642a105cb" />
+  <img width="800"  alt="Graphly - Executing DFS Algorithm" src="https://github.com/user-attachments/assets/bd2f2980-7738-4754-81ae-fbbb12ff0ab9" />
 </div>
+
 
 _Example: Step-by-Step Executing DFS Algorithm_
 
@@ -102,8 +103,9 @@ Practice makes perfect. A built-in coding environment similar to LeetCode.
 </p>
 
 <div align="center">
-  <img width="800" alt="Graphly - Solve Sum Of All Nodes" src="https://github.com/user-attachments/assets/772c2555-1ac4-4f5b-99a9-e825bb63d8ec" />
+  <img width="800" alt="Graphly - Solve Sum Of All Nodes" src="https://github.com/user-attachments/assets/a186d966-a76b-456e-8375-6f5048ce8d68" />
 </div>
+
 
 <h3>🤖 Submission & AI Insights</h3>
 <p>
@@ -112,10 +114,17 @@ Practice makes perfect. A built-in coding environment similar to LeetCode.
 </p>
 
 <div align="center">
-  <img width="800" alt="Graphly - Accepted Submission" src="https://github.com/user-attachments/assets/4bc803ed-5d99-43d8-afdd-c70b33072bd6" />
+  <img width="800" alt="Graphly - Accepted Submission" src="https://github.com/user-attachments/assets/940657bf-8be0-4900-9eb3-52acfe9bf57c" />
 </div>
 
-### 4. Roadmap
+### 4. Quest
+Embark on a structured journey to master graph algorithms. The Quest is a curated learning path that takes you from the fundamental graph algorithms to advanced.
+
+<div align="center">
+  <img width="800" alt="Graphly - Quest" src="https://github.com/user-attachments/assets/1286b9db-25ce-498e-ab88-aad56372cfbd" />
+</div>
+
+### 5. Roadmap
 
 A structured learning tree to guide your journey from basic traversals to advanced algorithms.
 
@@ -125,11 +134,10 @@ A structured learning tree to guide your journey from basic traversals to advanc
 <h3>🌳 The Big Picture</h3>
 <p>
   A visual dependency tree representing the optimal learning path. 
-  Nodes light up as you master concepts, tracking your progress from BFS to Network Flow.
 </p>
 
 <div align="center">
-  <img width="800" alt="Graphly - Roadmap" src="https://github.com/user-attachments/assets/51021cb5-6b57-44c6-a194-7feb9b950117">
+  <img width="800" alt="Graphly - Roadmap" src="https://github.com/user-attachments/assets/ae000d24-7f92-4e55-a857-0547b2209e7d" />
 </div>
 
 <h3>🔗 Curated Practice Problems</h3>
@@ -139,20 +147,44 @@ A structured learning tree to guide your journey from basic traversals to advanc
 </p>
 
 <div align="center">
-  <img width="800" alt="Graphly - Roadmap - Links" src="https://github.com/user-attachments/assets/00a5f660-8e8e-4122-8806-cb482ccf8530" />
+  <img width="800" alt="Graphly - Roadmap - Links" src="https://github.com/user-attachments/assets/5ece3987-85f1-4da5-b803-9efb3c19d246" />
 </div>
 
 ---
+
+## 🎮 Challenge Mode
+Think you've mastered the logic? Put your skills to the test in Challenge Mode (Quest section). Instead of just watching the algorithm run, you become the processor.
+
+How it works:
+
+- Active Execution: The app prompts you for the next step in an algorithm (e.g., "Which vertex is visited next in BFS?").
+
+- Instant Feedback:
+
+  - Blue: Correct move! The algorithm continues to the next step.
+
+  - Red: Incorrect. The node flashes red to indicate a logic error, helping you identify gaps in your understanding.
+
+- Track Progress: Complete the visualization without mistakes to prove your algorithmic expertise.
+
+- Lastly correctly seleted node is marked with the blue background and white border.
+
+<div align="center">
+  <img width="800" alt="Graphly - Challenge Mode" src="https://github.com/user-attachments/assets/d11d25a5-0876-4be1-b2b7-749c51a908e4" />
+</div>
+
+_Example: Incorrect move in Challenge Mode (node turns red) during a recursive DFS._
 
 ## 🤖 GraphlyAI Assistant
 
 Stuck? GraphlyAI is available on every page.
 
 - **Context-Aware:** Select any text on the screen (article, code, or problem description) and click **"Ask GraphlyAI"** for specific help.
-- **Coding Helper:** Ask for hints, time complexity analysis, or debugging help in the Solve module.
+- **Coding Helper:** Ask for hints, time complexity analysis or debugging help.
+- **Smart Context Injection**: No need to copy-paste context every time. The helper automatically injects for example your current graph structure, pseudocode and visualization history into the chat context.
 
 <div align="center">
-  <img width="800" alt="GraphlyAI identify an Euler Path" src="https://github.com/user-attachments/assets/0972ee4b-4bcb-4e80-93ee-3e3fd0f8e42d" />
+  <img width="800" alt="GraphlyAI identify an Euler Path" src="https://github.com/user-attachments/assets/80988c90-1f2e-434b-824a-a1689dafd16b" />
 </div>
 
 _Example: GraphlyAI analyzing an undirected graph to identify an Euler Path._
@@ -174,7 +206,7 @@ In the **Visualize** section, you can create your own graphs using a simple text
 Just type the relationships, and the graph renders instantly!
 
 <div align="center">
-  <img width="800" alt="Graphly - Graph Editor" src="https://github.com/user-attachments/assets/a5c87f17-a90e-47a1-8609-3da4431c231b" />
+  <img width="800" alt="Graphly - Graph Editor" src="https://github.com/user-attachments/assets/ad0bd24c-ed8e-43fe-b8f1-8d2a2a22ba6f" />
 </div>
 
 ---
