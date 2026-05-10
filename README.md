@@ -82,7 +82,6 @@ The heart of Graphly. Don't just read code - watch it run.
   <img width="800"  alt="Graphly - Executing DFS Algorithm" src="https://github.com/user-attachments/assets/bd2f2980-7738-4754-81ae-fbbb12ff0ab9" />
 </div>
 
-
 _Example: Step-by-Step Executing DFS Algorithm_
 
 ### 3. Solve (Powered by Judge0)
@@ -106,7 +105,6 @@ Practice makes perfect. A built-in coding environment similar to LeetCode.
   <img width="800" alt="Graphly - Solve Sum Of All Nodes" src="https://github.com/user-attachments/assets/a186d966-a76b-456e-8375-6f5048ce8d68" />
 </div>
 
-
 <h3>🤖 Submission & AI Insights</h3>
 <p>
   After a successful submission, <b>Judge0</b> returns runtime stats. 
@@ -118,6 +116,7 @@ Practice makes perfect. A built-in coding environment similar to LeetCode.
 </div>
 
 ### 4. Quest
+
 Embark on a structured journey to master graph algorithms. The Quest is a curated learning path that takes you from the fundamental graph algorithms to advanced.
 
 <div align="center">
@@ -153,6 +152,7 @@ A structured learning tree to guide your journey from basic traversals to advanc
 ---
 
 ## 🎮 Challenge Mode
+
 Think you've mastered the logic? Put your skills to the test in Challenge Mode (Quest section). Instead of just watching the algorithm run, you become the processor.
 
 How it works:
@@ -160,7 +160,6 @@ How it works:
 - Active Execution: The app prompts you for the next step in an algorithm (e.g., "Which vertex is visited next in BFS?").
 
 - Instant Feedback:
-
   - Blue: Correct move! The algorithm continues to the next step.
 
   - Red: Incorrect. The node flashes red to indicate a logic error, helping you identify gaps in your understanding.
