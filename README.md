@@ -225,13 +225,13 @@ To run Graphly locally, you need Docker installed.
     This will start the all needed services.
 
     ```bash
-    docker compose up --build
+    npm run docker-prod
     ```
 
     **Note:** If the startup fails or you encounter errors, you must clean up the old containers and volumes before retrying to ensure a clean state. Run the following command:
 
     ```bash
-    docker-compose down -v
+    npm run docker-down
     ```
 
 4.  **Access the App**
